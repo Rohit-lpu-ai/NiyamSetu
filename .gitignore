@@ -47,6 +47,11 @@ data/raw/
 data/**/*.pdf
 *.pdf
 
+# Generated extraction output. Regenerable from data/raw/ + data/manifest.csv
+# in seconds, and it duplicates every document's full text, so it is not worth
+# committing. See data/README.md section 1.
+data/processed/
+
 # Operating System & IDE
 .DS_Store
 Thumbs.db

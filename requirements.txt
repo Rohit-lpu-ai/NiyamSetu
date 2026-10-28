@@ -1,0 +1,25 @@
+# NiyamSetu backend - Phase 1 (PDF ingestion and extraction)
+#
+# Deliberately minimal. Every line is pinned so the five of us run the same
+# code. Add a package only with a written justification (CLAUDE.md §24 rule 5),
+# and pin it here in the same commit.
+#
+# Install into a project virtualenv, not globally:
+#   python -m venv .venv
+#   .venv\Scripts\activate          (Windows)
+#   source .venv/bin/activate       (macOS / Linux)
+#   pip install -r requirements.txt
+
+# --- runtime ---
+# Pure-Python PDF reading. Gives per-page access, which is what page-level
+# provenance depends on, with no compiled extension. See docs/pdf-extraction.md.
+pypdf==6.18.1
+
+# --- development / test ---
+pytest==8.3.4
+
+# --- NOT dependencies of this phase ---
+# fastapi, uvicorn, psycopg2-binary, SQLAlchemy, alembic, streamlit and
+# scikit-learn are present in some team members' *global* Python installs. They
+# are not used by Phase 1 and are not pinned here. They will be added, pinned,
+# when Phase 3 (PostgreSQL) and Phase 4 (FastAPI) actually need them.

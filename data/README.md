@@ -1,17 +1,36 @@
 # NiyamSetu — Data: Collection, Preparation and Conventions
 
 > Written 2026-10-28. Owner: Person 1 (Backend + Document NLP).
+> Updated 2026-10-28 after the Phase 1 extraction run.
 >
-> ## Status: NO DATA HAS BEEN COLLECTED
+> ## Status: a 4-document validation sample exists. The corpus does not.
 >
-> This directory currently contains **only this file**. There are no PDFs, no
-> processed documents, no annotations and no manifest. Nothing described below has
-> been executed. This file defines the *intended* process so that collection, when
-> it happens, is consistent and reproducible.
+> **What exists now**
 >
-> Which documents form the corpus, and who collects them, is **Open Decision D-10**
-> (`CLAUDE.md` §22.2) and is unresolved. Every NLP experiment in this project is
-> blocked on it.
+> - `data/manifest.csv` — 4 rows, one per document, with verified provenance.
+> - `data/raw/` — 4 real RBI PDFs (git-ignored; re-download from the manifest).
+> - `data/processed/` — 4 `extraction.json` files from the Phase 1 pipeline
+>   (git-ignored; regenerate with one command, §9).
+> - `data/annotations/` — **does not exist yet.** No annotation has been done.
+>
+> These four documents are a **validation sample for the extraction pipeline**,
+> not the project corpus. They were chosen to be real, verifiable and varied in
+> length (2, 8, 10 and 37 pages), not to be representative. Findings:
+> `evaluation/2026-10-28-phase1-extraction-validation.md`.
+>
+> **What is still missing, and blocks work**
+>
+> - The corpus itself. Which documents form it, and who collects them, is
+>   **Open Decision D-10** (`CLAUDE.md` §22.2) and is still unresolved.
+> - **Version pairs.** Both amendment documents in the sample amend 2025 parent
+>   Directions that are *not* here, so the sample contains **zero genuine
+>   version pairs**. Person 4's Compare feature has nothing to run on. This is
+>   the easiest requirement to forget during collection and the hardest to fix
+>   late — see §2.4.
+> - Documents from more than one issuing authority. All four are from the RBI.
+> - A scanned document, even one to be excluded later, to confirm the pipeline's
+>   `partial` / `failed` handling against a real file rather than a test fixture.
+> - All annotations, and therefore every evaluation metric.
 
 ---
 
@@ -20,7 +39,7 @@
 | Path | Contents | Committed to git? |
 |---|---|---|
 | `data/raw/` | Original, unmodified PDFs exactly as downloaded | **No** — git-ignored |
-| `data/processed/` | Extracted page text and segments as JSON | Only if small; otherwise regenerate |
+| `data/processed/` | Extracted page text (and later segments) as JSON | **No** — git-ignored; regenerate (see below) |
 | `data/annotations/` | Hand-annotated evaluation samples + the guideline | **Yes** — small, and essential for reproducibility |
 | `data/manifest.csv` | One row per source document: provenance and metadata | **Yes** |
 | `data/README.md` | This file | **Yes** |
@@ -29,7 +48,14 @@
 corpus of 20–40 would bloat the repository permanently, and git cannot compress
 them. The manifest plus the source URL is what makes the corpus reproducible.
 Anyone can re-download from the recorded URL and verify against the recorded
-SHA-256 checksum.
+SHA-256 checksum — `--verify-checksums` in §9 does exactly that.
+
+**Why generated JSON is not committed either (decided 2026-10-28):** the four
+sample documents produce 264 KB of `extraction.json`, because the output holds
+each page's text **twice** — raw and normalised, deliberately (§6). A 20–40
+document corpus would be a few megabytes of fully regenerable text, and it would
+churn on every pipeline change, making diffs useless. One command rebuilds it
+(§9). `data/processed/` is therefore git-ignored.
 
 `.gitignore` must contain at least:
 
@@ -108,12 +134,22 @@ no spaces. The **original** filename as downloaded is preserved in the manifest
 and in `document_versions.original_filename` — renaming for the filesystem must
 never lose it.
 
-Processed output mirrors the identifiers assigned at ingestion:
+Processed output mirrors the identifiers assigned at ingestion. **As built in
+Phase 1:**
 
 ```text
-data/processed/<version_public_id>/pages.json
-data/processed/<version_public_id>/segments_paragraph.json
-data/processed/<version_public_id>/segments_clause_aware.json
+data/processed/<version_id>/extraction.json      # pages + document metadata
+```
+
+`<version_id>` is `VER-` plus the first 16 hex characters of the file's SHA-256,
+so re-running on the same PDF writes to the same path instead of accumulating
+copies. See `docs/pdf-extraction.md` §4 for why identifiers are content-derived.
+
+**Planned for Phase 2**, alongside the file above:
+
+```text
+data/processed/<version_id>/segments_paragraph.json
+data/processed/<version_id>/segments_clause_aware.json
 ```
 
 ---
@@ -257,29 +293,46 @@ quietly degrading the corpus.
 
 ## 9. How to reproduce the dataset
 
-Once Phases 1–3 exist, the documented procedure will be:
+### Works today
 
 ```bash
-# 1. Re-download the corpus from the manifest's recorded URLs into data/raw/
-python -m backend.app.cli fetch --manifest data/manifest.csv
+# 1. Put the PDFs in data/raw/ under the local_filename the manifest records.
+#    Download them by hand from each row's source_url. (See the note below on
+#    rbidocs.rbi.org.in, which needs a Referer header.)
 
-# 2. Verify each file against its recorded checksum
-python -m backend.app.cli verify --manifest data/manifest.csv
+# 2. Extract every manifest row, verifying each file against its recorded
+#    checksum, into data/processed/<version_id>/extraction.json
+python -m backend.app.document_processing.cli \
+    --manifest data/manifest.csv \
+    --verify-checksums \
+    --output-dir data/processed
 
-# 3. Create the database schema
-python -m backend.app.db.migrate
-
-# 4. Ingest the corpus (extraction + normalisation + both segmentation methods)
-python -m backend.app.cli ingest --manifest data/manifest.csv
-
-# 5. Run the data quality checks
-python evaluation/data_quality.py --report evaluation/data-quality-report.md
+# 3. Inspect the result (prints artefacts for a human to read; asserts nothing)
+python -m backend.tests.inspect_real_extraction
 ```
 
-**None of these commands exist yet.** They are the target interface, recorded
-here so Phase 1 builds towards something specified. If a checksum in step 2 fails,
-the document has been re-published or altered — record that, do not overwrite the
-manifest.
+Step 2 exits non-zero if any file is missing, is not a PDF, or fails its
+checksum, and it processes every other row regardless, so one bad download does
+not block the corpus. **If a checksum fails, the document has been re-published
+or altered — record that, do not overwrite the manifest.**
+
+An existing `extraction.json` is never overwritten without `--force`.
+
+### Does not exist yet
+
+```bash
+# Phase 2: segmentation into paragraphs and clauses
+# Phase 3: database schema + loading these JSON files into PostgreSQL
+# Phase 5: the data-quality checks of section 8 (Experiment C)
+```
+
+A manifest-driven `fetch` command does not exist either — downloads are manual.
+That is deliberate for now: `rbidocs.rbi.org.in` serves an HTML interstitial
+instead of the PDF unless a `Referer` header from `rbi.org.in` is sent, so a
+naive fetcher saves HTML files named `*.pdf`. (The pipeline catches this by
+sniffing the bytes rather than trusting the extension, but a fetch command
+should not create the problem in the first place.) Whoever writes `fetch` must
+handle per-host quirks and verify the `%PDF-` header before saving.
 
 ---
 

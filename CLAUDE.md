@@ -20,10 +20,28 @@ statement as **[PROPOSED]**.
 | `[PROPOSED]` | Suggested by this document; **not yet agreed by the team**. |
 | `[BLOCKED]` | Cannot proceed until a listed decision is made. |
 
-**As of 2026-10-28 this repository contains exactly one pre-existing file: `README.md`.**
-Therefore *nothing* in this project is `[IMPLEMENTED]` yet. Every architecture,
-schema, endpoint, dataset and evaluation result described below is `[PROPOSED]`
-or `[PLANNED]`. Do not tell anyone otherwise.
+### Where the project actually is — updated 2026-10-28, after Phase 1
+
+**Phase 1 (PDF ingestion and page-level extraction) is `[IMPLEMENTED]`.** It has
+been built, tested (90 passing tests) and run against four real RBI documents.
+See §21 for the file-by-file status, `docs/pdf-extraction.md` for the design and
+contract, and `evaluation/2026-10-28-phase1-extraction-validation.md` for what
+the real-document run actually showed, defects included.
+
+**Everything else below remains `[PROPOSED]` or `[PLANNED]`.** In particular
+there is still no database, no FastAPI application, no segmentation, no NLP
+module, no frontend, no annotation and no evaluation metric. Do not tell anyone
+otherwise.
+
+**Current phase:** Phase 2 — paragraph and clause-aware segmentation.
+**Next milestone:** `segments` with page provenance, both methods stored side by
+side, plus header/footer removal informed by the validation report §4.6. Four of
+the five team members are blocked on this, because clauses are what they consume.
+
+The ordering recommendation has changed slightly on the strength of Phase 1:
+**do segmentation before the database.** The schema's hardest part is the segment
+tables, and they are easier to design against real segments than against a
+sketch (`docs/pdf-extraction.md` §12).
 
 ---
 
@@ -854,20 +872,53 @@ methodology; known limitations; exact reproduction steps.
 
 ## 17. Repository structure
 
-### 17.1 Current — verified 2026-10-28
+### 17.1 Current — verified 2026-10-28, after Phase 1
 ```text
 NiyamSetu-diw_backend/
-├── README.md        # pre-existing: the project idea (5.9 KB)
-├── CLAUDE.md        # this file (created 2026-10-28)
+├── README.md                      # the project idea
+├── CLAUDE.md                      # this file
+├── requirements.txt               # pinned: pypdf, pytest. Nothing else.
+├── pytest.ini
+├── .gitignore
+├── .venv/                         # git-ignored
+├── backend/
+│   ├── app/
+│   │   └── document_processing/   # PHASE 1 - implemented and tested
+│   │       ├── __init__.py        #   public API re-exports
+│   │       ├── errors.py          #   typed exceptions with stable codes
+│   │       ├── identity.py        #   checksums, stable document/version ids
+│   │       ├── normalization.py   #   the conservative cleaning steps
+│   │       ├── schemas.py         #   the data contract (dataclasses)
+│   │       ├── manifest.py        #   reading data/manifest.csv
+│   │       ├── pdf_extractor.py   #   validation + extraction (the library)
+│   │       └── cli.py             #   command-line front end only
+│   └── tests/                     # 90 tests, all passing
+│       ├── conftest.py            #   synthetic PDF fixtures
+│       ├── pdf_builder.py         #   a minimal PDF writer, test-only
+│       ├── inspect_real_extraction.py   # manual-inspection helper, not a test
+│       └── test_*.py              #   7 modules
+├── data/
+│   ├── README.md
+│   ├── manifest.csv               # 4 rows, verified provenance
+│   ├── raw/                       # git-ignored: 4 real RBI PDFs
+│   └── processed/                 # git-ignored: 4 extraction.json
 ├── docs/
 │   ├── architecture.md
+│   ├── backend-roadmap.md
 │   ├── team-responsibilities.md
-│   └── backend-roadmap.md
-└── data/
-    └── README.md
+│   └── pdf-extraction.md          # Phase 1 design, contract and findings
+└── evaluation/
+    └── 2026-10-28-phase1-extraction-validation.md
 ```
-There is **no** source code, no tests, no data, no dependency file, and **no
-initialised git repository** in this directory.
+
+There is still **no** database code, no FastAPI application, no segmentation, no
+`nlp/`, no `frontend/`, and no `data/annotations/`. Git **is** initialised
+(branch `diw_backend`, remote present) — §18's note to the contrary is
+superseded.
+
+`backend/app/main.py` does **not** exist. The brief's suggested structure
+included it, but there is no application to serve yet and an empty `main.py`
+would be a lie about the project's state. It arrives in Phase 4 with the API.
 
 ### 17.2 Target `[PROPOSED]` — create directories only when a phase needs them
 ```text
@@ -913,9 +964,13 @@ not create `frontend/` or `nlp/` until this is settled.
 
 ## 18. Git branching and integration workflow `[PROPOSED]`
 
-**This directory is not a git repository yet** — `git status` returned *not a git
-repository* on 2026-10-28. Initialising it and choosing a remote is Open
-Decision D-2.
+**Correction, 2026-10-28:** this **is** a git repository. The earlier claim in
+this section was wrong — `git status` reports a clean tree on branch
+`diw_backend`, with remote `origin` carrying `main` and `diw_backend`. Three
+commits exist. D-2 is therefore partly settled: the repository and remote exist;
+what remains undecided is the branch convention for the other four members.
+`.gitignore` already exists and covers `.env`, `data/raw/`, `data/processed/`,
+`*.pdf`, `__pycache__/`, `.venv/` and `.pytest_cache/`.
 
 Once initialised, the suggested convention — the team may already have its own,
 in which case theirs wins:
@@ -954,11 +1009,13 @@ with a small local stub rather than waiting for my server.
 ## 19. Coding and testing rules
 
 - Python 3.11 (3.11.9 confirmed on this machine).
-- A project virtualenv and a pinned `requirements.txt`. The packages found
-  globally on this machine (`fastapi`, `uvicorn`, `pypdf`, `psycopg2-binary`,
-  `SQLAlchemy`, `alembic`, `streamlit`, `scikit-learn`) are the *user's global*
-  install, **not** project dependencies — they must be pinned explicitly when the
-  venv is created.
+- A project virtualenv and a pinned `requirements.txt`. **Both now exist**:
+  `.venv/` holds exactly `pypdf==6.18.1` and `pytest==8.3.4`. The many packages
+  found globally on this machine (`fastapi`, `uvicorn`, `psycopg2-binary`,
+  `SQLAlchemy`, `alembic`, `streamlit`, `scikit-learn`, and much more) are the
+  *user's global* install, **not** project dependencies. Run everything through
+  `.venv`, and pin anything new in `requirements.txt` in the same commit that
+  starts using it.
 - `pytest` for tests. Every endpoint gets a happy-path test and at least one
   error-path test. Every service function with branching logic gets a unit test.
 - Extraction and segmentation are tested against small committed PDF fixtures,
@@ -993,19 +1050,28 @@ with a small local stub rather than waiting for my server.
 |---|---|---|
 | Project idea / vision | `[IMPLEMENTED]` as a document | `README.md`, read in full |
 | Wireframe | **not found** | no wireframe, design file or image exists in this directory |
-| Backend code | `[PLANNED]` | no `.py` file in the repository |
+| **PDF validation** | `[IMPLEMENTED]` | `pdf_extractor.validate_pdf_file`; 9 tests, including a `.pdf`-named HTML file |
+| **Page-level PDF extraction** | `[IMPLEMENTED]` | `pdf_extractor.extract_pdf`; run on 4 real RBI PDFs, 57 pages, all `ok` |
+| **Text normalisation** | `[IMPLEMENTED]` | `normalization.py`, 7 independently toggleable steps; 15 tests |
+| **Stable document/version ids** | `[IMPLEMENTED]` | `identity.py`; verified idempotent across re-runs; 10 tests |
+| **JSON output contract** | `[IMPLEMENTED]` | `schemas.py`, `schema_version` 1.0.0; `docs/pdf-extraction.md` §5 |
+| **Extraction CLI** | `[IMPLEMENTED]` | `cli.py`, incl. `--manifest`; 14 + 12 tests |
+| **Tests** | `[IMPLEMENTED]` | 90 passing, `python -m pytest`, `pytest.ini` present |
+| **Pinned dependencies** | `[IMPLEMENTED]` | `requirements.txt`: `pypdf==6.18.1`, `pytest==8.3.4`; `.venv/` created |
+| **Document provenance manifest** | `[PARTIAL]` | `data/manifest.csv`, 4 verified rows — a validation sample, not the corpus |
+| **Extraction validation report** | `[IMPLEMENTED]` | `evaluation/2026-10-28-phase1-extraction-validation.md` — manual inspection, no accuracy score |
+| Segmentation (paragraph / clause) | `[PLANNED]` | Phase 2; nothing built. No `segments`, no `clause_id` anywhere |
 | Database schema | `[PROPOSED]` | §11 is a DDL sketch inside documentation; no `.sql` migration file exists |
-| PDF ingestion | `[PLANNED]` | none |
-| API endpoints | `[PROPOSED]` | §12; none implemented |
+| API endpoints | `[PROPOSED]` | §12; none implemented; no `main.py` |
 | NLP code (any module) | `[PLANNED]` | none |
 | Frontend code | `[PLANNED]` | none |
-| Tests | `[PLANNED]` | no test directory, no pytest config |
-| Document corpus | **not started** | no PDFs; corpus not yet chosen |
-| Annotations | **not started** | none |
-| Evaluation results | **none exist** | no metric has been computed for this project |
-| Git repository | **not initialised** | `git status` → not a git repository |
-| Python toolchain | available | Python 3.11.9, pip 26.0.1, git 2.53.0, node 24.15.0 |
-| PostgreSQL | **unconfirmed** | `psql` is not on PATH here; server presence unknown |
+| Document corpus | `[PARTIAL]` | 4 real RBI PDFs as a validation sample. The corpus is **not** chosen (D-10), has one authority only, and contains **zero version pairs** |
+| Annotations | **not started** | `data/annotations/` does not exist |
+| Evaluation **metrics** | **none exist** | no accuracy, precision, recall or F1 has been computed for this project, and none may be quoted |
+| Git repository | initialised | branch `diw_backend`; remote `origin` with `main` present |
+| Python toolchain | available | Python 3.11.9, pip 26.0.1, git 2.53.0 |
+| PostgreSQL | **unconfirmed** | `psql` is not on PATH here; server presence still unknown (D-8) |
+| OCR | **not implemented** | deliberately out of scope; scanned-document paths tested only against synthetic fixtures |
 
 ---
 
@@ -1054,8 +1120,13 @@ with a small local stub rather than waiting for my server.
    D-3, not silently resolved.
 3. **Repository name vs proposed structure.** See D-1.
 4. **"Existing repository conventions."** The brief repeatedly says to respect
-   them. There are none — this is a greenfield directory with a README. The
-   conventions in §19 are therefore proposals, not observations.
+   them. At the time of the audit there were none — a greenfield directory with
+   a README — so the conventions in §19 began as proposals. **As of Phase 1 some
+   are now observable facts**: the `backend/app/<feature>/` layout, dataclass
+   contracts with a single `to_dict()`, typed exceptions carrying stable `code`
+   values, docstrings that explain *why*, one `pytest.ini` at the root, and
+   synthetic fixtures generated at test time rather than committed as binaries.
+   Follow those. The rest of §19 is still a proposal.
 
 ---
 
@@ -1063,15 +1134,21 @@ with a small local stub rather than waiting for my server.
 
 Phase detail, inputs, tests and definitions of done: **`docs/backend-roadmap.md`**.
 
-| Phase | Goal | Blocking dependency |
-|---|---|---|
-| 0 | Repository audit and project documentation | — (this phase) |
-| 1 | Corpus confirmed; PDF extraction with page provenance | D-10, D-2 |
-| 2 | Paragraph and clause-aware segmentation; annotated sample; comparison | Phase 1 |
-| 3 | PostgreSQL schema, access layer, persistence | D-4, D-8 |
-| 4 | FastAPI endpoints with validation and tests | Phase 3, D-5 |
-| 5 | Data-quality and segmentation evaluation reports | Phases 2–4 |
-| 6 | Integration with Persons 2–5; end-to-end tests | Phase 4 plus their modules |
+| Phase | Goal | Status | Blocking dependency |
+|---|---|---|---|
+| 0 | Repository audit and project documentation | **done** | — |
+| 1 | PDF extraction with page provenance | **done** (corpus still open) | D-10 for the corpus |
+| 2 | Paragraph and clause-aware segmentation; annotated sample; comparison | **current** | Phase 1 (met) |
+| 3 | PostgreSQL schema, access layer, persistence | planned | D-4, D-8, Phase 2 |
+| 4 | FastAPI endpoints with validation and tests | planned | Phase 3, D-5 |
+| 5 | Data-quality and segmentation evaluation reports | planned | Phases 2–4 |
+| 6 | Integration with Persons 2–5; end-to-end tests | planned | Phase 4 plus their modules |
+
+Phase 1 shipped the pipeline but **not** the corpus: four verified RBI documents
+exist as a validation sample, D-10 is still open, and there are no version pairs
+(see `data/README.md`). Collecting the corpus runs in parallel with Phase 2 —
+segmentation can be built and tuned on these four while collection proceeds, but
+no segmentation *metric* can be reported until the annotated sample exists.
 
 Across the whole month, the ordering that protects the grade is:
 **provenance-preserving ingestion → storage → stable API → Ask → Compare.**
@@ -1104,6 +1181,20 @@ not trade away the first three for it.
 10. **Never destroy data.** No deleting files, resetting git history, dropping
     databases or overwriting work without explicit approval, listed file by file.
 
-**Standing stop condition:** backend implementation begins only after the owner
-reviews this documentation and approves Phase 1. Until then: no dependency
-installs, no database changes, no application code.
+11. **Use the project virtualenv, not the global Python.** `.venv/` exists with
+    exactly `pypdf` and `pytest` in it. The large set of packages in the user's
+    global install (fastapi, streamlit, scikit-learn, pyspark, airflow…) is
+    **not** this project's dependency set; see the note at the bottom of
+    `requirements.txt`.
+12. **Never invent a metric.** §21 says "none exist" and that is load-bearing.
+    The validation report deliberately contains counts and defects but no
+    accuracy percentage, because no annotated ground truth exists yet.
+
+**Standing stop condition — updated 2026-10-28.** Phase 1 was approved and is
+complete. The condition now applies to **Phase 3 onward**: no PostgreSQL
+install, no database creation, no FastAPI application and no new dependency
+until the owner reviews Phase 2's segmentation output and the open decisions
+D-4, D-8 and D-10 have answers.
+
+Phase 2 (segmentation) may proceed, because it needs no new dependency and no
+infrastructure — it works on the JSON the Phase 1 pipeline already produces.
