@@ -680,11 +680,20 @@ _STRUCTURAL_RE = re.compile(
 #: schedule headings. Requiring the marker to be the *whole* line, or to be
 #: followed by a title rather than a bare comma-separated number list, is what
 #: separates them.
-#: Longest alternatives first: Python's ``|`` is leftmost-first, not
-#: longest-match, so listing ``Annex`` before ``Annexure`` would make the line
-#: "Annexure" report its marker as "Annex" and leave "ure" in the remainder.
+#: Two subtleties, both found by reading real output:
+#:
+#: 1. Longest alternatives first. Python's ``|`` is leftmost-first, not
+#:    longest-match, so listing ``Annex`` before ``Annexure`` made the line
+#:    "Annexure" report its marker as "Annex" and leave "ure" in the remainder.
+#: 2. ``(?![A-Za-z])`` after the alternation. Without it the pattern matched
+#:    ``Schedule`` *inside* ``Scheduled``, so the master-circular's wrapped line
+#:    "Scheduled Castes Finance & Development Corporation" opened a bogus
+#:    annexure segment numbered "Schedule" - twice in one document. A word
+#:    boundary ``\b`` would not help here, because the boundary between "e" and
+#:    "d" is not a word boundary; the next character must be checked directly.
 _ANNEXURE_RE = re.compile(
     r"^(ANNEXURE|Annexure|ANNEX|Annex|SCHEDULE|Schedule|APPENDIX|Appendix)"
+    r"(?![A-Za-z])"
     r"(?:\s+([IVXLC]{1,6}|[A-Z]|[0-9]{1,3}))?\s*[-–—:]?\s*(.*)$"
 )
 

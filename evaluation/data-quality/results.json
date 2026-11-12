@@ -1,0 +1,129 @@
+{
+  "experiment": "C - data quality",
+  "generated_at": "2026-11-12T05:16:14+00:00",
+  "processed_dir": "data\\processed",
+  "manifest": "data\\manifest.csv",
+  "versions_inspected": [
+    "VER-6507f32084d73257",
+    "VER-7c5ad74aba9ebd62",
+    "VER-b8a13c2a7651eb84",
+    "VER-fd6e1537c1a42574"
+  ],
+  "checks_run": [
+    "artifact_readability",
+    "identifiers",
+    "duplicate_files",
+    "near_duplicate_documents",
+    "pages",
+    "metadata_completeness",
+    "extraction_status",
+    "cleaning_reversibility",
+    "segment_provenance",
+    "segment_structure",
+    "segmentation_consistency",
+    "manifest"
+  ],
+  "checks_not_applicable": {},
+  "totals": {
+    "findings": 13,
+    "errors": 0,
+    "warnings": 1,
+    "info": 12
+  },
+  "findings": [
+    {
+      "check": "artifact_readability",
+      "severity": "info",
+      "message": "every artefact in 4 version(s) parsed cleanly",
+      "subjects": [],
+      "count": 0
+    },
+    {
+      "check": "identifiers",
+      "severity": "info",
+      "message": "all identifiers well-formed across 4 version(s)",
+      "subjects": [],
+      "count": 0
+    },
+    {
+      "check": "duplicate_files",
+      "severity": "info",
+      "message": "4 distinct checksum(s); no duplicate files",
+      "subjects": [],
+      "count": 0
+    },
+    {
+      "check": "near_duplicate_documents",
+      "severity": "info",
+      "message": "no pair of 4 version(s) exceeded 90% word overlap",
+      "subjects": [],
+      "count": 0
+    },
+    {
+      "check": "pages",
+      "severity": "info",
+      "message": "57 page(s) across 4 version(s), all non-empty and in sequence",
+      "subjects": [],
+      "count": 0
+    },
+    {
+      "check": "metadata_completeness",
+      "severity": "info",
+      "message": "optional metadata gaps, by field (a documented gap, not a defect)",
+      "subjects": [
+        "issuing_department: 1 version(s)",
+        "supersedes: 4 version(s)"
+      ],
+      "count": 2
+    },
+    {
+      "check": "extraction_status",
+      "severity": "info",
+      "message": "all 4 version(s) extracted with status 'ok'",
+      "subjects": [],
+      "count": 0
+    },
+    {
+      "check": "cleaning_reversibility",
+      "severity": "info",
+      "message": "151 removed line(s) across 4 version(s), all reversible and all with recorded evidence",
+      "subjects": [],
+      "count": 0
+    },
+    {
+      "check": "segment_provenance",
+      "severity": "info",
+      "message": "all 501 segment(s) carry valid page provenance",
+      "subjects": [],
+      "count": 0
+    },
+    {
+      "check": "segment_structure",
+      "severity": "info",
+      "message": "segment structure is consistent in every file",
+      "subjects": [],
+      "count": 0
+    },
+    {
+      "check": "segmentation_consistency",
+      "severity": "info",
+      "message": "both methods consistent on 4 version(s)",
+      "subjects": [],
+      "count": 0
+    },
+    {
+      "check": "manifest",
+      "severity": "info",
+      "message": "4 manifest row(s), 4 document_group(s), 0 group(s) with more than one version",
+      "subjects": [],
+      "count": 0
+    },
+    {
+      "check": "manifest",
+      "severity": "warning",
+      "message": "no document_group has two or more versions, so there is no version pair for Person 4's Compare feature to run on (data/README.md §2.4, CLAUDE.md D-10)",
+      "subjects": [],
+      "count": 0
+    }
+  ]
+}
