@@ -91,3 +91,37 @@ def document_id_from_group(document_group: Optional[str], checksum: str) -> str:
         digest = hashlib.sha256(key.encode("utf-8")).hexdigest()
         return f"DOC-{digest[:_ID_HEX_LENGTH]}"
     return f"DOC-{checksum[:_ID_HEX_LENGTH]}"
+
+
+def segment_id_from_parts(
+    version_id: str, segmentation_method: str, ordinal: int
+) -> str:
+    """Derive a stable identifier for one segment.
+
+    Same reasoning as the rest of this module: Phase 2 has no database, so there
+    is no sequence to hand out ``CLS-0000123`` keys, but the identifier must be
+    **stable across runs** or every re-segmentation invalidates every annotation
+    and citation that referenced it.
+
+    The inputs are the three things that identify a segment within the project:
+    which version it came from, which segmentation method produced it, and its
+    position in document order. Including the method is essential — the same
+    version is segmented twice, by ``paragraph`` and by ``clause_aware``, and
+    paragraph 12 is not clause 12.
+
+    Note what is *not* in the hash: the segment's text. That is deliberate. If
+    the text were included, fixing a typo in normalisation would change every
+    downstream identifier. Keying on position means a re-run with the same
+    pipeline produces the same ids, and a re-run with *different* segmentation
+    produces the same ids for different text — which is the honest outcome,
+    because the segment at position 12 genuinely is a different segment.
+
+    Bridging to PostgreSQL mirrors ``version_id``: this fingerprint is what rows
+    are matched on across re-ingestion, while ``segments.public_id`` stays the
+    database sequence (``CLAUDE.md`` §11.3).
+    """
+    if ordinal < 0:
+        raise ValueError(f"ordinal must be non-negative, got {ordinal}")
+    key = f"{version_id}|{segmentation_method}|{ordinal}"
+    digest = hashlib.sha256(key.encode("utf-8")).hexdigest()
+    return f"SEG-{digest[:_ID_HEX_LENGTH]}"

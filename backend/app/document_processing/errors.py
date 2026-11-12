@@ -74,6 +74,20 @@ class PdfHasNoPagesError(PdfIngestionError):
     code = "PDF_HAS_NO_PAGES"
 
 
+class SegmentProvenanceError(PdfIngestionError):
+    """A segment could not establish, or violated, its page provenance.
+
+    This is the Phase 2 counterpart of the "never produce a clause without a
+    page range" rule (``CLAUDE.md`` §10.2). It is raised rather than worked
+    around: a segment carrying a guessed page number would be indistinguishable
+    from a correct one, and the project's whole claim is that a citation can be
+    checked. Failing loudly costs an ingestion run; a wrong page reference costs
+    the credibility of every answer built on it.
+    """
+
+    code = "SEGMENT_PROVENANCE_ERROR"
+
+
 class OutputExistsError(PdfIngestionError):
     """Refusing to overwrite an existing output file (see CLI ``--force``)."""
 
