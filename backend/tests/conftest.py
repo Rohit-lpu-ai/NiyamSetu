@@ -132,3 +132,26 @@ def password_protected_pdf(tmp_path: Path) -> Path:
         build_password_protected_pdf_bytes([page_lines(1)], "fixture-password")
     )
     return path
+
+
+#: Fixtures whose presence means a test cannot run without PostgreSQL.
+_DATABASE_FIXTURES = frozenset(
+    {"db", "db_url", "loaded", "real_corpus_db", "api_db"}
+)
+
+
+def pytest_collection_modifyitems(items):
+    """Auto-apply the ``integration`` marker to anything needing a database.
+
+    Marking by hand does not stay accurate: ``test_db_schema.py`` mixes tests
+    that need a server with ten that do not (config validation, migration
+    discovery), so a module-level marker would be a lie in both directions.
+
+    Keying off the fixtures a test actually requests makes the marker derived
+    rather than maintained, so ``-m "not integration"`` reliably selects the
+    suite that runs on a machine with no PostgreSQL, and ``-m integration``
+    reliably selects the tests whose result depends on one.
+    """
+    for item in items:
+        if _DATABASE_FIXTURES & set(getattr(item, "fixturenames", ())):
+            item.add_marker("integration")

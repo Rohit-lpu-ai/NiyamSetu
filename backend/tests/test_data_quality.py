@@ -817,3 +817,90 @@ def test_the_real_corpus_has_no_data_quality_errors() -> None:
         for finding in report.findings
         if finding.severity == SEVERITY_ERROR
     ]
+
+
+# --------------------------------------------------------------------------- #
+# Offset resolution - can a stored offset be turned back into the clause?
+# --------------------------------------------------------------------------- #
+#
+# The provenance checks above assert the offsets are well formed. These assert
+# they are *usable*: that slicing the page at the stored range returns the
+# segment. That is the operation a citation performs, so these are the tests
+# standing between the project and a citation that points at the wrong text.
+
+
+def test_a_clean_corpus_resolves_every_offset(corpus: Path) -> None:
+    report = run(corpus)
+    assert not errors_for(report, "offset_resolution")
+    assert any(
+        finding.check == "offset_resolution"
+        and finding.severity == SEVERITY_INFO
+        and "rebuild exactly" in finding.message
+        for finding in report.findings
+    )
+
+
+def test_an_offset_shifted_off_by_one_is_an_error(corpus: Path) -> None:
+    """The defect a bounds check cannot see: legal range, wrong characters."""
+
+    def mutate(payload: Dict[str, object]) -> None:
+        offset = payload["segments"][0]["page_offsets"][0]  # type: ignore[index]
+        offset["char_start"] = int(offset["char_start"]) + 1
+
+    mutate_segments(corpus, mutate)
+    assert any(
+        "cannot be rebuilt" in m
+        for m in errors_for(run(corpus), "offset_resolution")
+    )
+
+
+def test_text_edited_away_from_its_offsets_is_an_error(corpus: Path) -> None:
+    mutate_segments(
+        corpus, lambda p: p["segments"][0].update(text="text that was never on the page")
+    )
+    assert any(
+        "cannot be rebuilt" in m
+        for m in errors_for(run(corpus), "offset_resolution")
+    )
+
+
+def test_a_declared_offset_basis_other_than_normalized_is_an_error(
+    corpus: Path,
+) -> None:
+    """D-11 is a contract, so a file quietly asserting the other basis fails."""
+    mutate_segments(corpus, lambda p: p.update(offset_basis="original_text"))
+    assert any(
+        "offset_basis" in m for m in errors_for(run(corpus), "offset_resolution")
+    )
+
+
+def test_an_offset_naming_a_page_that_was_never_extracted_is_an_error(
+    corpus: Path,
+) -> None:
+    def mutate(payload: Dict[str, object]) -> None:
+        pages = payload["pages"]  # type: ignore[index]
+        payload["pages"] = pages[:1]
+        payload["document"]["page_count"] = 1  # type: ignore[index]
+
+    mutate_extraction(corpus, mutate)
+    report = run(corpus)
+    assert any(
+        "not in extraction.json" in m
+        for m in errors_for(report, "offset_resolution")
+    )
+
+
+def test_whitespace_reflow_alone_is_tolerated(corpus: Path) -> None:
+    """A segment joins wrapped lines with a space; that must not be a defect.
+
+    Pinned deliberately: if someone later tightens the comparison to exact
+    equality, every real multi-line clause in the corpus starts failing, and
+    this test says why that tolerance exists.
+    """
+
+    def mutate(payload: Dict[str, object]) -> None:
+        segment = payload["segments"][0]  # type: ignore[index]
+        segment["text"] = str(segment["text"]).replace(" ", "\n  ")
+
+    mutate_segments(corpus, mutate)
+    assert not errors_for(run(corpus), "offset_resolution")

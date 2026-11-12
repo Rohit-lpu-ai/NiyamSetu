@@ -1,0 +1,112 @@
+NiyamSetu - Experiment B independent annotation worksheet
+======================================================================
+version_id : VER-b8a13c2a7651eb84
+title      : Master Circular - Credit facilities to Scheduled Castes (SCs) & Scheduled Tribes (STs)
+pages      : 1, 2
+
+HOW TO USE THIS FILE
+--------------------
+1. Read data/annotations/README.md first. It is the guideline, and it
+   defines what counts as a clause boundary. Do not skip it.
+2. This worksheet deliberately does NOT show you the system's output.
+   Mark the boundaries you think are correct, from this text and the
+   source PDF in data/raw/.
+3. For every clause you identify, write one JSONL record as specified
+   in the guideline (§4) into:
+       data/annotations/segmentation/VER-b8a13c2a7651eb84.annotator2.jsonl
+   Set "annotator" to your own name, not person1.
+4. Mark "uncertain": true wherever you genuinely cannot decide, and
+   say why in "note". Uncertain records are reported separately and
+   are more useful than a confident guess.
+5. Where the guideline does not answer a case, do NOT invent a rule.
+   Record the disagreement; the guideline gets amended (§7).
+
+Text below is the pipeline's normalised page text -- the same text the
+offsets are measured against, so your markers will line up. Line
+numbers are for discussion only; they are not part of a record.
+
+======================================================================
+--- PAGE 1 ---
+======================================================================
+   0 | 
+   1 | 
+   2 | 1
+   3 | 
+   4 | भारतीय �रज़वर् बैंक
+   5 | _________________________ RESERVE BANK OF INDIA___________________________
+   6 |  www.rbi.org.in
+   7 | 
+   8 | RBI/2026-27/272
+   9 | FIDD.CO.GSSD.BC.No.11/09.09.001/2026-27 October 01, 2026
+  10 | 
+  11 | The Chairman/ Managing Director / Chief Executive Officer
+  12 | All Scheduled Commercial Banks (including Small Finance Banks)
+  13 | 
+  14 | Madam/ Dear Sir,
+  15 | 
+  16 | Master Circular - Credit facilities to Scheduled Castes (SCs) & Scheduled Tribes
+  17 | (STs)
+  18 | 
+  19 | The Reserve Bank of India has, from time to time, issued a number of
+  20 | guidelines/instructions to banks on credit facilities to Scheduled Castes (SCs) & Scheduled
+  21 | Tribes (STs). The enclosed Master Circular consolidates the circulars issued by Reserve
+  22 | Bank on the subject till date, as listed in the Appendix.
+  23 | 
+  24 | Yours faithfully,
+  25 | 
+  26 | (R. Giridharan)
+  27 | Chief General Manager
+  28 | 
+  29 | ि व त् त ीय समावेशन और िवकास िवभाग, के � ी य कायार्लय,10 वी मंिजल, कें द्र ी य कायार्लय भवन, शहीद भगतिसंह मागर्, पो� बॉ� सं.
+  30 | 10014, मुंबई -400001
+  31 | Financial Inclusion & Development Dept., Central Office, 10th Floor, Central Office Building, Shahid Bhagat Singh
+  32 | Marg,P.B.No.10014, Mumbai-1
+  33 | टेली Tel:022-22601000 फै � ः 91-22-22621011/22610943/22610948 ई -मेल: cgmincfidd@rbi.org.in
+  34 | िहंदी आसान है, इसका प्रयोग बढ़ाइए।
+  35 |  “चेतावनी: -द्वारा बैंक �रज़वर् मेल डाक, एसएमएस या फोन कॉल के ज�रए िकसी की भी व् य��गत जानकारी जैसे बैंक के खाते
+  36 | का ब् य ौरा, पासवडर् आिद नहीं मांगी जाती है। यह धन रखने या देने का प्रस् ताव भी नहीं करता है। ऐसे प्रस् तावों का िकसी भी त र ी के
+  37 | से जवाब मत दीिजए।"
+  38 | Caution: RBI never sends mails, SMSs or makes calls asking for personal information like bank account details,
+  39 | passwords, etc. It never keeps or offers funds to anyone. Please do not respond in any manner to such offers.
+
+======================================================================
+--- PAGE 2 ---
+======================================================================
+   0 | 
+   1 | 
+   2 | 2
+   3 | 
+   4 | Master Circular - Credit Facilities to Scheduled Castes (SCs) & Scheduled Tribes
+   5 | (STs)
+   6 | 
+   7 | Banks should take the measures indicated below to step up their advances to
+   8 | SCs/STs.
+   9 | 
+  10 | 1. Planning Process
+  11 | 
+  12 | 1.1 The District Level Consultative Committees formed under the Lead Bank Scheme
+  13 | should continue to be the principal mechanism of co- ordination between banks and
+  14 | development agencies in this regard. The district credit plans formulated by the Lead
+  15 | Banks should clearly indicate the linkage of credit with employment and development
+  16 | schemes.
+  17 | 
+  18 | 1.2 Banks will have to establish closer liaison with the District Industries Centres,
+  19 | which have been set up in different districts for promoting self-employment.
+  20 | 
+  21 | 1.3 At the block level, a certain weightage is to be given to SCs/STs in the planning
+  22 | process. Accordingly, the credit planning should be weighted in their favour and
+  23 | special bankable schemes suited to them should be drawn up to ensure their
+  24 | participation and larger flow of credit to them for self-employment. It will be necessary
+  25 | for the banks to consider their loan proposals with utmost sympathy and
+  26 | understanding.
+  27 | 
+  28 | 1.4 Banks should periodically review their lending procedures and policies to see that
+  29 | loans are sanctioned in time, are adequate and production- oriented and that they
+  30 | generate incremental income to make them self-liquidating.
+  31 | 
+  32 | 1.5 While formulating the Block/ District Credit Plan, special focus may be given to
+  33 | villages with sizeable population of SC/ST communities/ specific localities (bastis) in
+  34 | the towns/villages having a concentration of these communities.
+  35 | 
+  36 | 
+

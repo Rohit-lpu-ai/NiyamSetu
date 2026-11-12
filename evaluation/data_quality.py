@@ -185,6 +185,11 @@ class VersionArtifacts:
         return int(self.extraction["document"]["page_count"])  # type: ignore[index]
 
 
+def _collapse_whitespace(text: str) -> str:
+    """Whitespace-insensitive comparison key. See check_offset_resolution."""
+    return re.sub(r"\s+", " ", text).strip()
+
+
 def _read_json(path: Path) -> Tuple[Optional[Dict[str, object]], Optional[str]]:
     if not path.exists():
         return None, None
@@ -606,6 +611,107 @@ def check_segment_provenance(
         report.add(check, SEVERITY_INFO, f"all {total} segment(s) carry valid page provenance")
 
 
+def check_offset_resolution(
+    versions: Sequence[VersionArtifacts], report: QualityReport
+) -> None:
+    """Resolve every segment's text *back* from its stored character offsets.
+
+    The other provenance check asks whether the offsets are *well formed* --
+    present, ordered, inside the page. This one asks the harder question the
+    project's traceability claim actually rests on: if a consumer takes a
+    stored ``(page_number, char_start, char_end)`` and slices the page text
+    named by ``offset_basis``, do they get the clause back?
+
+    That is the operation Person 2's highlighting and Person 3's citations both
+    perform, so an unresolvable offset is a broken citation even when every
+    bound is individually legal.
+
+    Comparison is whitespace-insensitive, and that tolerance is the finding
+    rather than a convenience: segmentation joins wrapped source lines with a
+    space, so a slice of the page carries the newline the segment text does
+    not. Character *ranges* are exact; only intra-segment whitespace differs.
+    Anything beyond whitespace -- an off-by-one, a stale offset, the wrong
+    basis -- still fails here.
+    """
+    check = "offset_resolution"
+    usable = [
+        a for a in versions
+        if a.segments and a.extraction and not a.load_errors
+    ]
+    if not usable:
+        report.checks_not_applicable[check] = (
+            "needs both extraction.json and a segment file per version"
+        )
+        return
+    report.checks_run.append(check)
+
+    unresolved: List[str] = []
+    missing_page: List[str] = []
+    wrong_basis: List[str] = []
+    resolved = 0
+
+    for artifacts in usable:
+        declared_bases = {
+            str(payload.get("offset_basis"))
+            for payload in artifacts.segments.values()
+        }
+        for basis in sorted(declared_bases):
+            if basis != "normalized_text":
+                wrong_basis.append(f"{artifacts.version_id}: offset_basis={basis!r}")
+
+        pages = {
+            int(page["page_number"]): str(page.get("normalized_text") or "")
+            for page in artifacts.extraction["pages"]  # type: ignore[index]
+        }
+
+        for method, payload in artifacts.segments.items():
+            if str(payload.get("offset_basis")) != "normalized_text":
+                continue
+            for segment in payload.get("segments", []):  # type: ignore[union-attr]
+                label = f"{artifacts.version_id}/{method}/{segment.get('segment_id')}"
+                fragments = []
+                absent = False
+                for offset in segment.get("page_offsets") or []:
+                    page_text = pages.get(int(offset["page_number"]))
+                    if page_text is None:
+                        missing_page.append(
+                            f"{label}: references page {offset['page_number']}, "
+                            f"which is not in extraction.json"
+                        )
+                        absent = True
+                        break
+                    fragments.append(
+                        page_text[int(offset["char_start"]):int(offset["char_end"])]
+                    )
+                if absent or not fragments:
+                    continue
+                rebuilt = _collapse_whitespace(" ".join(fragments))
+                stored = _collapse_whitespace(str(segment.get("text") or ""))
+                if rebuilt == stored:
+                    resolved += 1
+                else:
+                    unresolved.append(
+                        f"{label}: offsets rebuild {len(rebuilt)} chars, "
+                        f"segment text is {len(stored)}"
+                    )
+
+    for subjects, message in (
+        (wrong_basis, "segment file declares an offset_basis other than normalized_text (D-11)"),
+        (missing_page, "segment offset references a page absent from extraction.json"),
+        (unresolved, "segment text cannot be rebuilt from its stored character offsets"),
+    ):
+        if subjects:
+            report.add(check, SEVERITY_ERROR, message, subjects)
+
+    if not any([wrong_basis, missing_page, unresolved]):
+        report.add(
+            check,
+            SEVERITY_INFO,
+            f"all {resolved} segment(s) rebuild exactly from their stored "
+            f"offsets into normalized_text (whitespace-insensitive)",
+        )
+
+
 def check_segment_structure(
     versions: Sequence[VersionArtifacts], report: QualityReport
 ) -> None:
@@ -947,6 +1053,7 @@ ALL_CHECKS = (
     check_extraction_status,
     check_cleaning_reversibility,
     check_segment_provenance,
+    check_offset_resolution,
     check_segment_structure,
     check_segmentation_consistency,
 )

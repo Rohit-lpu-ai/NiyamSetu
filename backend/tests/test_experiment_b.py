@@ -591,3 +591,127 @@ def test_scoring_the_committed_annotations_runs_end_to_end(tmp_path: Path) -> No
         assert version["review_status"]
     for method in (METHOD_PARAGRAPH, METHOD_CLAUSE_AWARE):
         assert method in payload["aggregate"]
+
+
+# --------------------------------------------------------------------------- #
+# The blind worksheet - independence is the property under test
+# --------------------------------------------------------------------------- #
+#
+# `blind` exists so a second annotator can work without seeing our boundaries.
+# The tests that matter are therefore about what the worksheet must NOT
+# contain: if a future change starts helpfully printing the segmenter's clause
+# numbers into it, the agreement it produces becomes anchoring and these fail.
+
+
+def _extraction_fixture(tmp_path: Path) -> Path:
+    """A minimal two-page extraction.json, laid out where the CLI expects it."""
+    processed = tmp_path / "processed" / VER
+    processed.mkdir(parents=True)
+    pages = ["1. First clause text here.\n\n2. Second clause text here.\n",
+             "3. Third clause, on page two.\n"]
+    payload = {
+        "document": {
+            "schema_version": "1.0.0",
+            "document_id": DOC,
+            "version_id": VER,
+            "filename": "fixture.pdf",
+            "checksum": "a" * 64,
+            "page_count": 2,
+            "extraction_status": "ok",
+            "extraction_tool": "pypdf 6.18.1",
+            "source_metadata": {"title": "Fixture Directions"},
+        },
+        "pages": [
+            {
+                "page_number": number,
+                "original_text": text,
+                "normalized_text": text,
+                "char_count": len(text),
+                "normalized_char_count": len(text),
+                "word_count": len(text.split()),
+                "is_empty": False,
+                "has_meaningful_text": True,
+            }
+            for number, text in enumerate(pages, start=1)
+        ],
+    }
+    (processed / "extraction.json").write_text(
+        json.dumps(payload), encoding="utf-8"
+    )
+    return tmp_path / "processed"
+
+
+def test_the_blind_worksheet_contains_the_page_text(tmp_path: Path) -> None:
+    processed = _extraction_fixture(tmp_path)
+    out = tmp_path / "ws.txt"
+    assert main([
+        "--processed-dir", str(processed), "blind",
+        "--version-id", VER, "--pages", "1-2", "--output", str(out),
+    ]) == 0
+    worksheet = out.read_text(encoding="utf-8")
+    assert "First clause text here." in worksheet
+    assert "Third clause, on page two." in worksheet
+    assert "--- PAGE 1 ---" in worksheet and "--- PAGE 2 ---" in worksheet
+
+
+def test_the_blind_worksheet_reveals_no_system_boundaries(tmp_path: Path) -> None:
+    """The whole point. No segment ids, no segment count, no clause numbers."""
+    processed = _extraction_fixture(tmp_path)
+    out = tmp_path / "ws.txt"
+    main([
+        "--processed-dir", str(processed), "blind",
+        "--version-id", VER, "--pages", "1-2", "--output", str(out),
+    ])
+    worksheet = out.read_text(encoding="utf-8")
+    assert "SEG-" not in worksheet
+    assert "clause_number" not in worksheet
+    assert "page_offsets" not in worksheet
+    assert "marker_style" not in worksheet
+    # No count of what the segmenter found, in either phrasing. ("segment" as a
+    # bare word is not assertable: the worksheet legitimately names the
+    # data/annotations/segmentation/ output path.)
+    assert "segment_count" not in worksheet
+    assert "segments found" not in worksheet.lower()
+    # And the text must be reproduced verbatim, not pre-split into clauses:
+    # one body line per source line, so no line holds two clause openings.
+    body = worksheet.split("--- PAGE 1 ---", 1)[1]
+    assert not any(
+        line.count("clause text here.") > 1 for line in body.splitlines()
+    )
+
+
+def test_the_blind_worksheet_points_at_the_guideline_and_annotator2_path(
+    tmp_path: Path,
+) -> None:
+    processed = _extraction_fixture(tmp_path)
+    out = tmp_path / "ws.txt"
+    main([
+        "--processed-dir", str(processed), "blind",
+        "--version-id", VER, "--pages", "1", "--output", str(out),
+    ])
+    worksheet = out.read_text(encoding="utf-8")
+    assert "data/annotations/README.md" in worksheet
+    assert f"{VER}.annotator2.jsonl" in worksheet
+
+
+def test_the_blind_worksheet_is_deterministic(tmp_path: Path) -> None:
+    processed = _extraction_fixture(tmp_path)
+    first, second = tmp_path / "a.txt", tmp_path / "b.txt"
+    for path in (first, second):
+        main([
+            "--processed-dir", str(processed), "blind",
+            "--version-id", VER, "--pages", "1-2", "--output", str(path),
+        ])
+    assert first.read_text(encoding="utf-8") == second.read_text(encoding="utf-8")
+
+
+def test_a_second_annotator_file_is_excluded_from_the_primary_metrics(
+    tmp_path: Path,
+) -> None:
+    """So adding an independent annotation cannot silently move the headline."""
+    from evaluation.experiment_b_segmentation import annotation_files
+
+    (tmp_path / f"{VER}.jsonl").write_text("", encoding="utf-8")
+    (tmp_path / f"{VER}.annotator2.jsonl").write_text("", encoding="utf-8")
+    found = [path.name for path in annotation_files(tmp_path)]
+    assert found == [f"{VER}.jsonl"]

@@ -20,7 +20,29 @@ statement as **[PROPOSED]**.
 | `[PROPOSED]` | Suggested by this document; **not yet agreed by the team**. |
 | `[BLOCKED]` | Cannot proceed until a listed decision is made. |
 
-### Where the project actually is — updated 2026-11-12, after Phase 2
+### Where the project actually is — updated 2026-11-12, after Work Package 1
+
+**Phase 3 (PostgreSQL persistence) — see the Work Package 1 report at the
+bottom of this section for its verified status.** The code exists in full:
+`backend/app/db/{config,engine,migrate,loader,repository}.py`, two SQL
+migrations, and two test modules. Design and viva preparation:
+`docs/phase3-postgresql.md`. Repository audit:
+`docs/work-package-1-verification.md`.
+
+**D-8 is answered: PostgreSQL 18 is installed and its service is running** on
+the owner's machine. `psql` is not on `PATH`, which is all the earlier
+"unconfirmed" note actually observed. Auth is `scram-sha-256`, so the
+connection needs a password from `.env` (git-ignored; `.env.example` is
+committed).
+
+**D-11 is answered and empirically verified.** Offsets are into
+`normalized_text`. Applying the resolution rule to every candidate basis across
+all 501 segments: `normalized_text` 501/501, `cleaned_text` 14/501,
+`original_text` 0/501. A thirteenth data-quality check,
+`offset_resolution`, now enforces this on every run —
+`evaluation/2026-11-12-provenance-validation.md`.
+
+
 
 **Phase 1 (PDF ingestion and page-level extraction) is `[IMPLEMENTED]`.** Built,
 tested and run against four real RBI documents. `docs/pdf-extraction.md` for the
@@ -30,7 +52,7 @@ what the real-document run showed, defects included.
 **Phase 2 (header/footer cleaning and both segmentation methods) is
 `[IMPLEMENTED]`.** Built, run on all four documents, **385 passing tests**.
 Measured output: 151 running-header lines removed reversibly, 138 paragraph
-segments and 366 clause segments, all 501 carrying valid page provenance
+segments and 363 clause segments, all 501 carrying valid page provenance
 including the 45 that span a page break. Design and findings:
 `docs/phase2-segmentation.md`.
 
@@ -959,6 +981,7 @@ NiyamSetu-diw_backend/
 │   ├── raw/                       # git-ignored: 4 real RBI PDFs
 │   └── processed/                 # git-ignored: extraction + segments + cleaning JSON
 ├── docs/
+│   ├── api.md                     # Phase 4: endpoints, examples, limitations
 │   ├── architecture.md
 │   ├── backend-roadmap.md
 │   ├── team-responsibilities.md
@@ -1143,16 +1166,17 @@ with a small local stub rather than waiting for my server.
 | **Document provenance manifest** | `[PARTIAL]` | `data/manifest.csv`, 4 verified rows — a validation sample, not the corpus |
 | **Extraction validation report** | `[IMPLEMENTED]` | `evaluation/2026-10-28-phase1-extraction-validation.md` — manual inspection, no accuracy score |
 | **Experiment A — extractor comparison** | `[IMPLEMENTED]` | `evaluation/experiment-a-extractor-comparison.md`; 5 conditions x 4 documents. Recommendation: keep pypdf, keep PyMuPDF for tables |
-| **Experiment B — segmentation scoring** | `[PARTIAL]` | `evaluation/experiment-b-segmentation.md`; real metrics, small single-annotated sample, 9 failure cases |
+| **Experiment B — segmentation scoring** | `[PARTIAL]` | `evaluation/experiment-b-segmentation.md`; real metrics, small single-annotated sample, 9 failure cases. An **independent-annotation package** now exists for a second annotator — 5 blind worksheets over 11 pages covering all 5 marker styles, annexures, 8 cross-page segments and 4 ambiguous markers: `data/annotations/independent-review/`. Agreement remains `PENDING` |
 | **Experiment C — data quality** | `[IMPLEMENTED]` | `evaluation/data_quality.py`, 12 checks; current corpus 0 errors, 1 warning; 52 tests |
 | **Developer preview frontend** | `[IMPLEMENTED]` | `preview_app/`; 7 screens over the real artefacts. **Not** Person 2's product frontend; throwaway |
 | **Header/footer cleaning** | `[IMPLEMENTED]` | `page_cleaning.py`; reversible, evidence recorded per line; 151 lines removed across the corpus; 28 tests |
 | **Paragraph segmentation** | `[IMPLEMENTED]` | `segmentation.py::segment_paragraphs`; 138 segments, 11 spanning a page break |
-| **Clause-aware segmentation** | `[IMPLEMENTED]` | `segmentation.py::segment_clauses`; 366 segments, 34 spanning, hierarchy to depth 4; 5 marker styles observed |
+| **Clause-aware segmentation** | `[IMPLEMENTED]` | `segmentation.py::segment_clauses`; 363 segments, 34 spanning, hierarchy to depth 4; 5 marker styles observed |
 | **Segment page provenance** | `[IMPLEMENTED]` | All 501 segments verified; enforced in `Segment.__post_init__`, the CLI, and `data_quality.py` |
 | **Segmentation CLI + JSON output** | `[IMPLEMENTED]` | `segmentation_cli.py`; `segments_{paragraph,clause_aware}.json` + `page_cleaning.json` per version; determinism checked |
-| Database schema | `[PROPOSED]` | `backend/app/db/migrations/0001_initial_schema.sql` now exists as a **reviewable proposal, never executed**. No PostgreSQL reached, no SQLAlchemy/psycopg2 dependency. 7 additions the §11.3 sketch lacked: `backend/app/db/README.md` §4 |
-| API endpoints | `[PROPOSED]` | §12; none implemented; no `main.py` |
+| Database schema | `[IMPLEMENTED]` | Two migrations applied to PostgreSQL 18.6: `0001_initial_schema.sql` (7 tables, 1 view, 4 triggers, 15 indexes) + `0002_public_id_sequences.sql`. 7 additions the §11.3 sketch lacked: `backend/app/db/README.md` §4 |
+| Database access layer | `[IMPLEMENTED]` | `backend/app/db/{config,engine,migrate,loader,repository}.py`. SQLAlchemy Core, explicit transactions, idempotent loader, read queries in the §12 shapes. **462 tests pass, 0 skipped.** Corpus in the DB: 4 documents, 4 versions, 57 pages, 501 segments, 552 segment_pages. `docs/phase3-postgresql.md`, `evaluation/2026-11-12-phase3-postgresql.md` |
+| API endpoints | `[IMPLEMENTED]` | 6 endpoints under `/api`, `backend/app/api/`. FastAPI + Pydantic, DI'd repository, centralised §12.1 error envelope, Swagger at `/docs`. 39 mocked + 13 real-database tests. `docs/api.md` |
 | NLP code (any module) | `[PLANNED]` | none |
 | Frontend code | `[PLANNED]` | none |
 | Document corpus | `[PARTIAL]` | 4 real RBI PDFs as a validation sample. The corpus is **not** chosen (D-10), has one authority only, and contains **zero version pairs** |
@@ -1160,7 +1184,7 @@ with a small local stub rather than waiting for my server.
 | Evaluation **metrics** | `[PARTIAL]` | **Experiment A and C: real counts, no accuracy claimed.** Experiment B: real boundary P/R/F1 from a committed script and committed annotations, on a 4-page sample — quotable **only with** the §0 caveats in `evaluation/experiment-b-segmentation.md`. No other metric exists for any other part of the project |
 | Git repository | initialised | branch `diw_backend`; remote `origin` with `main` present |
 | Python toolchain | available | Python 3.11.9, pip 26.0.1, git 2.53.0 |
-| PostgreSQL | **unconfirmed** | `psql` is not on PATH here; server presence still unknown (D-8) |
+| PostgreSQL | **installed and running** | PostgreSQL 18, service `postgresql-x64-18` Running; `psql.exe` at `C:\Program Files\PostgreSQL8in`. Not on PATH, which is all the old note observed. Auth is `scram-sha-256`, so a password in `.env` is required and is held by the owner, not the repo |
 | OCR | **not implemented** | deliberately out of scope; scanned-document paths tested only against synthetic fixtures |
 
 ---
@@ -1194,10 +1218,10 @@ with a small local stub rather than waiting for my server.
 | D-5 | Synchronous vs asynchronous ingestion (§12.3) | Affects API shape and test determinism | Synchronous for the MVP; `ingestion_jobs` present for a later switch |
 | ~~D-6~~ | ~~Scanned PDFs: exclude, or OCR?~~ | — | **ANSWERED by the owner: excluded from the MVP, no OCR.** Documented in `data/README.md` §2.3 and §10 |
 | D-7 | Where do retrieval embeddings live? | A vector DB would violate Rule 5 without justification | Person 3 keeps an index inside `nlp/rag_qa/`; add `pgvector` only on measured need |
-| D-8 | Is PostgreSQL installed and reachable for everyone? | `psql` is not on PATH here; Phase 3 depends on it | Confirm per machine; agree one connection convention via `.env` |
+| ~~D-8~~ | ~~Is PostgreSQL installed and reachable for everyone?~~ | — | **ANSWERED for this machine: PostgreSQL 18 is installed and its service is running.** `psql` is simply not on PATH. The connection convention is `.env` / `NIYAMSETU_DB_*`, see `.env.example`. **Still open for the other four machines.** |
 | D-9 | How is a new upload declared a *version* of an existing document? | Must not be inferred from title similarity | Explicit `document_public_id` at ingestion, recorded by a human |
 | D-10 | Which documents form the corpus, and who collects them? | Every experiment depends on this, and nothing has been collected | Agree a 20–40 document list in week 1; I define the metadata format. **Still the single biggest blocker**: `evaluation/data_quality.py` reports it as the corpus's one outstanding warning, and Compare has nothing to run on |
-| **D-11** | **`offset_basis`: are character offsets into `normalized_text` (as built) or `raw_text` (as §11.4 originally specified)?** | Changes what every character offset means, for four consumers | **Normalised**, as built and as recorded per version. Reasoning in §11.4 above. Needs explicit agreement before Phase 3 loads anything |
+| ~~D-11~~ | ~~`offset_basis`: `normalized_text` or `raw_text`?~~ | — | **ANSWERED: `normalized_text`, and verified empirically.** All 501 segments rebuild from their stored offsets against `normalized_text`; 14 against `cleaned_text`; 0 against `original_text`. Enforced by the `offset_resolution` data-quality check, by `document_versions.offset_basis` (a `CHECK`-constrained column), and by the loader, which refuses a segment file declaring another basis. `evaluation/2026-11-12-provenance-validation.md`. Four consumers should still be *told*, since it reverses §11.4 |
 | **D-12** | **Should segmentation become table-aware?** | The only case where clause-aware segmentation is clearly *worse* than the paragraph baseline (`evaluation/experiment-b-segmentation.md` §3.1) | Yes, using PyMuPDF's `find_tables()` — already a pinned dependency, and shown to recover the row structure on exactly the pages that fail. Record table regions at extraction; treat a region as one segment |
 
 ### 22.3 Conflicts between the repository and the working brief
@@ -1231,8 +1255,8 @@ Phase detail, inputs, tests and definitions of done: **`docs/backend-roadmap.md`
 | 0 | Repository audit and project documentation | **done** | — |
 | 1 | PDF extraction with page provenance | **done** (corpus still open) | D-10 for the corpus |
 | 2 | Paragraph and clause-aware segmentation; annotated sample; comparison | **done** (small annotated sample; agreement `PENDING`) | Phase 1 (met) |
-| 3 | PostgreSQL schema, access layer, persistence | **blocked** — schema proposed, never executed | D-8, D-11; owner review of Phase 2 |
-| 4 | FastAPI endpoints with validation and tests | planned | Phase 3, D-5 |
+| 3 | PostgreSQL schema, access layer, persistence | **done** — applied, loaded, 462 tests passing | — |
+| 4 | FastAPI endpoints with validation and tests | **done** — 6 endpoints, 516 tests passing, verified against the live DB | — |
 | 5 | Data-quality and segmentation evaluation reports | planned | Phases 2–4 |
 | 6 | Integration with Persons 2–5; end-to-end tests | planned | Phase 4 plus their modules |
 
@@ -1282,12 +1306,21 @@ not trade away the first three for it.
     The validation report deliberately contains counts and defects but no
     accuracy percentage, because no annotated ground truth exists yet.
 
-**Standing stop condition — updated 2026-11-12.** Phases 1 and 2 are approved
-and complete. The condition still applies to **Phase 3 onward**: no PostgreSQL
-install, no database creation, no FastAPI application and no new runtime
-dependency until the owner reviews Phase 2's segmentation output and **D-8** and
-**D-11** have answers. (D-4 and D-6 are now answered; D-10 remains open and
-blocks meaningful evaluation rather than Phase 3 itself.)
+**Standing stop condition — updated 2026-11-12, after Work Package 1.** Phases
+1, 2 and 3 are authorised. D-4, D-6, D-8 and D-11 are all answered, and the
+owner explicitly approved PostgreSQL + SQLAlchemy Core + plain SQL migrations,
+so `SQLAlchemy` and `psycopg[binary]` are now pinned dependencies and the
+schema may be applied.
+
+**Phases 3 and 4 are now done and verified** — migrations applied to
+PostgreSQL 18.6, the corpus loaded, the FastAPI layer built and exercised
+against the live database. **516 tests passing, 0 skipped** (443 of them need
+no database; `-m integration` selects the 73 that do).
+
+The condition now applies to **Phase 5 onward**: **no frontend, no RAG, no
+Compare, no classification, no library search and no new runtime dependency**
+until the owner approves the next work package. D-10 remains open and blocks
+meaningful evaluation rather than the next phase itself.
 
 What has been done under this condition, and why it does not breach it:
 

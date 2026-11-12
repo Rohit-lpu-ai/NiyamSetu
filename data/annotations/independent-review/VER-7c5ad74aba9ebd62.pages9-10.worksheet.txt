@@ -1,0 +1,89 @@
+NiyamSetu - Experiment B independent annotation worksheet
+======================================================================
+version_id : VER-7c5ad74aba9ebd62
+title      : Reserve Bank of India (Commercial Banks - Forthcoming Instructions) Second Amendment Directions, 2026
+pages      : 9, 10
+
+HOW TO USE THIS FILE
+--------------------
+1. Read data/annotations/README.md first. It is the guideline, and it
+   defines what counts as a clause boundary. Do not skip it.
+2. This worksheet deliberately does NOT show you the system's output.
+   Mark the boundaries you think are correct, from this text and the
+   source PDF in data/raw/.
+3. For every clause you identify, write one JSONL record as specified
+   in the guideline (§4) into:
+       data/annotations/segmentation/VER-7c5ad74aba9ebd62.annotator2.jsonl
+   Set "annotator" to your own name, not person1.
+4. Mark "uncertain": true wherever you genuinely cannot decide, and
+   say why in "note". Uncertain records are reported separately and
+   are more useful than a confident guess.
+5. Where the guideline does not answer a case, do NOT invent a rule.
+   Record the disagreement; the guideline gets amended (§7).
+
+Text below is the pipeline's normalised page text -- the same text the
+offsets are measured against, so your markers will line up. Line
+numbers are for discussion only; they are not part of a record.
+
+======================================================================
+--- PAGE 9 ---
+======================================================================
+   0 | 9
+   1 | 
+   2 | BI
+   3 | constituents
+   4 | P&L or
+   5 | balance
+   6 | sheet
+   7 | items
+   8 | Description Typical sub-items [added]
+   9 | Indicative Mapping to
+  10 | specific schedules in
+  11 | the Balance Sheet
+  12 | and / or P&L Account
+  13 | (iii) Net profit / loss from hedge
+  14 | accounting.
+  15 | (iv) Net profit / loss from exchange
+  16 | differences.
+  17 | 
+  18 | (iii) Paragraph 31 shall be substituted by the following, namely:
+  19 | “A bank’s internal operational risk loss experience affects the calculation of ORC
+  20 | through the ILM. The ILM shall be calculated as given below,
+  21 | 
+  22 | Where the Loss Component (LC) is equal to 15 times average annual operational
+  23 | risk losses (net of recoveries) as mentioned in paragraph 32.”
+  24 | (iv) Paragraph 32 shall be substituted by the following, namely:
+  25 | “The calculation of average losses in the LC shall be based on 10 years of highquality operational risk annual loss data. However, when a bank first becomes
+  26 | subject to calculation of ILM a bank that and it does not have 10 years of highquality loss data, but have has five years and above of high- quality loss data, it
+  27 | shall make use of such available high-quality loss data of five years and above to
+  28 | calculate the LC.”
+  29 | (v) After Paragraph 39(2)(ii)(b)(ii), the following shall be inserted, namely:
+  30 | “Explanation: In a case where a bank’s asset is damaged or destroyed and without
+  31 | prejudice of additional indirect losses, the losses related to the asset value and
+  32 | the costs of repair or replacement depend on how the bank proceeds in
+  33 | addressing that damage or destruction.
+  34 | (a) In cases where an asset of the bank is damaged or destroyed and the bank
+  35 | does not replace or repair it, the operational loss amount corresponds to the
+  36 | 
+
+======================================================================
+--- PAGE 10 ---
+======================================================================
+   0 | 10
+   1 | 
+   2 | reduction in the book value of the asset plus any residual clean- up or
+   3 | disposal costs.
+   4 | (b) In cases where an asset of the bank is damaged or destroyed and the bank
+   5 | decides to replace it or repair it fully, then the operational loss amount is the
+   6 | cost of replacing or repairing the asset plus any residual clean- up or
+   7 | disposal costs.
+   8 | (c) In cases where an asset of the bank is damaged and the bank decides to
+   9 | repair it partially (i.e., the asset has less book value after repair than prior to
+  10 | the operational loss event), then the operational loss amount is the cost of
+  11 | repairing the asset plus the loss of book value of the asset after the repair
+  12 | relative to its pre-operational loss event book value plus any residual cleanup or disposal costs.”
+  13 | 
+  14 | (Sunil T S Nair)
+  15 | Chief General Manager
+  16 | 
+

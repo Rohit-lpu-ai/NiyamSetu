@@ -655,6 +655,72 @@ def build_template(
     return records
 
 
+def build_blind_worksheet(
+    extraction_path: Path,
+    pages: Sequence[int],
+) -> str:
+    """Emit the page text alone, for an annotator who must not see our output.
+
+    ``build_template`` pre-fills from the segmenter's own clause boundaries.
+    That is efficient for the system's own author and **useless for measuring
+    agreement**: an annotator handed our boundaries tends to accept them, so
+    the resulting "agreement" would measure anchoring, not independent
+    judgement (guideline §7).
+
+    This worksheet therefore shows the normalised page text with line numbers
+    and *nothing else* -- no predicted boundaries, no clause numbers, no
+    segment count. The annotator marks boundaries from the text and the PDF,
+    then writes JSONL records by hand against the guideline. Line numbers are
+    there only so two people can talk about the same place in the text.
+    """
+    _, page_text, document = segments_for_version(extraction_path, pages)
+    version_id = str(document["version_id"])  # type: ignore[index]
+    title = str(document.get("source_metadata", {}).get("title", ""))  # type: ignore[union-attr]
+
+    out: List[str] = [
+        "NiyamSetu - Experiment B independent annotation worksheet",
+        "=" * 70,
+        f"version_id : {version_id}",
+        f"title      : {title}",
+        f"pages      : {', '.join(str(page) for page in pages)}",
+        "",
+        "HOW TO USE THIS FILE",
+        "--------------------",
+        "1. Read data/annotations/README.md first. It is the guideline, and it",
+        "   defines what counts as a clause boundary. Do not skip it.",
+        "2. This worksheet deliberately does NOT show you the system's output.",
+        "   Mark the boundaries you think are correct, from this text and the",
+        "   source PDF in data/raw/.",
+        "3. For every clause you identify, write one JSONL record as specified",
+        "   in the guideline (§4) into:",
+        f"       data/annotations/segmentation/{version_id}.annotator2.jsonl",
+        "   Set \"annotator\" to your own name, not person1.",
+        "4. Mark \"uncertain\": true wherever you genuinely cannot decide, and",
+        "   say why in \"note\". Uncertain records are reported separately and",
+        "   are more useful than a confident guess.",
+        "5. Where the guideline does not answer a case, do NOT invent a rule.",
+        "   Record the disagreement; the guideline gets amended (§7).",
+        "",
+        "Text below is the pipeline's normalised page text -- the same text the",
+        "offsets are measured against, so your markers will line up. Line",
+        "numbers are for discussion only; they are not part of a record.",
+        "",
+    ]
+    for page_number in pages:
+        text = page_text.get(page_number)
+        if text is None:
+            out.append(f"--- page {page_number}: NOT EXTRACTED ---")
+            continue
+        out.append("=" * 70)
+        out.append(f"--- PAGE {page_number} ---")
+        out.append("=" * 70)
+        lines = text.split("\n")
+        for index, line in enumerate(lines):
+            out.append(f"{index:4} | {line}")
+        out.append("")
+    return "\n".join(out)
+
+
 # --------------------------------------------------------------------------- #
 # CLI
 # --------------------------------------------------------------------------- #
@@ -691,6 +757,21 @@ def build_parser() -> argparse.ArgumentParser:
     template.add_argument(
         "--output", type=Path, default=None,
         help="Write here instead of stdout.",
+    )
+
+    blind = sub.add_parser(
+        "blind",
+        help=(
+            "Emit a blind worksheet (page text only, no system output) for an "
+            "independent second annotator."
+        ),
+    )
+    blind.add_argument("--version-id", required=True)
+    blind.add_argument(
+        "--pages", required=True, help="Page range, e.g. '1-3' or '2,4,6'."
+    )
+    blind.add_argument(
+        "--output", type=Path, default=None, help="Write here instead of stdout."
     )
 
     validate = sub.add_parser(
@@ -742,6 +823,23 @@ def annotation_files(annotation_dir: Path) -> List[Path]:
         for path in annotation_dir.glob("*.jsonl")
         if ".annotator2" not in path.name
     )
+
+
+def _command_blind(args: argparse.Namespace) -> int:
+    extraction_path = args.processed_dir / args.version_id / EXTRACTION_FILENAME
+    worksheet = build_blind_worksheet(extraction_path, parse_pages(args.pages))
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(worksheet + "\n", encoding="utf-8")
+        print(f"wrote blind worksheet to {args.output}")
+        print(
+            "This worksheet shows no system output, which is the point: an "
+            "annotator who has seen our boundaries cannot provide independent "
+            "agreement (guideline §7)."
+        )
+    else:
+        print(worksheet)
+    return 0
 
 
 def _command_template(args: argparse.Namespace) -> int:
@@ -975,6 +1073,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "template":
         return _command_template(args)
+    if args.command == "blind":
+        return _command_blind(args)
     if args.command == "validate":
         return _command_validate(args)
     if args.command == "score":

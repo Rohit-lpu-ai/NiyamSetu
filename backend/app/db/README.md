@@ -1,11 +1,42 @@
-# Database — proposal only, nothing here has been run
+# Database — Phase 3, implemented and verified
 
-> **Status: `[PROPOSED]`.** No PostgreSQL server has been reached from this
-> repository. No database has been created. `SQLAlchemy` and `psycopg2` are
-> **not** project dependencies. The SQL in `migrations/` has never been
-> executed, and it is not validated by any test.
+> **Status: `[IMPLEMENTED]`** as of 2026-11-12 (Work Package 1).
 >
-> The standing stop condition in `CLAUDE.md` §24 still applies to Phase 3.
+> Both migrations have been **applied** to PostgreSQL 18.6, the four-version
+> RBI corpus is **loaded**, and the full suite is **462 passed, 0 skipped**.
+> Measured: 4 documents, 4 versions, 57 pages, 151 removed header lines, 501
+> segments (138 paragraph + 363 clause-aware), 552 `segment_pages` rows, 45
+> page-spanning segments. Every count matches the JSON artefacts exactly, and
+> all 501 segments resolve from their stored offsets *read back out of the
+> database*.
+>
+> Results, including the two defects found on first apply:
+> `evaluation/2026-11-12-phase3-postgresql.md`. Viva-facing explanation of every
+> design decision: `docs/phase3-postgresql.md`.
+>
+> `SQLAlchemy==2.0.46` and `psycopg[binary]==3.2.12` are pinned. The access
+> layer is **Core only** — no ORM, no Alembic (D-4).
+>
+> Run it again from scratch:
+>
+> ```
+> .venv\Scripts\python -m backend.app.db.migrate
+> .venv\Scripts\python -m backend.app.db.loader
+> .venv\Scripts\python -m pytest
+> ```
+>
+> **Resolved:**
+> - **D-8** — PostgreSQL 18 installed, running, and now actually connected to.
+>   Databases `niyamsetu` and `niyamsetu_test` exist. Other machines still open.
+> - **D-11 / `offset_basis`** — `normalized_text`, verified twice: 501/501 from
+>   the artefacts and 501/501 from the database. 14 resolve against
+>   `cleaned_text`, 0 against `original_text`.
+>
+> **Still open:** D-10 (four documents, one authority, zero version pairs), and
+> therefore every claim about Compare.
+>
+> The sections below were written as a *proposal* before Phase 3 and are kept
+> because the reasoning is still the reasoning.
 
 ---
 
@@ -26,10 +57,10 @@ same as applying it.
 | | |
 |---|---|
 | **D-4** — SQLAlchemy Core + plain SQL migrations, not Alembic | **answered.** Confirmed by the project owner. This directory follows it. |
-| **D-8** — is PostgreSQL installed and reachable on all five machines? | **open.** `psql` is not on PATH on this machine. |
+| **D-8** — is PostgreSQL installed and reachable on all five machines? | **partly answered.** PostgreSQL 18 is installed and running on the owner's machine (`psql` is merely not on PATH). The other four machines are still unknown. |
 | **D-10** — which documents form the corpus? | **open.** 4 validation documents exist; the corpus does not. |
 | Owner review of Phase 2's segmentation output | **pending.** |
-| The `offset_basis` contract point (§3 below) | **needs team sign-off.** |
+| The `offset_basis` contract point (§3 below) | **answered and verified** as `normalized_text` (501/501 segments resolve). Still wants explicit team sign-off, since four consumers read it. |
 
 ---
 
@@ -38,19 +69,35 @@ same as applying it.
 ```text
 backend/app/db/
 ├── README.md                          # this file
+├── __init__.py
+├── config.py                          # env/.env config; no credentials in source
+├── engine.py                          # SQLAlchemy Core engine; explicit transactions
+├── migrate.py                         # the migration runner (+ --status, --dry-run)
+├── loader.py                          # data/processed/*.json -> PostgreSQL
+├── repository.py                      # read queries in the CLAUDE.md §12 shapes
 └── migrations/
-    └── 0001_initial_schema.sql        # PROPOSAL, never executed
+    ├── 0001_initial_schema.sql        # 7 tables, 1 view, 4 triggers, 15 indexes
+    └── 0002_public_id_sequences.sql   # public_id allocation
 ```
 
-`0001_initial_schema.sql` creates seven tables, one view, three trigger
+`0001_initial_schema.sql` creates seven tables, one view, four trigger
 functions and fifteen indexes, in a single transaction. Every column carries an
 inline comment saying why it is there, and the measurement that justified it
 where there was one.
 
-**Not here, deliberately:** the migration runner, the SQLAlchemy Core engine
-and session setup, and the loader that reads `data/processed/*.json` into these
-tables. All three need `SQLAlchemy` and `psycopg2`, which the stop condition
-forbids installing yet, and all three are Phase 3 work.
+`0002_public_id_sequences.sql` adds the sequences and column defaults that
+allocate `public_id` values, so the loader never has to write a placeholder and
+then update it. See that file's header for why a generated column cannot do
+this.
+
+The five Python modules were added in Work Package 1, together with
+`SQLAlchemy==2.0.46` and `psycopg[binary]==3.2.12` in `requirements.txt`. They
+are written and reviewable; **none of them has been run against a server yet**
+(see the status block at the top of this file).
+
+**Still not here:** anything FastAPI. The API is Phase 4, and `repository.py`
+deliberately stops at returning plain dicts in the agreed payload shapes so the
+routers have nothing to do but serialise them.
 
 ---
 
@@ -94,7 +141,7 @@ Each one came out of running segmentation on the real documents.
 |---|---|---|
 | 1 | `segments.parent_id` | Clause hierarchy to depth 4; 241 of 254 segments in the capital-adequacy document have a parent. Person 2 cannot render a clause tree without it and Person 4 cannot align sub-clauses. |
 | 2 | `segments.segment_type` | The sketch assumed every segment is a clause. Reality: clause 355, paragraph 138, preamble 4, annexure 3, heading 1. Unattributable text is kept, not discarded, so the distinction must be storable. |
-| 3 | `segments.level`, `.marker_style`, `.clause_number_ambiguous` | Needed for per-style accuracy in Experiment B, and to explain a nesting decision afterwards. 31 bracketed markers across the corpus are genuinely ambiguous between a roman numeral and a list letter. |
+| 3 | `segments.level`, `.marker_style`, `.clause_number_ambiguous` | Needed for per-style accuracy in Experiment B, and to explain a nesting decision afterwards. 21 bracketed markers across the corpus are genuinely ambiguous between a roman numeral and a list letter. |
 | 4 | `segment_pages.line_index_start/end` | The sketch had character offsets only. Line indices are what the preview highlights with, and what locates a removed header line relative to a segment. |
 | 5 | `document_versions.offset_basis` | §3 above. |
 | 6 | **`page_removed_lines`** — a whole table | Cleaning is the only stage that *deletes* text, and its guarantee is reversibility. If that trail lives only in a JSON file, a database deployment has silently lost source evidence. 151 rows on the current corpus. |

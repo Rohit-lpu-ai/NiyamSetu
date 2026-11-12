@@ -1,0 +1,108 @@
+NiyamSetu - Experiment B independent annotation worksheet
+======================================================================
+version_id : VER-fd6e1537c1a42574
+title      : Reserve Bank of India (Commercial Banks - Prudential Norms on Capital Adequacy) Eleventh Amendment Directions, 2026
+pages      : 1, 2
+
+HOW TO USE THIS FILE
+--------------------
+1. Read data/annotations/README.md first. It is the guideline, and it
+   defines what counts as a clause boundary. Do not skip it.
+2. This worksheet deliberately does NOT show you the system's output.
+   Mark the boundaries you think are correct, from this text and the
+   source PDF in data/raw/.
+3. For every clause you identify, write one JSONL record as specified
+   in the guideline (§4) into:
+       data/annotations/segmentation/VER-fd6e1537c1a42574.annotator2.jsonl
+   Set "annotator" to your own name, not person1.
+4. Mark "uncertain": true wherever you genuinely cannot decide, and
+   say why in "note". Uncertain records are reported separately and
+   are more useful than a confident guess.
+5. Where the guideline does not answer a case, do NOT invent a rule.
+   Record the disagreement; the guideline gets amended (§7).
+
+Text below is the pipeline's normalised page text -- the same text the
+offsets are measured against, so your markers will line up. Line
+numbers are for discussion only; they are not part of a record.
+
+======================================================================
+--- PAGE 1 ---
+======================================================================
+   0 | बेटी बचाओ
+   1 | बेटी पढ़ाओ
+   2 | 
+   3 | भारतीय �रज़वर् बैंक
+   4 | _________________________ RESERVE BANK OF INDIA ______________________
+   5 | www.rbi.org.in
+   6 | 
+   7 | RBI/2026-27/297
+   8 | DOR.CAP.REC. 251/21-02-002/2026-27 October 23, 2026
+   9 | Reserve Bank of India (Commercial Banks – Prudential Norms on Capital
+  10 | Adequacy) Eleventh Amendment Directions, 2026
+  11 | Please refer to ‘Chapter VII: Leverage Ratio framework’ of the Reserve Bank of India
+  12 | (Commercial Banks – Prudential Norms on Capital Adequacy) Directions, 2025
+  13 | (hereinafter referred to as ‘ the Directions ’). To ensure alignment with the latest
+  14 | leverage ratio framework (‘leverage ratio 2017 standard’) issued by the Basel
+  15 | Committee on Banking Supervision, there is a felt need to amend these Directions.
+  16 | 2. Accordingly, in exercise of the powers conferred by Section 35A of the Banking
+  17 | Regulation Act, 1949 and all other provisions / laws enabling the Reserve Bank of
+  18 | India to issue instructions in this regard, the Reserve Bank being satisfied that it is
+  19 | necessary and expedient in the public interest so to do, hereby, issues the Amendment
+  20 | Directions hereinafter specified.
+  21 | 3. These instructions shall be called the Reserve Bank of India (Commercial Banks –
+  22 | Prudential Norms on Capital Adequacy) Eleventh Amendment Directions, 2026.
+  23 | 4. These Amendment Directions modify the Directions as under:
+  24 | 4(1) Paragraph 262 shall be substituted with the following, namely:
+  25 | “262. The definition, minimum requirement, and the scope of application of the
+  26 | leverage ratio shall be as under:
+  27 | (1) The Basel III leverage ratio is defined as the capital measure (the numerator)
+  28 | divided by the exposure measure (the denominator), with this ratio expressed as
+  29 | a percentage:
+  30 | Leverage Ratio = Capital Measure
+  31 | Exposure Measure
+  32 | (2) The minimum leverage ratio for a domestic systemically important bank (D-SIB)
+  33 | shall be 4 per cent and 3.5 per cent for other banks. Branch of a global
+  34 | systemically important bank (G -SIB) in India (hereinafter referred to as ‘G -SIB
+
+======================================================================
+--- PAGE 2 ---
+======================================================================
+   0 | Reserve Bank of India (Commercial Banks – Prudential Norms
+   1 | on Capital Adequacy) Eleventh Amendment Directions, 2026
+   2 | 2
+   3 | 
+   4 | branch’) shall maintain a leverage ratio of 3.5 per cent plus the leverage ratio
+   5 | buffer applicable to it as a G -SIB (including any additional leverage ratio buffer
+   6 | prescribed by the home regulator).
+   7 | (3) Capital distribution constraints will be imposed on a G -SIB branch which does
+   8 | not meet its leverage ratio buffer requirement. The capital distribution constraints
+   9 | imposed on the branch will depend on its common equity tier 1 (CET1) risk-based
+  10 | ratio and its leverage ratio as under:
+  11 | (i) A G-SIB branch which meets both its CET1 risk-based capital requirements
+  12 | (defined as a 5.5 per cent minimum requirement, a 2.5 per cent capital
+  13 | conservation buffer, the G -SIB higher loss -absorbency requirement, and
+  14 | countercyclical capital buffer , if applicable) and its Tier 1 leverage ratio
+  15 | requirement (defined as a 3.5 per cent leverage ratio minimum requirement
+  16 | and the G-SIB leverage ratio buffer) will not be subject to minimum capital
+  17 | conservation standards.
+  18 | (ii) A G-SIB branch which does not meet one of these requirements will be
+  19 | subject to the associated minimum capital conservation standards.
+  20 | (iii) A G-SIB branch which does not meet both requirements will be subject to
+  21 | the higher minimum capital conservation standard related to its risk -based
+  22 | capital requirement or leverage ratio.
+  23 | (4) The table below shows the minimum capital conservation standards for the CET1
+  24 | risk-based requirements and Tier 1 leverage ratio requirements of a G -SIB
+  25 | branch in the first bucket of the higher loss-absorbency requirements (i.e., where
+  26 | a 1 per cent risk-based G-SIB capital buffer applies):
+  27 | CET1 risk-based ratio Tier 1 leverage ratio Minimum capital
+  28 | conservation ratios
+  29 | (expressed as a
+  30 | percentage of earnings)
+  31 | 5.5%–6.375% 3.5%–3.625% 100%
+  32 | > 6.375%–7.25% > 3.625%–3.75% 80%
+  33 | > 7.25%–8.125% > 3.75%–3.875% 60%
+  34 | > 8.125%–9% > 3.875%–4.0% 40%
+  35 | > 9.0% > 4.0% 0%
+  36 | (5) Both the capital measure and the exposure measure are to be calculated on a
+  37 | quarter-end basis. However, a bank may, subject to the Reserve Bank’s
+
