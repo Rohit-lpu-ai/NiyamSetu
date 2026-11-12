@@ -1,0 +1,16 @@
+# Developer preview frontend — dependencies, kept OUT of the backend's
+# requirements.txt on purpose.
+#
+# The preview is a throwaway internal tool (see README.md in this directory).
+# Pinning Streamlit in the project's requirements.txt would make it a backend
+# dependency, and the backend must stay installable and testable without it:
+# every backend test runs with pypdf and pytest alone, and the preview's own
+# render tests skip themselves when Streamlit is absent.
+#
+# Install into the SAME project virtualenv, in addition to the backend's
+# requirements:
+#
+#   .venv\Scripts\python.exe -m pip install -r requirements.txt
+#   .venv\Scripts\python.exe -m pip install -r preview_app/requirements.txt
+
+streamlit==1.67.0
