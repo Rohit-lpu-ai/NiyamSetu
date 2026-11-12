@@ -5,13 +5,21 @@
 >
 > ## Status: a 4-document validation sample exists. The corpus does not.
 >
+> **Updated 2026-11-12, after Phase 2.** What changed: `data/annotations/`
+> now exists (guideline + 21 clause records over 4 pages), and
+> `data/processed/` now holds segments and a cleaning audit per version as
+> well as extraction. The corpus itself is unchanged and D-10 is still open.
+>
 > **What exists now**
 >
 > - `data/manifest.csv` — 4 rows, one per document, with verified provenance.
 > - `data/raw/` — 4 real RBI PDFs (git-ignored; re-download from the manifest).
 > - `data/processed/` — 4 `extraction.json` files from the Phase 1 pipeline
 >   (git-ignored; regenerate with one command, §9).
-> - `data/annotations/` — **does not exist yet.** No annotation has been done.
+> - `data/annotations/` — **exists.** `README.md` (the guideline, written
+>   before annotating) and 21 clause records across 4 pages of 2 documents.
+>   **Single annotator, not independent of the system; agreement `PENDING`.**
+>   Read `data/annotations/README.md` §7 before quoting any number from it.
 >
 > These four documents are a **validation sample for the extraction pipeline**,
 > not the project corpus. They were chosen to be real, verifiable and varied in
@@ -30,7 +38,9 @@
 > - Documents from more than one issuing authority. All four are from the RBI.
 > - A scanned document, even one to be excluded later, to confirm the pipeline's
 >   `partial` / `failed` handling against a real file rather than a test fixture.
-> - All annotations, and therefore every evaluation metric.
+> - A **larger, independently annotated** sample. What exists is enough to
+>   demonstrate the method and to have found four real bugs; it is not enough
+>   to support a confident comparison.
 
 ---
 
@@ -145,12 +155,18 @@ data/processed/<version_id>/extraction.json      # pages + document metadata
 so re-running on the same PDF writes to the same path instead of accumulating
 copies. See `docs/pdf-extraction.md` §4 for why identifiers are content-derived.
 
-**Planned for Phase 2**, alongside the file above:
+**Built in Phase 2**, alongside the file above:
 
 ```text
-data/processed/<version_id>/segments_paragraph.json
-data/processed/<version_id>/segments_clause_aware.json
+data/processed/<version_id>/segments_paragraph.json      # baseline method
+data/processed/<version_id>/segments_clause_aware.json   # experimental method
+data/processed/<version_id>/page_cleaning.json           # removal audit trail
 ```
+
+`page_cleaning.json` was not in the plan. It is there because header/footer
+removal is the only stage that *deletes* text, and its guarantee is that the
+removal is reversible — so the record of what was removed, from which line,
+and on what evidence has to be an artefact rather than a runtime detail.
 
 ---
 
@@ -269,8 +285,22 @@ pipeline.
 
 ## 8. Data quality checks
 
-Implemented in Phase 5 as `evaluation/data_quality.py` (Experiment C,
-`CLAUDE.md` §15). Each check reports a count and the offending identifiers:
+**Implemented, 2026-11-12**, as `evaluation/data_quality.py` (Experiment C,
+`CLAUDE.md` §15) — earlier than the Phase 5 slot planned, because the segment
+artefacts it checks now exist and the provenance invariant is worth guarding
+from the moment segments are produced. 12 checks, each reporting a count and
+the offending identifiers, graded `error` / `warning` / `info`.
+
+Run it with `python -m evaluation.data_quality`. It **reports and never
+repairs** — the module has no write path at all, so a correction has to be
+made deliberately, elsewhere, by a person.
+
+Current corpus: **0 errors, 1 warning** (no `document_group` has two or more
+versions, so Compare has nothing to run on — §2.4 and D-10), 501 segments all
+carrying valid page provenance, 151 removed header lines all reversible and
+all with recorded evidence.
+
+The checks:
 
 | Check | Why it matters |
 |---|---|
@@ -318,12 +348,42 @@ or altered — record that, do not overwrite the manifest.**
 
 An existing `extraction.json` is never overwritten without `--force`.
 
+### Also works today (added in Phase 2)
+
+```bash
+# 4. Clean running headers/footers and segment into paragraphs and clauses.
+#    Reads the extraction JSON; never rewrites it.
+python -m backend.app.document_processing.segmentation_cli --all \
+    --check-deterministic
+
+# 5. The data-quality checks of section 8
+python -m evaluation.data_quality
+
+# 6. Check the committed annotations still resolve against current extraction,
+#    then score both segmentation methods against them
+python -m evaluation.experiment_b_segmentation validate --against-template
+python -m evaluation.experiment_b_segmentation score
+
+# 7. Compare the three extraction libraries (Experiment A)
+python -m evaluation.experiment_a_extractor_comparison \
+    --manifest data/manifest.csv --repeats 3
+
+# 8. Look at all of it on screen (developer preview, not the product frontend)
+.venv\Scripts\python.exe -m streamlit run preview_app/app.py
+```
+
+Step 6 must be run before step 4's output is scored: if extraction or
+normalisation changes, an annotation marker may stop resolving, and the scorer
+raises rather than silently dropping the record — a dropped annotation would
+inflate precision and recall at the same time.
+
 ### Does not exist yet
 
 ```bash
-# Phase 2: segmentation into paragraphs and clauses
-# Phase 3: database schema + loading these JSON files into PostgreSQL
-# Phase 5: the data-quality checks of section 8 (Experiment C)
+# Phase 3: loading these JSON files into PostgreSQL.
+#   The schema is proposed and committed but has NEVER been executed:
+#   backend/app/db/README.md
+# Phase 4: the FastAPI endpoints.
 ```
 
 A manifest-driven `fetch` command does not exist either — downloads are manual.

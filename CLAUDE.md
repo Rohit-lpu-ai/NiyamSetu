@@ -20,28 +20,53 @@ statement as **[PROPOSED]**.
 | `[PROPOSED]` | Suggested by this document; **not yet agreed by the team**. |
 | `[BLOCKED]` | Cannot proceed until a listed decision is made. |
 
-### Where the project actually is — updated 2026-10-28, after Phase 1
+### Where the project actually is — updated 2026-11-12, after Phase 2
 
-**Phase 1 (PDF ingestion and page-level extraction) is `[IMPLEMENTED]`.** It has
-been built, tested (90 passing tests) and run against four real RBI documents.
-See §21 for the file-by-file status, `docs/pdf-extraction.md` for the design and
-contract, and `evaluation/2026-10-28-phase1-extraction-validation.md` for what
-the real-document run actually showed, defects included.
+**Phase 1 (PDF ingestion and page-level extraction) is `[IMPLEMENTED]`.** Built,
+tested and run against four real RBI documents. `docs/pdf-extraction.md` for the
+design and contract; `evaluation/2026-10-28-phase1-extraction-validation.md` for
+what the real-document run showed, defects included.
 
-**Everything else below remains `[PROPOSED]` or `[PLANNED]`.** In particular
-there is still no database, no FastAPI application, no segmentation, no NLP
-module, no frontend, no annotation and no evaluation metric. Do not tell anyone
-otherwise.
+**Phase 2 (header/footer cleaning and both segmentation methods) is
+`[IMPLEMENTED]`.** Built, run on all four documents, **385 passing tests**.
+Measured output: 151 running-header lines removed reversibly, 138 paragraph
+segments and 366 clause segments, all 501 carrying valid page provenance
+including the 45 that span a page break. Design and findings:
+`docs/phase2-segmentation.md`.
 
-**Current phase:** Phase 2 — paragraph and clause-aware segmentation.
-**Next milestone:** `segments` with page provenance, both methods stored side by
-side, plus header/footer removal informed by the validation report §4.6. Four of
-the five team members are blocked on this, because clauses are what they consume.
+**Experiment A (extractor comparison) is `[IMPLEMENTED]`** —
+`evaluation/experiment-a-extractor-comparison.md`. Conclusion: keep `pypdf` as
+the primary text extractor; keep PyMuPDF for its table API. The headline finding
+inverts the obvious reading — PyMuPDF does not fix the Devanagari problem, it
+converts a visible loss (U+FFFD) into a silent one.
 
-The ordering recommendation has changed slightly on the strength of Phase 1:
-**do segmentation before the database.** The schema's hardest part is the segment
-tables, and they are easier to design against real segments than against a
-sketch (`docs/pdf-extraction.md` §12).
+**Experiment B (segmentation) is `[PARTIAL]`.** Real metrics exist, from a
+committed script and committed annotations:
+`evaluation/experiment-b-segmentation.md`. **Read its §0 before quoting any
+number** — the sample is 4 pages and 21 clauses, single-annotated by an
+annotator who is not independent of the system, and inter-annotator agreement is
+`PENDING`. Headline: pooled boundary F1 0.865 for the paragraph baseline against
+0.714 for clause-aware; clause-number recovery 0.0% against 92.9%; page
+provenance 100% for both.
+
+**Experiment C (data quality) is `[IMPLEMENTED]`** —
+`evaluation/data-quality/`. 12 checks; current corpus: 0 errors, 1 warning (no
+version pair exists, D-10).
+
+**Still does not exist:** no database (the schema is a reviewable proposal in
+`backend/app/db/`, never executed), no FastAPI application, no NLP module, no
+product frontend. The `preview_app/` is a throwaway developer tool, not
+Person 2's frontend. Do not tell anyone otherwise.
+
+**Current phase:** Phase 3 — PostgreSQL — and it is **`[BLOCKED]`**: see §24's
+standing stop condition, D-8 and D-10.
+**Next milestone:** owner review of Phase 2's segmentation output, then the
+`offset_basis` contract point (§11.4 note below), then Phase 3.
+
+The ordering recommendation from Phase 1 held: **segmentation before the
+database** was right. The schema's segment tables needed seven additions that
+the §11.3 sketch did not anticipate, each forced by a measurement on real
+segments — `backend/app/db/README.md` §4 lists them.
 
 ---
 
@@ -554,11 +579,24 @@ for precise highlighting. A clause spanning pages 3–4 therefore gets
 `page_start = 3, page_end = 4` **and** two `segment_pages` rows. We never
 collapse a spanning clause onto a single page.
 
-**Documented limitation:** `char_start` / `char_end` are offsets into
-`pages.raw_text`. After normalisation those offsets no longer line up with
-`normalized_text`, so highlighting against normalised text is approximate. If
-exact highlighting on normalised text becomes necessary, we store an offset map
-per page — not planned for the MVP.
+**Revised by Phase 2, and this needs team sign-off.** `char_start` /
+`char_end` are offsets into **`normalized_text`**, not `raw_text` as this
+section originally specified, and every output records which basis was used as
+`offset_basis`.
+
+Why: segmentation has to run on normalised text to work at all; normalisation
+changes a page's *line count* (`collapse_blank_lines`), so raw and normalised
+text share no line numbering and mapping between them needs the per-page offset
+map this section puts out of MVP scope; and the API serves `text=normalized` by
+default (§12.3), so offsets on the same basis as the displayed text are correct
+for the common path.
+
+The approximation is therefore **inverted, not removed** — it now falls on the
+`text=raw` path instead, which is the less-used direction — and the trade is
+explicit and recorded per segment rather than implied. The segmentation CLI's
+`--use-raw-text` produces the other basis, which is why `offset_basis` is a
+stored column rather than a global constant. See `docs/phase2-segmentation.md`
+§6.3 and `backend/app/db/README.md` §3.
 
 ### 11.5 Data access layer
 
@@ -760,9 +798,15 @@ is merged. Additive fields may be added freely.
   de-hyphenation of line-break hyphens, collapsing runs of whitespace, removal of
   detected repeating headers and footers. Each step is documented individually so
   its effect can be discussed and disabled.
-- Header/footer detection: a line repeating in the same position on ≥60% of pages
-  is a candidate. The threshold is tuned on real documents and the chosen value
-  is reported.
+- Header/footer detection: a line repeating in the same position on a tuned
+  fraction of pages is a candidate. **The threshold is 0.90, not the 0.60 this
+  section originally proposed.** Measured on the four real documents, 0.60
+  deletes the commercial-banks amendment's repeated table column headers from 7
+  of 10 pages — those are clause content. Real running headers score 97% and
+  100%; the table headers score 70%. Full reasoning and the regression test:
+  `docs/phase2-segmentation.md` §3.2. Frequency alone is also not enough: see
+  §3.4 there for the printed-page-number rule, which no frequency rule can
+  catch.
 - A page yielding 0 characters is recorded as `is_empty = true` with a warning —
   that is a signal of a scanned page, not a silent success.
 
@@ -872,53 +916,91 @@ methodology; known limitations; exact reproduction steps.
 
 ## 17. Repository structure
 
-### 17.1 Current — verified 2026-10-28, after Phase 1
+### 17.1 Current — verified 2026-11-12, after Phase 2
 ```text
 NiyamSetu-diw_backend/
 ├── README.md                      # the project idea
 ├── CLAUDE.md                      # this file
-├── requirements.txt               # pinned: pypdf, pytest. Nothing else.
+├── requirements.txt               # pypdf + pytest; pymupdf/pdfplumber eval-only
 ├── pytest.ini
 ├── .gitignore
 ├── .venv/                         # git-ignored
 ├── backend/
 │   ├── app/
-│   │   └── document_processing/   # PHASE 1 - implemented and tested
-│   │       ├── __init__.py        #   public API re-exports
-│   │       ├── errors.py          #   typed exceptions with stable codes
-│   │       ├── identity.py        #   checksums, stable document/version ids
-│   │       ├── normalization.py   #   the conservative cleaning steps
-│   │       ├── schemas.py         #   the data contract (dataclasses)
-│   │       ├── manifest.py        #   reading data/manifest.csv
-│   │       ├── pdf_extractor.py   #   validation + extraction (the library)
-│   │       └── cli.py             #   command-line front end only
-│   └── tests/                     # 90 tests, all passing
+│   │   ├── document_processing/   # PHASES 1 and 2 - implemented and tested
+│   │   │   ├── __init__.py        #   public API re-exports (50 names)
+│   │   │   ├── errors.py          #   typed exceptions with stable codes
+│   │   │   ├── identity.py        #   checksums, stable document/version/segment ids
+│   │   │   ├── normalization.py   #   the conservative per-page cleaning steps
+│   │   │   ├── schemas.py         #   the Phase 1 data contract (dataclasses)
+│   │   │   ├── manifest.py        #   reading data/manifest.csv
+│   │   │   ├── pdf_extractor.py   #   validation + extraction (the library)
+│   │   │   ├── cli.py             #   Phase 1 command-line front end
+│   │   │   ├── extractor_backends.py  # PHASE 2: pypdf/PyMuPDF/pdfplumber seam
+│   │   │   ├── page_cleaning.py   #   PHASE 2: reversible header/footer removal
+│   │   │   ├── segmentation.py    #   PHASE 2: both methods + segment contract
+│   │   │   └── segmentation_cli.py#   PHASE 2 command-line front end
+│   │   └── db/                    # PHASE 3 - PROPOSAL ONLY, NEVER EXECUTED
+│   │       ├── README.md          #   status, the 7 additions, the open questions
+│   │       └── migrations/
+│   │           └── 0001_initial_schema.sql   # reviewable; no DB has been created
+│   └── tests/                     # 385 tests, all passing
 │       ├── conftest.py            #   synthetic PDF fixtures
 │       ├── pdf_builder.py         #   a minimal PDF writer, test-only
 │       ├── inspect_real_extraction.py   # manual-inspection helper, not a test
-│       └── test_*.py              #   7 modules
+│       └── test_*.py              #   12 modules
 ├── data/
 │   ├── README.md
 │   ├── manifest.csv               # 4 rows, verified provenance
+│   ├── annotations/               # COMMITTED - the only unregenerable evaluation input
+│   │   ├── README.md              #   the guideline, written before annotating
+│   │   ├── build_annotations.py   #   rebuilds the files from recorded boundaries
+│   │   └── segmentation/          #   21 clause records over 4 pages, 2 documents
 │   ├── raw/                       # git-ignored: 4 real RBI PDFs
-│   └── processed/                 # git-ignored: 4 extraction.json
+│   └── processed/                 # git-ignored: extraction + segments + cleaning JSON
 ├── docs/
 │   ├── architecture.md
 │   ├── backend-roadmap.md
 │   ├── team-responsibilities.md
-│   └── pdf-extraction.md          # Phase 1 design, contract and findings
-└── evaluation/
-    └── 2026-10-28-phase1-extraction-validation.md
+│   ├── pdf-extraction.md          # Phase 1 design, contract and findings
+│   └── phase2-segmentation.md     # Phase 2 design, contract and findings
+├── evaluation/
+│   ├── __init__.py                # it is a package: tests import from it
+│   ├── text_artifacts.py          #   the Phase 1 defects, as counters
+│   ├── experiment_a_extractor_comparison.py
+│   ├── experiment_b_segmentation.py   # template / validate / score
+│   ├── data_quality.py            #   Experiment C: 12 checks, reports only
+│   ├── 2026-10-28-phase1-extraction-validation.md
+│   ├── experiment-a-extractor-comparison.md
+│   ├── experiment-b-segmentation.md
+│   ├── experiment-a/results.json  # committed evidence
+│   ├── experiment-b/results.json  # committed evidence
+│   └── data-quality/              # committed evidence
+└── preview_app/                   # THROWAWAY developer preview - NOT the product
+    ├── README.md
+    ├── requirements.txt           #   streamlit only, deliberately separate
+    ├── app.py                     #   routing and chrome; no data access
+    └── components/
+        ├── data_access.py         #   the ONLY module here that reads a file
+        ├── screens.py             #   7 screens; render only
+        └── styles.py              #   CSS and presentation helpers
 ```
 
-There is still **no** database code, no FastAPI application, no segmentation, no
-`nlp/`, no `frontend/`, and no `data/annotations/`. Git **is** initialised
-(branch `diw_backend`, remote present) — §18's note to the contrary is
-superseded.
+Still **no** database (only the unexecuted proposal above), no FastAPI
+application, no `nlp/`, and no product `frontend/`.
 
 `backend/app/main.py` does **not** exist. The brief's suggested structure
 included it, but there is no application to serve yet and an empty `main.py`
 would be a lie about the project's state. It arrives in Phase 4 with the API.
+
+`preview_app/` is **not** Person 2's frontend and must not be mistaken for it
+(§5, §7). It is an internal tool for looking at pipeline output during
+development, nothing in `backend/` imports from it, and deleting the directory
+affects nothing but itself.
+
+`evaluation/` is now an importable package, because the measurement code has
+unit tests of its own. Nothing in `backend/app/` imports from it — a metric must
+never be able to change what the pipeline produces.
 
 ### 17.2 Target `[PROPOSED]` — create directories only when a phase needs them
 ```text
@@ -1056,18 +1138,26 @@ with a small local stub rather than waiting for my server.
 | **Stable document/version ids** | `[IMPLEMENTED]` | `identity.py`; verified idempotent across re-runs; 10 tests |
 | **JSON output contract** | `[IMPLEMENTED]` | `schemas.py`, `schema_version` 1.0.0; `docs/pdf-extraction.md` §5 |
 | **Extraction CLI** | `[IMPLEMENTED]` | `cli.py`, incl. `--manifest`; 14 + 12 tests |
-| **Tests** | `[IMPLEMENTED]` | 90 passing, `python -m pytest`, `pytest.ini` present |
-| **Pinned dependencies** | `[IMPLEMENTED]` | `requirements.txt`: `pypdf==6.18.1`, `pytest==8.3.4`; `.venv/` created |
+| **Tests** | `[IMPLEMENTED]` | **385 passing**, `python -m pytest`, `pytest.ini` present |
+| **Pinned dependencies** | `[IMPLEMENTED]` | `requirements.txt`: `pypdf==6.18.1`, `pytest==8.3.4`, plus `pymupdf==2.1` and `pdfplumber==0.11.10` as **evaluation-only** (Experiment A). `streamlit==1.67.0` is in `preview_app/requirements.txt`, deliberately not a backend dependency |
 | **Document provenance manifest** | `[PARTIAL]` | `data/manifest.csv`, 4 verified rows — a validation sample, not the corpus |
 | **Extraction validation report** | `[IMPLEMENTED]` | `evaluation/2026-10-28-phase1-extraction-validation.md` — manual inspection, no accuracy score |
-| Segmentation (paragraph / clause) | `[PLANNED]` | Phase 2; nothing built. No `segments`, no `clause_id` anywhere |
-| Database schema | `[PROPOSED]` | §11 is a DDL sketch inside documentation; no `.sql` migration file exists |
+| **Experiment A — extractor comparison** | `[IMPLEMENTED]` | `evaluation/experiment-a-extractor-comparison.md`; 5 conditions x 4 documents. Recommendation: keep pypdf, keep PyMuPDF for tables |
+| **Experiment B — segmentation scoring** | `[PARTIAL]` | `evaluation/experiment-b-segmentation.md`; real metrics, small single-annotated sample, 9 failure cases |
+| **Experiment C — data quality** | `[IMPLEMENTED]` | `evaluation/data_quality.py`, 12 checks; current corpus 0 errors, 1 warning; 52 tests |
+| **Developer preview frontend** | `[IMPLEMENTED]` | `preview_app/`; 7 screens over the real artefacts. **Not** Person 2's product frontend; throwaway |
+| **Header/footer cleaning** | `[IMPLEMENTED]` | `page_cleaning.py`; reversible, evidence recorded per line; 151 lines removed across the corpus; 28 tests |
+| **Paragraph segmentation** | `[IMPLEMENTED]` | `segmentation.py::segment_paragraphs`; 138 segments, 11 spanning a page break |
+| **Clause-aware segmentation** | `[IMPLEMENTED]` | `segmentation.py::segment_clauses`; 366 segments, 34 spanning, hierarchy to depth 4; 5 marker styles observed |
+| **Segment page provenance** | `[IMPLEMENTED]` | All 501 segments verified; enforced in `Segment.__post_init__`, the CLI, and `data_quality.py` |
+| **Segmentation CLI + JSON output** | `[IMPLEMENTED]` | `segmentation_cli.py`; `segments_{paragraph,clause_aware}.json` + `page_cleaning.json` per version; determinism checked |
+| Database schema | `[PROPOSED]` | `backend/app/db/migrations/0001_initial_schema.sql` now exists as a **reviewable proposal, never executed**. No PostgreSQL reached, no SQLAlchemy/psycopg2 dependency. 7 additions the §11.3 sketch lacked: `backend/app/db/README.md` §4 |
 | API endpoints | `[PROPOSED]` | §12; none implemented; no `main.py` |
 | NLP code (any module) | `[PLANNED]` | none |
 | Frontend code | `[PLANNED]` | none |
 | Document corpus | `[PARTIAL]` | 4 real RBI PDFs as a validation sample. The corpus is **not** chosen (D-10), has one authority only, and contains **zero version pairs** |
-| Annotations | **not started** | `data/annotations/` does not exist |
-| Evaluation **metrics** | **none exist** | no accuracy, precision, recall or F1 has been computed for this project, and none may be quoted |
+| Annotations | `[PARTIAL]` | `data/annotations/README.md` (guideline, written before annotating) + 21 clause records over 4 pages of 2 documents. **Single annotator, not independent of the system; agreement `PENDING`** — see that file's §7 |
+| Evaluation **metrics** | `[PARTIAL]` | **Experiment A and C: real counts, no accuracy claimed.** Experiment B: real boundary P/R/F1 from a committed script and committed annotations, on a 4-page sample — quotable **only with** the §0 caveats in `evaluation/experiment-b-segmentation.md`. No other metric exists for any other part of the project |
 | Git repository | initialised | branch `diw_backend`; remote `origin` with `main` present |
 | Python toolchain | available | Python 3.11.9, pip 26.0.1, git 2.53.0 |
 | PostgreSQL | **unconfirmed** | `psql` is not on PATH here; server presence still unknown (D-8) |
@@ -1099,14 +1189,16 @@ with a small local stub rather than waiting for my server.
 |---|---|---|---|
 | D-1 | Monorepo vs backend-only repo (§17.2) | Determines directory layout and who commits where | Monorepo for a one-month project; simpler integration |
 | D-2 | `git init` + remote + branch convention (§18) | No version control exists today; this blocks parallel work | Initialise now; one remote; branches as listed |
-| D-3 | Is Hindi / simple-language mode in scope? | `README.md` lists it as a core feature; the working brief calls it optional | Treat as a stretch demo, not a graded deliverable, unless a reference set is built |
-| D-4 | SQLAlchemy Core + SQL migrations vs Alembic vs raw psycopg | Affects explainability and setup effort | Core plus plain SQL migrations |
+| D-3 | Is Hindi / simple-language mode in scope? | `README.md` lists it as a core feature; the working brief calls it optional | **PAUSED by the owner** for this phase. Experiment A §3 independently confirms the basis is not there: *no* extractor available to us reads the Devanagari letterhead correctly — PyMuPDF merely hides the loss rather than fixing it |
+| ~~D-4~~ | ~~SQLAlchemy Core + SQL migrations vs Alembic~~ | — | **ANSWERED by the owner: SQLAlchemy Core + plain SQL migration files, no Alembic.** `backend/app/db/` follows it |
 | D-5 | Synchronous vs asynchronous ingestion (§12.3) | Affects API shape and test determinism | Synchronous for the MVP; `ingestion_jobs` present for a later switch |
-| D-6 | Scanned PDFs: exclude, or OCR? | Changes corpus selection and Experiment A scope | Exclude from the MVP; document the exclusion |
+| ~~D-6~~ | ~~Scanned PDFs: exclude, or OCR?~~ | — | **ANSWERED by the owner: excluded from the MVP, no OCR.** Documented in `data/README.md` §2.3 and §10 |
 | D-7 | Where do retrieval embeddings live? | A vector DB would violate Rule 5 without justification | Person 3 keeps an index inside `nlp/rag_qa/`; add `pgvector` only on measured need |
 | D-8 | Is PostgreSQL installed and reachable for everyone? | `psql` is not on PATH here; Phase 3 depends on it | Confirm per machine; agree one connection convention via `.env` |
 | D-9 | How is a new upload declared a *version* of an existing document? | Must not be inferred from title similarity | Explicit `document_public_id` at ingestion, recorded by a human |
-| D-10 | Which documents form the corpus, and who collects them? | Every experiment depends on this, and nothing has been collected | Agree a 20–40 document list in week 1; I define the metadata format |
+| D-10 | Which documents form the corpus, and who collects them? | Every experiment depends on this, and nothing has been collected | Agree a 20–40 document list in week 1; I define the metadata format. **Still the single biggest blocker**: `evaluation/data_quality.py` reports it as the corpus's one outstanding warning, and Compare has nothing to run on |
+| **D-11** | **`offset_basis`: are character offsets into `normalized_text` (as built) or `raw_text` (as §11.4 originally specified)?** | Changes what every character offset means, for four consumers | **Normalised**, as built and as recorded per version. Reasoning in §11.4 above. Needs explicit agreement before Phase 3 loads anything |
+| **D-12** | **Should segmentation become table-aware?** | The only case where clause-aware segmentation is clearly *worse* than the paragraph baseline (`evaluation/experiment-b-segmentation.md` §3.1) | Yes, using PyMuPDF's `find_tables()` — already a pinned dependency, and shown to recover the row structure on exactly the pages that fail. Record table regions at extraction; treat a region as one segment |
 
 ### 22.3 Conflicts between the repository and the working brief
 1. **Wireframe.** The brief calls the wireframe "the primary reference for the
@@ -1138,8 +1230,8 @@ Phase detail, inputs, tests and definitions of done: **`docs/backend-roadmap.md`
 |---|---|---|---|
 | 0 | Repository audit and project documentation | **done** | — |
 | 1 | PDF extraction with page provenance | **done** (corpus still open) | D-10 for the corpus |
-| 2 | Paragraph and clause-aware segmentation; annotated sample; comparison | **current** | Phase 1 (met) |
-| 3 | PostgreSQL schema, access layer, persistence | planned | D-4, D-8, Phase 2 |
+| 2 | Paragraph and clause-aware segmentation; annotated sample; comparison | **done** (small annotated sample; agreement `PENDING`) | Phase 1 (met) |
+| 3 | PostgreSQL schema, access layer, persistence | **blocked** — schema proposed, never executed | D-8, D-11; owner review of Phase 2 |
 | 4 | FastAPI endpoints with validation and tests | planned | Phase 3, D-5 |
 | 5 | Data-quality and segmentation evaluation reports | planned | Phases 2–4 |
 | 6 | Integration with Persons 2–5; end-to-end tests | planned | Phase 4 plus their modules |
@@ -1190,11 +1282,24 @@ not trade away the first three for it.
     The validation report deliberately contains counts and defects but no
     accuracy percentage, because no annotated ground truth exists yet.
 
-**Standing stop condition — updated 2026-10-28.** Phase 1 was approved and is
-complete. The condition now applies to **Phase 3 onward**: no PostgreSQL
-install, no database creation, no FastAPI application and no new dependency
-until the owner reviews Phase 2's segmentation output and the open decisions
-D-4, D-8 and D-10 have answers.
+**Standing stop condition — updated 2026-11-12.** Phases 1 and 2 are approved
+and complete. The condition still applies to **Phase 3 onward**: no PostgreSQL
+install, no database creation, no FastAPI application and no new runtime
+dependency until the owner reviews Phase 2's segmentation output and **D-8** and
+**D-11** have answers. (D-4 and D-6 are now answered; D-10 remains open and
+blocks meaningful evaluation rather than Phase 3 itself.)
 
-Phase 2 (segmentation) may proceed, because it needs no new dependency and no
-infrastructure — it works on the JSON the Phase 1 pipeline already produces.
+What has been done under this condition, and why it does not breach it:
+
+- `backend/app/db/migrations/0001_initial_schema.sql` is written and committed
+  but **has never been executed**. No server was reached, no database created,
+  and neither SQLAlchemy nor psycopg2 was installed. It exists because this
+  file's §12 and `docs/pdf-extraction.md` §12 both argued for designing the
+  segment tables against *real* segments — and the segments now exist.
+- `pymupdf` and `pdfplumber` were installed and pinned, with the owner's
+  explicit approval, for Experiment A only. They are imported lazily, so the
+  production path and the package still run on `pypdf` alone.
+- `streamlit` was installed for the developer preview and pinned in
+  `preview_app/requirements.txt`, **not** in the project's `requirements.txt`.
+  The backend stays installable and testable with `pypdf` and `pytest` alone;
+  the preview's render tests skip themselves when Streamlit is absent.

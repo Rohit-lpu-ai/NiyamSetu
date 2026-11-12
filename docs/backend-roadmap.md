@@ -131,14 +131,34 @@ or PR.
 
 ## Phase 2 — Segmentation and dataset preparation
 
+> **STATUS: DONE, 2026-11-12.** Both methods implemented, run on all four
+> documents, 385 passing tests. Design and findings:
+> `docs/phase2-segmentation.md`. Metrics: `evaluation/experiment-b-segmentation.md`.
+>
+> **Where it fell short of this plan, and it matters:** the annotated sample is
+> 4 pages and 21 clauses, not the 10 documents x ~5 pages proposed below, and it
+> is **single-annotated by an annotator who is not independent of the system**.
+> Inter-annotator agreement is `PENDING`, so task 7 and the agreement half of
+> the definition of done are **not met**. That is the honest trade this plan
+> anticipated under Risks ("shrink the sample and say so"), and it is the
+> highest-value remaining work on the evaluation.
+>
+> Everything else in the definition of done is met: both methods run on the
+> whole available corpus, every one of 501 segments has a valid page range, the
+> sample and its guideline are committed, and the report names nine concrete
+> failure cases from a committed script.
+
 **Goal:** two segmentation methods, both preserving page provenance, with an
 honest comparison on a manually annotated sample.
 
 **Required inputs:** Phase 1 page records; the annotation guideline; annotator
 time (mine, plus one teammate for the agreement subset).
 
-**Tasks**
-1. Implement `services/segmentation.py::segment_paragraphs` — the baseline.
+**Tasks** — built as `app/document_processing/segmentation.py` rather than
+`services/segmentation.py`, following the `backend/app/<feature>/` layout that
+Phase 1 established (`CLAUDE.md` §22.3 item 4).
+
+1. Implement `segment_paragraphs` — the baseline.
 2. Implement `services/segmentation.py::segment_clauses` — numbering detection
    (`3.`, `3.2`, `(a)`, `(iv)`, `Clause 5`, `Section 7`), heading detection,
    schedule/annexure markers, page-break carry-over.

@@ -518,9 +518,35 @@ The JSON contract in §5 was shaped to match the proposed schema in
 | `document.source_metadata.version_label` / `.supersedes` / `.publication_date` / `.source_url` / `.retrieved_at` | `document_versions.*` |
 | `pages[].page_number`, `.original_text`, `.normalized_text`, `.char_count`, `.is_empty` | `pages.page_number`, `.raw_text`, `.normalized_text`, `.char_count`, `.is_empty` |
 
+> **Updated 2026-11-12: step 1 below is done.** Phase 2 is implemented —
+> `docs/phase2-segmentation.md`. Two things this section predicted turned out
+> right: doing segmentation before the database was correct (the schema needed
+> seven additions that only real segments revealed), and the
+> `_extract_page_text` seam was enough to plug in two more extractors for
+> Experiment A without touching the production path.
+>
+> Two things it did not predict:
+>
+> - **Character offsets are into `normalized_text`, not `raw_text`.** The table
+>   above maps `pages[].original_text` to `pages.raw_text` and that still holds,
+>   but `segment_pages.char_start`/`char_end` are on the normalised basis, and
+>   every output records which as `offset_basis`. See
+>   `docs/phase2-segmentation.md` §6.3 — it is Open Decision D-11 and needs team
+>   sign-off before Phase 3 loads anything.
+> - **`page_removed_lines` is a table nobody planned.** Header/footer removal
+>   deletes text, so the reversibility record has to survive into the database
+>   rather than living only in a JSON file.
+>
+> Step 2 of §10's recommended next steps (run Experiment A properly) is also
+> done: `evaluation/experiment-a-extractor-comparison.md`. The verdict is to
+> **keep pypdf** — no completeness gain, no Devanagari gain, and a 12x
+> environment cost — while keeping PyMuPDF for its table API, which is the one
+> thing pypdf genuinely cannot do.
+
 Recommended order from here:
 
-1. **Phase 2 — segmentation.** Paragraph baseline, then clause-aware, both
+1. ~~**Phase 2 — segmentation.**~~ **Done** — see the note above.
+   Original text: Paragraph baseline, then clause-aware, both
    stored side by side, plus header/footer removal informed by validation report
    §4.6. This produces `segments` and `segment_pages`, which four of the five
    team members are blocked on. **Do this before the database**, because the
