@@ -24,6 +24,7 @@ must never be quoted as real government policy text (``CLAUDE.md`` §16).
 
 from __future__ import annotations
 
+import io
 from typing import Dict, List, Optional, Sequence
 
 #: Characters that must be escaped inside a PDF literal string.
@@ -135,3 +136,69 @@ def page_lines(page_number: int, filler_lines: int = 6) -> List[str]:
         for i in range(filler_lines)
     )
     return lines
+
+
+def build_pdf_without_pages() -> bytes:
+    """Return a structurally valid PDF whose page tree is empty.
+
+    ``build_pdf_bytes`` refuses to build this (a document with no pages is not
+    something we would ever *want*), so it is a separate function. The file is
+    well-formed: a catalog, a ``/Pages`` node with ``/Count 0`` and no kids, and
+    a correct cross-reference table. pypdf parses it happily and reports zero
+    pages, which is exactly the case
+    :class:`~backend.app.document_processing.errors.PdfHasNoPagesError` exists
+    for - a file that is a PDF, and still carries nothing to extract.
+    """
+    objects = {
+        1: "<< /Type /Catalog /Pages 2 0 R >>",
+        2: "<< /Type /Pages /Count 0 /Kids [] >>",
+    }
+    out = bytearray(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
+    offsets: Dict[int, int] = {}
+    for number in sorted(objects):
+        offsets[number] = len(out)
+        out += f"{number} 0 obj\n{objects[number]}\nendobj\n".encode("cp1252")
+
+    xref_offset = len(out)
+    size = max(objects) + 1
+    out += f"xref\n0 {size}\n".encode("cp1252")
+    out += b"0000000000 65535 f \n"
+    for number in range(1, size):
+        out += f"{offsets[number]:010d} 00000 n \n".encode("cp1252")
+    out += (
+        f"trailer\n<< /Size {size} /Root 1 0 R >>\n"
+        f"startxref\n{xref_offset}\n%%EOF\n"
+    ).encode("cp1252")
+    return bytes(out)
+
+
+def build_password_protected_pdf_bytes(
+    pages: Sequence[Sequence[str]],
+    password: str,
+) -> bytes:
+    """Return the bytes of a PDF encrypted with a non-empty user password.
+
+    This is the one builder that uses ``pypdf`` rather than writing bytes by
+    hand: PDF encryption means implementing the standard security handler's key
+    derivation and an RC4 or AES stream, which is not something to hand-roll for
+    a fixture. ``pypdf`` is already a project dependency, and here it is only
+    *writing* the fixture - the code under test still does the reading.
+
+    A non-empty password matters. The pipeline deliberately tries the empty
+    password first, because many government PDFs are "encrypted" only to set
+    permission flags and open fine with no password at all. Only a file that
+    genuinely needs a secret should raise
+    :class:`~backend.app.document_processing.errors.PdfEncryptedError`.
+    """
+    from pypdf import PdfReader, PdfWriter  # local: keeps this module importable
+
+    plain = io.BytesIO(build_pdf_bytes(pages))
+    reader = PdfReader(plain)
+    writer = PdfWriter()
+    for page in reader.pages:
+        writer.add_page(page)
+    writer.encrypt(password)
+
+    encrypted = io.BytesIO()
+    writer.write(encrypted)
+    return encrypted.getvalue()

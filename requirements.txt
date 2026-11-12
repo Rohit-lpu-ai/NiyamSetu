@@ -1,8 +1,8 @@
-# NiyamSetu backend - Phase 1 (PDF ingestion and extraction)
+# NiyamSetu backend - Phase 1 (PDF ingestion) + Phase 2 (segmentation)
 #
 # Deliberately minimal. Every line is pinned so the five of us run the same
 # code. Add a package only with a written justification (CLAUDE.md §24 rule 5),
-# and pin it here in the same commit.
+# and pin it here in the same commit that starts using it.
 #
 # Install into a project virtualenv, not globally:
 #   python -m venv .venv
@@ -10,16 +10,47 @@
 #   source .venv/bin/activate       (macOS / Linux)
 #   pip install -r requirements.txt
 
-# --- runtime ---
+# --- runtime: the production extraction path ---
 # Pure-Python PDF reading. Gives per-page access, which is what page-level
-# provenance depends on, with no compiled extension. See docs/pdf-extraction.md.
+# provenance depends on, with no compiled extension. This is the library
+# `extract_pdf` actually uses, and Experiment A confirmed it should stay the
+# default. See docs/pdf-extraction.md and
+# evaluation/experiment-a-extractor-comparison.md.
 pypdf==6.18.1
+
+# --- evaluation only: Experiment A extractor comparison ---
+# Approved by the project owner for the Experiment A comparison
+# (CLAUDE.md §15). Imported *lazily*, only by
+# backend/app/document_processing/extractor_backends.py, so the production
+# ingestion path still runs with pypdf alone and the document_processing
+# package stays importable without them.
+#
+# Cost of these two lines, measured: the virtualenv grows from ~25 MB to
+# ~314 MB. PyMuPDF 2.1 is 105 MB on its own and pulls pymupdf-layout,
+# pymupdf4llm and onnxruntime (48 MB) as hard dependencies; pdfplumber pulls
+# pdfminer.six, Pillow and pypdfium2. That footprint is recorded here because
+# it is the main argument against making either one the default extractor for a
+# five-machine student project.
+#
+# Experiment A's verdict (see the report): pypdf stays the default page-text
+# extractor; PyMuPDF is retained for its table API, which is the one capability
+# pypdf genuinely lacks.
+pymupdf==2.1
+pdfplumber==0.11.10
 
 # --- development / test ---
 pytest==8.3.4
 
 # --- NOT dependencies of this phase ---
-# fastapi, uvicorn, psycopg2-binary, SQLAlchemy, alembic, streamlit and
-# scikit-learn are present in some team members' *global* Python installs. They
-# are not used by Phase 1 and are not pinned here. They will be added, pinned,
-# when Phase 3 (PostgreSQL) and Phase 4 (FastAPI) actually need them.
+# fastapi, uvicorn, psycopg2-binary, SQLAlchemy and alembic are present in some
+# team members' *global* Python installs. They are not used by Phase 1 or 2 and
+# are not pinned here. They will be added, pinned, when Phase 3 (PostgreSQL)
+# and Phase 4 (FastAPI) actually need them.
+#
+# streamlit is NOT pinned here either, deliberately. The developer preview
+# frontend in preview_app/ is a throwaway internal tool, not part of the
+# backend deliverable, so its dependency lives in preview_app/requirements.txt
+# and the backend stays installable and testable without it.
+#
+# No OCR packages (pytesseract, easyocr): scanned PDFs are excluded from the
+# MVP by an approved decision (CLAUDE.md D-6).

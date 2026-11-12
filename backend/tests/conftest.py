@@ -12,7 +12,12 @@ from pathlib import Path
 
 import pytest
 
-from .pdf_builder import build_pdf_bytes, page_lines
+from .pdf_builder import (
+    build_password_protected_pdf_bytes,
+    build_pdf_bytes,
+    build_pdf_without_pages,
+    page_lines,
+)
 
 
 @pytest.fixture
@@ -98,4 +103,32 @@ def truncated_pdf(tmp_path: Path) -> Path:
 def zero_byte_pdf(tmp_path: Path) -> Path:
     path = tmp_path / "empty.pdf"
     path.write_bytes(b"")
+    return path
+
+
+@pytest.fixture
+def pdf_with_no_pages(tmp_path: Path) -> Path:
+    """A well-formed PDF whose page tree is empty.
+
+    Distinct from ``truncated_pdf``: this file parses cleanly. The failure is
+    semantic, not structural, so it must surface as ``PDF_HAS_NO_PAGES`` rather
+    than as a parse error.
+    """
+    path = tmp_path / "no_pages.pdf"
+    path.write_bytes(build_pdf_without_pages())
+    return path
+
+
+@pytest.fixture
+def password_protected_pdf(tmp_path: Path) -> Path:
+    """A PDF encrypted with a non-empty user password, which we never supply.
+
+    Stands in for a government PDF locked by its publisher. The pipeline must
+    refuse it loudly; returning a document whose every page is empty would look
+    like a successful extraction of a scanned file and quietly poison the corpus.
+    """
+    path = tmp_path / "locked.pdf"
+    path.write_bytes(
+        build_password_protected_pdf_bytes([page_lines(1)], "fixture-password")
+    )
     return path

@@ -10,6 +10,8 @@ from backend.app.document_processing import (
     EmptyFileError,
     FileTooLargeError,
     NotAPdfError,
+    PdfEncryptedError,
+    PdfHasNoPagesError,
     PdfUnreadableError,
     SourceFileNotFoundError,
     extract_pdf,
@@ -74,3 +76,42 @@ def test_extract_pdf_rejects_missing_file(tmp_path: Path) -> None:
 def test_extract_pdf_accepts_a_string_path(three_page_pdf: Path) -> None:
     result = extract_pdf(str(three_page_pdf))
     assert result.document.page_count == 3
+
+
+def test_pdf_with_zero_pages_raises_has_no_pages(pdf_with_no_pages: Path) -> None:
+    """A file can be a perfectly valid PDF and still carry nothing to extract.
+
+    The distinction from ``truncated_pdf`` matters: that one fails to parse, so
+    ``EXTRACTION_FAILED`` is right. This one parses fine and simply has an empty
+    page tree, which is a different diagnosis and gets its own code.
+    """
+    assert validate_pdf_file(pdf_with_no_pages) > 0  # byte-level validation passes
+    with pytest.raises(PdfHasNoPagesError) as excinfo:
+        extract_pdf(pdf_with_no_pages)
+    assert excinfo.value.code == "PDF_HAS_NO_PAGES"
+
+
+def test_password_protected_pdf_raises_encrypted(password_protected_pdf: Path) -> None:
+    """An encrypted PDF must fail loudly, not extract as a stack of blank pages.
+
+    Silently returning empty pages would be indistinguishable from a scanned
+    document and would enter the corpus looking like a successful ingestion.
+    """
+    with pytest.raises(PdfEncryptedError) as excinfo:
+        extract_pdf(password_protected_pdf)
+    assert excinfo.value.code == "PDF_ENCRYPTED"
+
+
+def test_encrypted_pdf_error_does_not_leak_a_password_guess(
+    password_protected_pdf: Path,
+) -> None:
+    """The message names the file and the cause, and nothing about credentials.
+
+    ``CLAUDE.md`` §20 requires error text that is safe to show a caller; the
+    pipeline also has a standing rule that it never accepts a password, so the
+    message must say that rather than inviting a retry.
+    """
+    with pytest.raises(PdfEncryptedError) as excinfo:
+        extract_pdf(password_protected_pdf)
+    assert "fixture-password" not in excinfo.value.message
+    assert "encrypted" in excinfo.value.message.lower()
