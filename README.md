@@ -222,3 +222,150 @@ If everyone likes the direction, then we can move to the next step:
 **Problem Statement → Requirements → Features → Architecture → Tech Stack → Dataset → Development Plan**
 
 and decide exactly what we're going to build for the first version.
+
+---
+
+# Backend — running it
+
+> The sections above describe the **product idea**. This section is the
+> **backend as actually built** (Person 1: Backend + Document NLP).
+>
+> Status 2026-11-13: ingestion, PostgreSQL persistence and the FastAPI layer are
+> implemented and verified — **600 tests passing, 0 failed, 0 skipped**
+> (re-run 2026-11-13 after the repository cleanup; 590 of them predate it, 10
+> pin the Library & Search scaffold).
+> Teammates integrating against it should read
+> [`backend/docs/backend-integration-contract.md`](backend/docs/backend-integration-contract.md).
+
+## 1. Prerequisites
+
+- **Python 3.11** (3.11.9 confirmed)
+- **PostgreSQL 14+** (18.6 confirmed). The Windows installer puts `psql` in
+  `C:\Program Files\PostgreSQL\18\bin`, which is **not on PATH** by default —
+  that is normal and nothing here needs it.
+
+## 2. Environment
+
+```bat
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+```bash
+# macOS / Linux
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+## 3. Database configuration
+
+```bat
+copy .env.example .env
+```
+
+Edit `.env` and set `NIYAMSETU_DB_PASSWORD`. `.env` is **git-ignored**; never
+commit it. `.env.example` holds placeholders only.
+
+Create the two databases (the test one must have `test` in its name — the code
+refuses to run destructive tests otherwise):
+
+```sql
+CREATE DATABASE niyamsetu;
+CREATE DATABASE niyamsetu_test;
+```
+
+## 4. Migrations
+
+```bat
+.venv\Scripts\python -m backend.app.db.migrate --status
+.venv\Scripts\python -m backend.app.db.migrate
+```
+
+Plain SQL files in `backend/app/db/migrations/`, applied in filename order. The
+runner records each file's SHA-256 and **refuses to continue if an applied
+migration was edited** — add a new migration instead.
+
+## 5. Build the corpus and load it
+
+`data/raw/` and `data/processed/` are git-ignored, so a fresh clone has no
+documents. With the source PDFs in `data/raw/` and `data/manifest.csv` present:
+
+```bat
+.venv\Scripts\python -m backend.app.document_processing.cli --manifest data/manifest.csv
+.venv\Scripts\python -m backend.app.document_processing.segmentation_cli --all
+.venv\Scripts\python -m backend.app.db.loader
+```
+
+Expected on the current corpus: 4 documents, 4 versions, 57 pages, 501 segments
+(138 paragraph + 363 clause-aware), 552 segment-page rows.
+
+## 6. Checks
+
+```bat
+.venv\Scripts\python -m evaluation.data_quality
+.venv\Scripts\python -m pytest
+.venv\Scripts\python -m pytest -m integration        :: the 73 needing PostgreSQL
+.venv\Scripts\python -m pytest -m "not integration"  :: the 527 that do not
+```
+
+## 7. Run the API
+
+```bat
+.venv\Scripts\python -m uvicorn backend.app.api.main:app --reload
+```
+
+| | |
+|---|---|
+| **Swagger UI** | http://127.0.0.1:8000/docs |
+| ReDoc | http://127.0.0.1:8000/redoc |
+| OpenAPI JSON | http://127.0.0.1:8000/openapi.json |
+| Health | http://127.0.0.1:8000/api/health |
+
+### Example requests
+
+```bash
+curl http://127.0.0.1:8000/api/health
+curl "http://127.0.0.1:8000/api/documents?limit=5"
+curl http://127.0.0.1:8000/api/documents/DOC-0001
+curl "http://127.0.0.1:8000/api/documents/DOC-0004/clauses?method=clause_aware&limit=3"
+
+curl -X POST http://127.0.0.1:8000/api/documents/ingest \
+  -F "file=@data/raw/your-document.pdf" \
+  -F "title=Your Document Title" \
+  -F "document_group=your-document-group" \
+  -F "document_type=circular"
+```
+
+## 8. Documentation map
+
+| Document | What it covers |
+|---|---|
+| [`backend/docs/PROJECT_STRUCTURE_AND_MODULE_GUIDE.md`](backend/docs/PROJECT_STRUCTURE_AND_MODULE_GUIDE.md) | **Read first.** What exists, where it lives, where your module goes |
+| [`backend/docs/BACKEND_FINAL_COMPLETION_REPORT.md`](backend/docs/BACKEND_FINAL_COMPLETION_REPORT.md) | What is built and what was verified, with the honest gaps |
+| [`backend/docs/backend-integration-contract.md`](backend/docs/backend-integration-contract.md) | **Start here if you are integrating.** IDs, schemas, provenance rules, errors |
+| [`backend/docs/api.md`](backend/docs/api.md) | Endpoints, examples, ingestion flow |
+| [`backend/docs/phase3-postgresql.md`](backend/docs/phase3-postgresql.md) | Schema design, every decision with a viva Q&A |
+| [`backend/docs/final-backend-evaluation.md`](backend/docs/final-backend-evaluation.md) | **Every metric**, with sample sizes and limitations |
+| [`backend/docs/evaluation-audit.md`](backend/docs/evaluation-audit.md) | What is measured, what is not, what is pending |
+| [`backend/docs/pdf-extraction.md`](backend/docs/pdf-extraction.md), [`backend/docs/phase2-segmentation.md`](backend/docs/phase2-segmentation.md) | Pipeline design and findings |
+| [`backend/app/library_search/README.md`](backend/app/library_search/README.md) | **Next module.** Library & Search: scope, reuse map, planned endpoints |
+| [`CLAUDE.md`](CLAUDE.md) | Project reference and open decisions |
+
+## 9. Known limitations
+
+Honest and load-bearing — see `backend/docs/final-backend-evaluation.md` §9 for the full list.
+
+- **4 documents, one authority (RBI), zero version pairs, zero scanned** (D-10).
+  Nothing here generalises to government documents at large, and Compare has no
+  data to run on.
+- **No independent validation of segmentation.** Boundary F1 comes from 21
+  clauses annotated by one non-independent annotator; inter-annotator agreement
+  is **PENDING**.
+- **Cleaning correctness is unmeasured.** Removals are reversible and audited,
+  which makes a mistake recoverable — not absent.
+- **Extraction has no accuracy figure** (no ground-truth transcription).
+- **Devanagari text is corrupted** and no available extractor fixes it.
+- **Tables flatten**; up to 39.9% of clause-aware segments overlap a detected
+  table region (an upper bound, not a false-positive rate).
+- **No authentication.** Anyone who can reach the port can ingest.

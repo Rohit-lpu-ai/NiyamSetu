@@ -1,0 +1,202 @@
+NiyamSetu - Experiment B independent annotation worksheet
+======================================================================
+version_id : VER-7c5ad74aba9ebd62
+title      : Reserve Bank of India (Commercial Banks - Forthcoming Instructions) Second Amendment Directions, 2026
+pages      : 1, 2, 3
+
+HOW TO USE THIS FILE
+--------------------
+1. Read data/annotations/README.md first. It is the guideline, and it
+   defines what counts as a clause boundary. Do not skip it.
+2. This worksheet deliberately does NOT show you the system's output.
+   Mark the boundaries you think are correct, from this text and the
+   source PDF in data/raw/.
+3. For every clause you identify, write one JSONL record as specified
+   in the guideline (§4) into:
+       data/annotations/segmentation/VER-7c5ad74aba9ebd62.annotator2.jsonl
+   Set "annotator" to your own name, not person1.
+4. Mark "uncertain": true wherever you genuinely cannot decide, and
+   say why in "note". Uncertain records are reported separately and
+   are more useful than a confident guess.
+5. Where the guideline does not answer a case, do NOT invent a rule.
+   Record the disagreement; the guideline gets amended (§7).
+
+Text below is the pipeline's normalised page text -- the same text the
+offsets are measured against, so your markers will line up. Line
+numbers are for discussion only; they are not part of a record.
+
+======================================================================
+--- PAGE 1 ---
+======================================================================
+   0 | िविनयमन िवभाग, कें द्र ी य कायार्लय, कें द्र ी य कायार्लय भवन, 12वीं/ 13वीं मंिज़ल, शहीद भगत िसंह मागर्, फोटर्, मुंबई - 400001
+   1 | टेलीफोन/ Tel No: 22661602, 22601000 फै �/ Fax No: 022-2270 5691
+   2 | Department of Regulation, Central Office, Central Office Building, 12th/ 13th Floor, Shahid Bhagat Singh Marg, Fort, Mumbai – 400001
+   3 | 
+   4 | भारतीय �रज़वर् बैंक
+   5 | __________________ RESERVE BANK OF INDIA __________________
+   6 | www.rbi.org.in
+   7 | RBI/2026-27/299
+   8 | DOR.ORG.REC.252/21.06.050/2026-27 October 23, 2026
+   9 | Reserve Bank of India (Commercial Banks – Forthcoming Instructions) Second
+  10 | Amendment Directions, 2026
+  11 | Please refer to Chapter IV of the Reserve Bank of India (Commercial Banks –
+  12 | Forthcoming Instructions) Directions, 2025 dated November 28, 2025 ( hereinafter
+  13 | referred to as ‘the Directions’), on Minimum Capital Requirements for Operational
+  14 | Risk.
+  15 | 2. On a review, and in exercise of the powers conferred by Section 35A of the Banking
+  16 | Regulation Act, 1949 and all other laws enabling the Reserve Bank of India
+  17 | (hereinafter called the Reserve Bank) in this regard, the Reserve Bank being satisfied
+  18 | that it is necessary and expedient in the public interest so to do, hereby issues the
+  19 | Amendment Directions hereinafter specified.
+  20 | 3. (i) These Directions shall be called the Reserve Bank of India (Commercial Banks
+  21 | – Forthcoming Instructions) Second Amendment Directions, 2026.
+  22 | (ii) Chapter IV of the Reserve Bank of India (Commercial Banks – Forthcoming
+  23 | Instructions) Directions, 2025, on M inimum Capital Requirements for Operational
+  24 | Risk, along with amendments set out at Para 4 below, shall come into effect from April
+  25 | 1, 2027.
+  26 | 4. The Amendment Directions modify the Directions as under:
+  27 | (i) Paragraph 29 shall be substituted by the following, namely:
+  28 | “The description for each of these constituents of the BI (i.e., ILDC, SC, and FC)
+  29 | along with the schedules of the prescribed financial statements format is
+  30 | provided in Table VIII. An indicative mapping of BI items with schedules and line
+  31 | items of the prescribed financial statements format shall be given in due course.
+  32 | 
+
+======================================================================
+--- PAGE 2 ---
+======================================================================
+   0 | 2
+   1 | 
+   2 | Explanation: The mapping provided is indicative and where the
+   3 | measurement, classification or presentation of an item under the ‘ Reserve
+   4 | Bank of India (Commercial Banks - Financial Statements: Presentation and
+   5 | Disclosures) Directions, 2025’ differs from that prescribed under these
+   6 | Directions, the banks shall ensure that items used for computation of ORC
+   7 | are in accordance with these Directions and consistent with the ‘description’
+   8 | and ‘sub- items’ prescribed in Table VIII under Paragraph 29 of these
+   9 | Directions.”
+  10 | (ii) Table 8 under Paragraph 29 shall be modified as under:
+  11 | Table 8
+  12 | BI
+  13 | constituents
+  14 | P&L or
+  15 | balance
+  16 | sheet
+  17 | items
+  18 | Description Typical sub-items [added]
+  19 | Indicative Mapping to
+  20 | specific schedules in
+  21 | the Balance Sheet
+  22 | and / or P&L Account
+  23 | Interest,
+  24 | lease and
+  25 | dividend
+  26 | Component
+  27 | (ILDC)
+  28 | Interest
+  29 | income
+  30 | Interest
+  31 | income from
+  32 | all financial
+  33 | assets and
+  34 | other interest
+  35 | income
+  36 | (includes
+  37 | interest
+  38 | rental
+  39 | income from
+  40 | financial and
+  41 | operating
+  42 | leases and
+  43 | profits from
+  44 | leased
+  45 | assets)
+  46 | (i) Interest income
+  47 | from loans and
+  48 | advances, assets
+  49 | available for sale,
+  50 | assets held to
+  51 | maturity, trading
+  52 | assets, and
+  53 | financial leases ,
+  54 | and operating
+  55 | leases.
+  56 | (ii) Interest income
+  57 | from hedge
+  58 | accounting
+  59 | derivatives.
+  60 | (iii) Other interest
+  61 | income.
+  62 | (iv) Profits from leased
+  63 | assets.
+  64 |  Schedule 13, 14
+
+======================================================================
+--- PAGE 3 ---
+======================================================================
+   0 | 3
+   1 | 
+   2 | BI
+   3 | constituents
+   4 | P&L or
+   5 | balance
+   6 | sheet
+   7 | items
+   8 | Description Typical sub-items [added]
+   9 | Indicative Mapping to
+  10 | specific schedules in
+  11 | the Balance Sheet
+  12 | and / or P&L Account
+  13 | [added] (v) Rental
+  14 | income from
+  15 | operating leases.
+  16 | Interest
+  17 | expenses
+  18 | Interest
+  19 | expenses
+  20 | from all
+  21 | financial
+  22 | liabilities and
+  23 | other interest
+  24 | expenses
+  25 | (includes
+  26 | interest
+  27 | expense
+  28 | from
+  29 | financial and
+  30 | operating
+  31 | leases
+  32 | rental
+  33 | expenses,
+  34 | losses,
+  35 | depreciation
+  36 | and
+  37 | impairment
+  38 | of and losses
+  39 | from,
+  40 | operating
+  41 | leased
+  42 | assets and
+  43 | losses from
+  44 | (i) Interest expenses
+  45 | from deposits, debt
+  46 | securities issued,
+  47 | financial leases,
+  48 | and operating
+  49 | leases.
+  50 | (ii) Interest expenses
+  51 | from hedge
+  52 | accounting
+  53 | derivatives.
+  54 | (iii) Other interest
+  55 | expenses;
+  56 | (iv) Losses from
+  57 | leased assets.
+  58 | (v) Depreciation
+  59 | Rental expenses,
+  60 | depreciation and
+  61 | impairment of
+  62 | operating leased
+  63 | assets.
+  64 |  Schedule 15, 16
+

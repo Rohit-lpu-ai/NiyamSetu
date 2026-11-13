@@ -1,0 +1,161 @@
+{
+  "experiment": "E4 - table-induced false clause PROXY",
+  "generated_at": "2026-11-13T06:23:50+00:00",
+  "metric": "Share of clause_aware segments whose token content overlaps a PyMuPDF-detected table region by >= threshold. A PROXY for table-induced false clauses, NOT a false-positive rate: table detection is itself a heuristic, the intersection is textual rather than geometric, and a table row can legitimately be a clause. Flagged pages need manual confirmation.",
+  "overlap_threshold": 0.6,
+  "sensitivity_thresholds": [
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8
+  ],
+  "pooled": {
+    "clause_segments": 363,
+    "flagged_segments": 145,
+    "flagged_share": 0.39944903581267216,
+    "pages_with_detected_tables": 22
+  },
+  "versions": [
+    {
+      "version_id": "VER-6507f32084d73257",
+      "filename": "rbi_circular_lead-bank-delhi_v1.pdf",
+      "page_count": 2,
+      "pages_with_tables": [
+        1,
+        2
+      ],
+      "tables_detected": 2,
+      "clause_segments": 11,
+      "clause_segments_on_table_pages": 11,
+      "flagged_segments": 6,
+      "flagged_share_of_all_clause_segments": 0.5454545454545454,
+      "flagged_examples": [
+        "p1 [1] overlap=1.00 '1. Old Delhi Canara Bank 03E (to be read as ‘Numeral Zero, Numeral Three'",
+        "p1 [2] overlap=1.00 '2. Central North State Bank of India 03F (to be read as ‘Numeral Zero, N'",
+        "p1 [3] overlap=1.00 '3. Outer North Punjab National Bank 03G (to be read as ‘Numeral Zero, Nu'",
+        "p2 [1] overlap=1.00 '1. Central Canara Bank 358 State Bank of India'",
+        "p2 [2] overlap=1.00 '2. Northwest Punjab National Bank 362 Union Bank of India'",
+        "p2 [1] overlap=1.00 '1 Shahdara Bank of Baroda 369'"
+      ],
+      "sensitivity_by_threshold": {
+        "0.4": 7,
+        "0.5": 7,
+        "0.6": 6,
+        "0.7": 6,
+        "0.8": 6
+      },
+      "note": null
+    },
+    {
+      "version_id": "VER-7c5ad74aba9ebd62",
+      "filename": "rbi_directions_commercial-banks-forthcoming-2nd-amendment_v1.pdf",
+      "page_count": 10,
+      "pages_with_tables": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "tables_detected": 8,
+      "clause_segments": 49,
+      "clause_segments_on_table_pages": 42,
+      "flagged_segments": 37,
+      "flagged_share_of_all_clause_segments": 0.7551020408163265,
+      "flagged_examples": [
+        "p2 [(ii)] overlap=0.74 '(ii) Table 8 under Paragraph 29 shall be modified as under: Table 8 BI c'",
+        "p2 [(ILDC)] overlap=1.00 '(ILDC) Interest income Interest income from all financial assets and oth'",
+        "p2 [(i)] overlap=1.00 '(i) Interest income from loans and advances, assets available for sale, '",
+        "p2 [(ii)] overlap=1.00 '(ii) Interest income from hedge accounting derivatives.'",
+        "p2 [(iii)] overlap=1.00 '(iii) Other interest income.'",
+        "p2 [(iv)] overlap=0.93 '(iv) Profits from leased assets. Schedule 13, 14 BI constituents P&L or '",
+        "p3 [(i)] overlap=0.92 '(i) Interest expenses from deposits, debt securities issued, financial l'",
+        "p3 [(ii)] overlap=1.00 '(ii) Interest expenses from hedge accounting derivatives.'"
+      ],
+      "sensitivity_by_threshold": {
+        "0.4": 37,
+        "0.5": 37,
+        "0.6": 37,
+        "0.7": 36,
+        "0.8": 34
+      },
+      "note": null
+    },
+    {
+      "version_id": "VER-b8a13c2a7651eb84",
+      "filename": "rbi_master-circular_272mc_v1.pdf",
+      "page_count": 8,
+      "pages_with_tables": [
+        7,
+        8
+      ],
+      "tables_detected": 2,
+      "clause_segments": 49,
+      "clause_segments_on_table_pages": 23,
+      "flagged_segments": 23,
+      "flagged_share_of_all_clause_segments": 0.46938775510204084,
+      "flagged_examples": [
+        "p7 [Appendix] overlap=0.72 'Appendix Credit Facilities to Scheduled Castes / Scheduled Tribes List o'",
+        "p7 [1] overlap=1.00 '1. DBOD.No.BP.BC.172/C.464(R)-78 December 12, 1978 Role of Banks in Prom'",
+        "p7 [2] overlap=1.00 '2. DBOD.No.BP.BC.8/C.453(K)-Gen January 09, 1979 Agricultural Credit to '",
+        "p7 [3] overlap=1.00 '3. DBOD.No.BP.BC.45/C.469(86)-81 April 14, 1981 Credit Facilities to SC '",
+        "p7 [4] overlap=1.00 '4. DBOD.No.BP.BC.132/C.594-81 October 22, 1981 Recommendations of the Wo'",
+        "p7 [5] overlap=1.00 '5. RPCD.No.PS.BC.2/C.594-82 September 10, 1982 Credit Facilities to SC /'",
+        "p7 [6] overlap=0.90 '6. RPCD.No.PS.BC.9/C.594-82 November 05, 1982 Concessional Bank Finance '",
+        "p7 [7] overlap=1.00 '7. RPCD.No.PS.BC.4/C. 594-83 August 22, 1983 Credit Facilities to SC / S'"
+      ],
+      "sensitivity_by_threshold": {
+        "0.4": 23,
+        "0.5": 23,
+        "0.6": 23,
+        "0.7": 23,
+        "0.8": 22
+      },
+      "note": null
+    },
+    {
+      "version_id": "VER-fd6e1537c1a42574",
+      "filename": "rbi_directions_capital-adequacy-11th-amendment_v1.pdf",
+      "page_count": 37,
+      "pages_with_tables": [
+        2,
+        26,
+        27,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37
+      ],
+      "tables_detected": 10,
+      "clause_segments": 254,
+      "clause_segments_on_table_pages": 103,
+      "flagged_segments": 79,
+      "flagged_share_of_all_clause_segments": 0.3110236220472441,
+      "flagged_examples": [
+        "p26 [100] overlap=0.77 '100 Payable SFT 100 Total 153 Total 153 Total 204 Total 204 Repo of bank'",
+        "p26 [50] overlap=1.00 '50 Receivable SFT'",
+        "p26 [100] overlap=1.00 '100 Payable SFT'",
+        "p31 [4] overlap=0.64 '4 Adjustments for temporary exemption of central bank reserves (if appli'",
+        "p31 [5] overlap=0.86 '5 Adjustment for fiduciary assets recognised on the balance sheet pursua'",
+        "p31 [6] overlap=1.00 '6 Adjustments for regular -way purchases and sales of financial assets s'",
+        "p31 [8] overlap=0.67 '8 Adjustments for derivative financial instruments'",
+        "p31 [9] overlap=0.86 '9 Adjustment for securities financing transactions (i.e., repurchase agr'"
+      ],
+      "sensitivity_by_threshold": {
+        "0.4": 86,
+        "0.5": 85,
+        "0.6": 79,
+        "0.7": 67,
+        "0.8": 57
+      },
+      "note": null
+    }
+  ]
+}

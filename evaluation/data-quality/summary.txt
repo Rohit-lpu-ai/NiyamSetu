@@ -1,0 +1,28 @@
+NiyamSetu data-quality report (Experiment C)
+generated   : 2026-11-13T17:47:28+00:00
+processed   : data\processed
+versions    : 4
+checks run  : 13
+findings    : 14 (0 error, 1 warning, 13 info)
+
+WARNINGS - probably wrong, or worth a look:
+  [manifest] no document_group has two or more versions, so there is no version pair for Person 4's Compare feature to run on (data/README.md §2.4, CLAUDE.md D-10)
+
+INFO - counts and documented gaps:
+  [artifact_readability] every artefact in 4 version(s) parsed cleanly
+  [identifiers] all identifiers well-formed across 4 version(s)
+  [duplicate_files] 4 distinct checksum(s); no duplicate files
+  [near_duplicate_documents] no pair of 4 version(s) exceeded 90% word overlap
+  [pages] 57 page(s) across 4 version(s), all non-empty and in sequence
+  [metadata_completeness] optional metadata gaps, by field (a documented gap, not a defect) (2)
+      - issuing_department: 1 version(s)
+      - supersedes: 4 version(s)
+  [extraction_status] all 4 version(s) extracted with status 'ok'
+  [cleaning_reversibility] 151 removed line(s) across 4 version(s), all reversible and all with recorded evidence
+  [segment_provenance] all 501 segment(s) carry valid page provenance
+  [offset_resolution] all 501 segment(s) rebuild exactly from their stored offsets into normalized_text (whitespace-insensitive)
+  [segment_structure] segment structure is consistent in every file
+  [segmentation_consistency] both methods consistent on 4 version(s)
+  [manifest] 4 manifest row(s), 4 document_group(s), 0 group(s) with more than one version
+
+No check in this module repairs anything. Every finding above is a report only (data/README.md §8).

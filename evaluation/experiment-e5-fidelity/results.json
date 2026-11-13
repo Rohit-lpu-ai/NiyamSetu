@@ -1,0 +1,75 @@
+{
+  "experiment": "E5 - extraction fidelity (CER/WER)",
+  "generated_at": "2026-11-13T06:27:16+00:00",
+  "metric": "CER = levenshtein(reference, extracted) / len(reference), on NFKC-normalised whitespace-collapsed text. WER is the same over whitespace-separated words. Not clamped at 1.0: a flattened table can emit more text than the page contains.",
+  "pooled": {
+    "status": "PENDING - no transcriptions",
+    "pages_measured": 0,
+    "pages_pending": 5,
+    "cer": null,
+    "wer": null,
+    "note": "No page has been transcribed. CER and WER cannot be computed, and no estimate may be substituted."
+  },
+  "pages": [
+    {
+      "version_id": "VER-6507f32084d73257",
+      "page_number": 1,
+      "reason": "most Devanagari characters in the corpus",
+      "devanagari_chars": 355,
+      "short_line_ratio": 0.463,
+      "char_count": 2089,
+      "truth_file": "data\\annotations\\extraction\\VER-6507f32084d73257.page001.truth.txt",
+      "status": "PENDING - no transcription",
+      "cer": null,
+      "wer": null
+    },
+    {
+      "version_id": "VER-7c5ad74aba9ebd62",
+      "page_number": 3,
+      "reason": "most table-like (highest short-line ratio)",
+      "devanagari_chars": 0,
+      "short_line_ratio": 0.984,
+      "char_count": 815,
+      "truth_file": "data\\annotations\\extraction\\VER-7c5ad74aba9ebd62.page003.truth.txt",
+      "status": "PENDING - no transcription",
+      "cer": null,
+      "wer": null
+    },
+    {
+      "version_id": "VER-7c5ad74aba9ebd62",
+      "page_number": 6,
+      "reason": "second most table-like",
+      "devanagari_chars": 0,
+      "short_line_ratio": 0.984,
+      "char_count": 794,
+      "truth_file": "data\\annotations\\extraction\\VER-7c5ad74aba9ebd62.page006.truth.txt",
+      "status": "PENDING - no transcription",
+      "cer": null,
+      "wer": null
+    },
+    {
+      "version_id": "VER-fd6e1537c1a42574",
+      "page_number": 32,
+      "reason": "large prose page, as a contrast to the hard cases",
+      "devanagari_chars": 0,
+      "short_line_ratio": 0.058,
+      "char_count": 4423,
+      "truth_file": "data\\annotations\\extraction\\VER-fd6e1537c1a42574.page032.truth.txt",
+      "status": "PENDING - no transcription",
+      "cer": null,
+      "wer": null
+    },
+    {
+      "version_id": "VER-fd6e1537c1a42574",
+      "page_number": 35,
+      "reason": "large prose page, as a contrast to the hard cases",
+      "devanagari_chars": 0,
+      "short_line_ratio": 0.17,
+      "char_count": 3943,
+      "truth_file": "data\\annotations\\extraction\\VER-fd6e1537c1a42574.page035.truth.txt",
+      "status": "PENDING - no transcription",
+      "cer": null,
+      "wer": null
+    }
+  ]
+}

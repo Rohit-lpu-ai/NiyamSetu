@@ -1,0 +1,456 @@
+{
+  "experiment": "B - paragraph vs clause-aware segmentation",
+  "generated_at": "2026-11-13T06:25:49+00:00",
+  "tolerance_chars": 5,
+  "tolerance_note": "A predicted boundary matches an annotated one when it is on the same page and within this many characters. See the module docstring; a sensitivity table across tolerances is included per version.",
+  "inter_annotator_agreement": "PENDING - no second annotator",
+  "aggregate": {
+    "paragraph": {
+      "annotated_clauses": 18,
+      "predicted_segments": 19,
+      "matched": 16,
+      "exact_text_matches": 13,
+      "incorrect_merges": 2,
+      "incorrect_splits": 1,
+      "heading_opportunities": 1,
+      "heading_preserved": 0,
+      "numbering_opportunities": 14,
+      "numbering_preserved": 0,
+      "page_provenance_correct": 16,
+      "page_provenance_checked": 16,
+      "boundary_precision": 0.8421,
+      "boundary_recall": 0.8889,
+      "boundary_f1": 0.8649,
+      "exact_match_rate": 0.7222,
+      "heading_preservation_rate": 0.0,
+      "numbering_preservation_rate": 0.0,
+      "page_provenance_rate": 1.0
+    },
+    "clause_aware": {
+      "annotated_clauses": 18,
+      "predicted_segments": 24,
+      "matched": 15,
+      "exact_text_matches": 13,
+      "incorrect_merges": 2,
+      "incorrect_splits": 0,
+      "heading_opportunities": 0,
+      "heading_preserved": 0,
+      "numbering_opportunities": 14,
+      "numbering_preserved": 13,
+      "page_provenance_correct": 15,
+      "page_provenance_checked": 15,
+      "boundary_precision": 0.625,
+      "boundary_recall": 0.8333,
+      "boundary_f1": 0.7143,
+      "exact_match_rate": 0.7222,
+      "heading_preservation_rate": null,
+      "numbering_preservation_rate": 0.9286,
+      "page_provenance_rate": 1.0
+    },
+    "versions_scored": 2,
+    "pages_annotated": 4
+  },
+  "versions": [
+    {
+      "version_id": "VER-6507f32084d73257",
+      "document_title": "Re-organisation of districts in the NCT of Delhi - Assignment and Review of Lead Bank Responsibility",
+      "page_count": 2,
+      "annotated_pages": [
+        1,
+        2
+      ],
+      "annotation_file": "data\\annotations\\segmentation\\VER-6507f32084d73257.jsonl",
+      "annotator": "person1-claude-code",
+      "guideline_version": "1.0",
+      "review_status": [
+        "awaiting_owner_review"
+      ],
+      "annotated_clauses_total": 7,
+      "annotated_clauses_confident": 4,
+      "annotated_clauses_uncertain": 3,
+      "tolerance_chars": 5,
+      "headline_excluding_uncertain": {
+        "paragraph": {
+          "method": "paragraph",
+          "tolerance": 5,
+          "annotated_clauses": 4,
+          "predicted_segments": 4,
+          "matched": 2,
+          "boundary_precision": 0.5,
+          "boundary_recall": 0.5,
+          "boundary_f1": 0.5,
+          "exact_text_matches": 0,
+          "exact_match_rate": 0.0,
+          "missed_clause_indices": [
+            1,
+            6
+          ],
+          "spurious_segment_ordinals": [
+            1,
+            2
+          ],
+          "incorrect_merges": 2,
+          "incorrect_splits": 0,
+          "heading_opportunities": 0,
+          "heading_preserved": 0,
+          "numbering_opportunities": 1,
+          "numbering_preserved": 0,
+          "page_provenance_correct": 2,
+          "page_provenance_checked": 2,
+          "heading_preservation_rate": null,
+          "numbering_preservation_rate": 0.0,
+          "page_provenance_rate": 1.0
+        },
+        "clause_aware": {
+          "method": "clause_aware",
+          "tolerance": 5,
+          "annotated_clauses": 4,
+          "predicted_segments": 11,
+          "matched": 2,
+          "boundary_precision": 0.1818,
+          "boundary_recall": 0.5,
+          "boundary_f1": 0.2666,
+          "exact_text_matches": 0,
+          "exact_match_rate": 0.0,
+          "missed_clause_indices": [
+            1,
+            6
+          ],
+          "spurious_segment_ordinals": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "incorrect_merges": 2,
+          "incorrect_splits": 0,
+          "heading_opportunities": 0,
+          "heading_preserved": 0,
+          "numbering_opportunities": 1,
+          "numbering_preserved": 1,
+          "page_provenance_correct": 2,
+          "page_provenance_checked": 2,
+          "heading_preservation_rate": null,
+          "numbering_preservation_rate": 1.0,
+          "page_provenance_rate": 1.0
+        }
+      },
+      "including_uncertain": {
+        "paragraph": {
+          "method": "paragraph",
+          "tolerance": 5,
+          "annotated_clauses": 7,
+          "predicted_segments": 4,
+          "matched": 4,
+          "boundary_precision": 1.0,
+          "boundary_recall": 0.5714,
+          "boundary_f1": 0.7272,
+          "exact_text_matches": 2,
+          "exact_match_rate": 0.2857,
+          "missed_clause_indices": [
+            1,
+            2,
+            6
+          ],
+          "spurious_segment_ordinals": [],
+          "incorrect_merges": 2,
+          "incorrect_splits": 0,
+          "heading_opportunities": 0,
+          "heading_preserved": 0,
+          "numbering_opportunities": 3,
+          "numbering_preserved": 0,
+          "page_provenance_correct": 4,
+          "page_provenance_checked": 4,
+          "heading_preservation_rate": null,
+          "numbering_preservation_rate": 0.0,
+          "page_provenance_rate": 1.0
+        },
+        "clause_aware": {
+          "method": "clause_aware",
+          "tolerance": 5,
+          "annotated_clauses": 7,
+          "predicted_segments": 11,
+          "matched": 5,
+          "boundary_precision": 0.4545,
+          "boundary_recall": 0.7143,
+          "boundary_f1": 0.5555,
+          "exact_text_matches": 0,
+          "exact_match_rate": 0.0,
+          "missed_clause_indices": [
+            1,
+            6
+          ],
+          "spurious_segment_ordinals": [
+            2,
+            3,
+            4,
+            6,
+            7,
+            9
+          ],
+          "incorrect_merges": 2,
+          "incorrect_splits": 3,
+          "heading_opportunities": 0,
+          "heading_preserved": 0,
+          "numbering_opportunities": 4,
+          "numbering_preserved": 4,
+          "page_provenance_correct": 5,
+          "page_provenance_checked": 5,
+          "heading_preservation_rate": null,
+          "numbering_preservation_rate": 1.0,
+          "page_provenance_rate": 1.0
+        }
+      },
+      "tolerance_sensitivity": {
+        "paragraph": {
+          "0": {
+            "boundary_precision": 0.5,
+            "boundary_recall": 0.5,
+            "boundary_f1": 0.5
+          },
+          "2": {
+            "boundary_precision": 0.5,
+            "boundary_recall": 0.5,
+            "boundary_f1": 0.5
+          },
+          "5": {
+            "boundary_precision": 0.5,
+            "boundary_recall": 0.5,
+            "boundary_f1": 0.5
+          },
+          "20": {
+            "boundary_precision": 0.5,
+            "boundary_recall": 0.5,
+            "boundary_f1": 0.5
+          },
+          "80": {
+            "boundary_precision": 0.5,
+            "boundary_recall": 0.5,
+            "boundary_f1": 0.5
+          }
+        },
+        "clause_aware": {
+          "0": {
+            "boundary_precision": 0.1818,
+            "boundary_recall": 0.5,
+            "boundary_f1": 0.2666
+          },
+          "2": {
+            "boundary_precision": 0.1818,
+            "boundary_recall": 0.5,
+            "boundary_f1": 0.2666
+          },
+          "5": {
+            "boundary_precision": 0.1818,
+            "boundary_recall": 0.5,
+            "boundary_f1": 0.2666
+          },
+          "20": {
+            "boundary_precision": 0.1818,
+            "boundary_recall": 0.5,
+            "boundary_f1": 0.2666
+          },
+          "80": {
+            "boundary_precision": 0.1818,
+            "boundary_recall": 0.5,
+            "boundary_f1": 0.2666
+          }
+        }
+      },
+      "inter_annotator_agreement": "PENDING - no second annotator"
+    },
+    {
+      "version_id": "VER-b8a13c2a7651eb84",
+      "document_title": "Master Circular - Credit facilities to Scheduled Castes (SCs) & Scheduled Tribes (STs)",
+      "page_count": 8,
+      "annotated_pages": [
+        2,
+        3
+      ],
+      "annotation_file": "data\\annotations\\segmentation\\VER-b8a13c2a7651eb84.jsonl",
+      "annotator": "person1-claude-code",
+      "guideline_version": "1.0",
+      "review_status": [
+        "awaiting_owner_review"
+      ],
+      "annotated_clauses_total": 14,
+      "annotated_clauses_confident": 14,
+      "annotated_clauses_uncertain": 0,
+      "tolerance_chars": 5,
+      "headline_excluding_uncertain": {
+        "paragraph": {
+          "method": "paragraph",
+          "tolerance": 5,
+          "annotated_clauses": 14,
+          "predicted_segments": 15,
+          "matched": 14,
+          "boundary_precision": 0.9333,
+          "boundary_recall": 1.0,
+          "boundary_f1": 0.9655,
+          "exact_text_matches": 13,
+          "exact_match_rate": 0.9286,
+          "missed_clause_indices": [],
+          "spurious_segment_ordinals": [
+            10
+          ],
+          "incorrect_merges": 0,
+          "incorrect_splits": 1,
+          "heading_opportunities": 1,
+          "heading_preserved": 0,
+          "numbering_opportunities": 13,
+          "numbering_preserved": 0,
+          "page_provenance_correct": 14,
+          "page_provenance_checked": 14,
+          "heading_preservation_rate": 0.0,
+          "numbering_preservation_rate": 0.0,
+          "page_provenance_rate": 1.0
+        },
+        "clause_aware": {
+          "method": "clause_aware",
+          "tolerance": 5,
+          "annotated_clauses": 14,
+          "predicted_segments": 13,
+          "matched": 13,
+          "boundary_precision": 1.0,
+          "boundary_recall": 0.9286,
+          "boundary_f1": 0.963,
+          "exact_text_matches": 13,
+          "exact_match_rate": 0.9286,
+          "missed_clause_indices": [
+            0
+          ],
+          "spurious_segment_ordinals": [],
+          "incorrect_merges": 0,
+          "incorrect_splits": 0,
+          "heading_opportunities": 0,
+          "heading_preserved": 0,
+          "numbering_opportunities": 13,
+          "numbering_preserved": 12,
+          "page_provenance_correct": 13,
+          "page_provenance_checked": 13,
+          "heading_preservation_rate": null,
+          "numbering_preservation_rate": 0.9231,
+          "page_provenance_rate": 1.0
+        }
+      },
+      "including_uncertain": {
+        "paragraph": {
+          "method": "paragraph",
+          "tolerance": 5,
+          "annotated_clauses": 14,
+          "predicted_segments": 15,
+          "matched": 14,
+          "boundary_precision": 0.9333,
+          "boundary_recall": 1.0,
+          "boundary_f1": 0.9655,
+          "exact_text_matches": 13,
+          "exact_match_rate": 0.9286,
+          "missed_clause_indices": [],
+          "spurious_segment_ordinals": [
+            10
+          ],
+          "incorrect_merges": 0,
+          "incorrect_splits": 1,
+          "heading_opportunities": 1,
+          "heading_preserved": 0,
+          "numbering_opportunities": 13,
+          "numbering_preserved": 0,
+          "page_provenance_correct": 14,
+          "page_provenance_checked": 14,
+          "heading_preservation_rate": 0.0,
+          "numbering_preservation_rate": 0.0,
+          "page_provenance_rate": 1.0
+        },
+        "clause_aware": {
+          "method": "clause_aware",
+          "tolerance": 5,
+          "annotated_clauses": 14,
+          "predicted_segments": 13,
+          "matched": 13,
+          "boundary_precision": 1.0,
+          "boundary_recall": 0.9286,
+          "boundary_f1": 0.963,
+          "exact_text_matches": 13,
+          "exact_match_rate": 0.9286,
+          "missed_clause_indices": [
+            0
+          ],
+          "spurious_segment_ordinals": [],
+          "incorrect_merges": 0,
+          "incorrect_splits": 0,
+          "heading_opportunities": 0,
+          "heading_preserved": 0,
+          "numbering_opportunities": 13,
+          "numbering_preserved": 12,
+          "page_provenance_correct": 13,
+          "page_provenance_checked": 13,
+          "heading_preservation_rate": null,
+          "numbering_preservation_rate": 0.9231,
+          "page_provenance_rate": 1.0
+        }
+      },
+      "tolerance_sensitivity": {
+        "paragraph": {
+          "0": {
+            "boundary_precision": 0.9333,
+            "boundary_recall": 1.0,
+            "boundary_f1": 0.9655
+          },
+          "2": {
+            "boundary_precision": 0.9333,
+            "boundary_recall": 1.0,
+            "boundary_f1": 0.9655
+          },
+          "5": {
+            "boundary_precision": 0.9333,
+            "boundary_recall": 1.0,
+            "boundary_f1": 0.9655
+          },
+          "20": {
+            "boundary_precision": 0.9333,
+            "boundary_recall": 1.0,
+            "boundary_f1": 0.9655
+          },
+          "80": {
+            "boundary_precision": 0.9333,
+            "boundary_recall": 1.0,
+            "boundary_f1": 0.9655
+          }
+        },
+        "clause_aware": {
+          "0": {
+            "boundary_precision": 1.0,
+            "boundary_recall": 0.9286,
+            "boundary_f1": 0.963
+          },
+          "2": {
+            "boundary_precision": 1.0,
+            "boundary_recall": 0.9286,
+            "boundary_f1": 0.963
+          },
+          "5": {
+            "boundary_precision": 1.0,
+            "boundary_recall": 0.9286,
+            "boundary_f1": 0.963
+          },
+          "20": {
+            "boundary_precision": 1.0,
+            "boundary_recall": 0.9286,
+            "boundary_f1": 0.963
+          },
+          "80": {
+            "boundary_precision": 1.0,
+            "boundary_recall": 0.9286,
+            "boundary_f1": 0.963
+          }
+        }
+      },
+      "inter_annotator_agreement": "PENDING - no second annotator"
+    }
+  ]
+}

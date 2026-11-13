@@ -1,0 +1,92 @@
+label,disposition,occurrences,versions,pages,position,pipeline_reason,pipeline_evidence,line_text
+,removed,36,VER-fd6e1537c1a42574,2-37 (36 pages),line 0,repeated_header,"repeated at top position 0 on 36/37 pages (97%, threshold 90%)",Reserve Bank of India (Commercial Banks – Prudential Norms
+,removed,36,VER-fd6e1537c1a42574,2-37 (36 pages),line 1,repeated_header,"repeated at top position 1 on 36/37 pages (97%, threshold 90%)","on Capital Adequacy) Eleventh Amendment Directions, 2026"
+,removed,3,VER-7c5ad74aba9ebd62;VER-b8a13c2a7651eb84;VER-fd6e1537c1a42574,2,lines 0-2,printed_page_number,bare number 2 at top of page 2; matches the physical page number,2
+,removed,3,VER-7c5ad74aba9ebd62;VER-b8a13c2a7651eb84;VER-fd6e1537c1a42574,3,lines 0-2,printed_page_number,bare number 3 at top of page 3; matches the physical page number,3
+,removed,3,VER-7c5ad74aba9ebd62;VER-b8a13c2a7651eb84;VER-fd6e1537c1a42574,4,lines 0-2,printed_page_number,bare number 4 at top of page 4; matches the physical page number,4
+,removed,3,VER-7c5ad74aba9ebd62;VER-b8a13c2a7651eb84;VER-fd6e1537c1a42574,5,lines 0-2,printed_page_number,bare number 5 at top of page 5; matches the physical page number,5
+,removed,3,VER-7c5ad74aba9ebd62;VER-b8a13c2a7651eb84;VER-fd6e1537c1a42574,6,lines 0-2,printed_page_number,bare number 6 at top of page 6; matches the physical page number,6
+,removed,3,VER-7c5ad74aba9ebd62;VER-b8a13c2a7651eb84;VER-fd6e1537c1a42574,7,lines 0-2,printed_page_number,bare number 7 at top of page 7; matches the physical page number,7
+,removed,3,VER-7c5ad74aba9ebd62;VER-b8a13c2a7651eb84;VER-fd6e1537c1a42574,8,lines 0-2,printed_page_number,bare number 8 at top of page 8; matches the physical page number,8
+,removed,2,VER-6507f32084d73257,"1,2",line 2,repeated_header,"repeated at top position 2 on 2/2 pages (100%, threshold 90%)", भारतीय �रज़वर् बैंक
+,removed,2,VER-7c5ad74aba9ebd62;VER-fd6e1537c1a42574,10,lines 0-2,printed_page_number,bare number 10 at top of page 10; matches the physical page number,10
+,removed,2,VER-7c5ad74aba9ebd62;VER-fd6e1537c1a42574,9,lines 0-2,printed_page_number,bare number 9 at top of page 9; matches the physical page number,9
+,removed,2,VER-6507f32084d73257,"1,2",line 12,repeated_header,"repeated at top position 11 on 2/2 pages (100%, threshold 90%)","Caution: RBI never sends mails, SMSs or makes calls asking for personal information like bank account details, passwords, etc. It neve r keeps"
+,removed,2,VER-6507f32084d73257,"1,2",line 7,repeated_header,"repeated at top position 6 on 2/2 pages (100%, threshold 90%)","Financial Inclusion & Development Dept, Central Office,10th Floor, Central Office Building, Shahid Bhagat Singh Marg, P.B.No.10014, Mumbai-1"
+,removed,2,VER-6507f32084d73257,"1,2",line 3,repeated_header,"repeated at top position 3 on 2/2 pages (100%, threshold 90%)",______________________ RESERVE BANK OF INDIA________________________
+,removed,2,VER-6507f32084d73257,"1,2",line 13,repeated_header,"repeated at top position 12 on 2/2 pages (100%, threshold 90%)",or offers funds to anyone. Please do not respond in any manner to such offers.
+,removed,2,VER-6507f32084d73257,"1,2",line 4,repeated_header,"repeated at top position 4 on 2/2 pages (100%, threshold 90%)",www.rbi.org.in
+,removed,2,VER-6507f32084d73257,"1,2",line 8,repeated_header,"repeated at top position 7 on 2/2 pages (100%, threshold 90%)",टेल� Tel:022-22601000 फै क्सः 91-22-22621011/22610943/22610948 ई-मेल: cgmincfidd@rbi.org.in
+,removed,2,VER-6507f32084d73257,"1,2",line 1,repeated_header,"repeated at top position 1 on 2/2 pages (100%, threshold 90%)",बेटी पढ़ाओ
+,removed,2,VER-6507f32084d73257,"1,2",line 0,repeated_header,"repeated at top position 0 on 2/2 pages (100%, threshold 90%)",बेटी बचाओ
+,removed,2,VER-6507f32084d73257,"1,2",line 11,repeated_header,"repeated at top position 10 on 2/2 pages (100%, threshold 90%)","यह धन रखने या देने का प्रस् ताव भी नह�ं करता है। ऐसे प्रस् तावों का �कसी भी तर�के से जवाब मत द�िजए।"""
+,removed,2,VER-6507f32084d73257,"1,2",line 10,repeated_header,"repeated at top position 9 on 2/2 pages (100%, threshold 90%)","“चेतावनी: -मेल �रज़वर् बैंक द्वारा डाक, एसएमएस या फोन कॉल के ज�रए �कसी क� भी व् यिक्तगत जानकार� जैसे बैंक के खाते का ब् यौरा, पासवडर् आ�द नह�ं मांगी जाती है।"
+,removed,2,VER-6507f32084d73257,"1,2",line 6,repeated_header,"repeated at top position 5 on 2/2 pages (100%, threshold 90%)","� व त् त ीय समावेशन और �वकास �वभाग, केन्द्र�य कायार्लय,10 वी मंिजल, क ेंद्र�य कायार्लय भवन, शह�द भगत�संह मागर्,पोस्ट बॉक्स सं. 10014, मुंबई -400001"
+,removed,2,VER-6507f32084d73257,"1,2",line 9,repeated_header,"repeated at top position 8 on 2/2 pages (100%, threshold 90%)","�हंद� आसान है, इसका प्रयोग बढ़ाइए।"
+,removed,1,VER-b8a13c2a7651eb84,1,line 2,printed_page_number,bare number 1 at top of page 1; matches the physical page number,1
+,removed,1,VER-fd6e1537c1a42574,11,line 2,printed_page_number,bare number 11 at top of page 11; matches the physical page number,11
+,removed,1,VER-fd6e1537c1a42574,12,line 2,printed_page_number,bare number 12 at top of page 12; matches the physical page number,12
+,removed,1,VER-fd6e1537c1a42574,13,line 2,printed_page_number,bare number 13 at top of page 13; matches the physical page number,13
+,removed,1,VER-fd6e1537c1a42574,14,line 2,printed_page_number,bare number 14 at top of page 14; matches the physical page number,14
+,removed,1,VER-fd6e1537c1a42574,15,line 2,printed_page_number,bare number 15 at top of page 15; matches the physical page number,15
+,removed,1,VER-fd6e1537c1a42574,16,line 2,printed_page_number,bare number 16 at top of page 16; matches the physical page number,16
+,removed,1,VER-fd6e1537c1a42574,17,line 2,printed_page_number,bare number 17 at top of page 17; matches the physical page number,17
+,removed,1,VER-fd6e1537c1a42574,18,line 2,printed_page_number,bare number 18 at top of page 18; matches the physical page number,18
+,removed,1,VER-fd6e1537c1a42574,19,line 2,printed_page_number,bare number 19 at top of page 19; matches the physical page number,19
+,removed,1,VER-fd6e1537c1a42574,20,line 2,printed_page_number,bare number 20 at top of page 20; matches the physical page number,20
+,removed,1,VER-fd6e1537c1a42574,21,line 2,printed_page_number,bare number 21 at top of page 21; matches the physical page number,21
+,removed,1,VER-fd6e1537c1a42574,22,line 2,printed_page_number,bare number 22 at top of page 22; matches the physical page number,22
+,removed,1,VER-fd6e1537c1a42574,23,line 2,printed_page_number,bare number 23 at top of page 23; matches the physical page number,23
+,removed,1,VER-fd6e1537c1a42574,24,line 2,printed_page_number,bare number 24 at top of page 24; matches the physical page number,24
+,removed,1,VER-fd6e1537c1a42574,25,line 2,printed_page_number,bare number 25 at top of page 25; matches the physical page number,25
+,removed,1,VER-fd6e1537c1a42574,26,line 2,printed_page_number,bare number 26 at top of page 26; matches the physical page number,26
+,removed,1,VER-fd6e1537c1a42574,27,line 2,printed_page_number,bare number 27 at top of page 27; matches the physical page number,27
+,removed,1,VER-fd6e1537c1a42574,28,line 2,printed_page_number,bare number 28 at top of page 28; matches the physical page number,28
+,removed,1,VER-fd6e1537c1a42574,29,line 2,printed_page_number,bare number 29 at top of page 29; matches the physical page number,29
+,removed,1,VER-fd6e1537c1a42574,30,line 2,printed_page_number,bare number 30 at top of page 30; matches the physical page number,30
+,removed,1,VER-fd6e1537c1a42574,31,line 2,printed_page_number,bare number 31 at top of page 31; matches the physical page number,31
+,removed,1,VER-fd6e1537c1a42574,32,line 2,printed_page_number,bare number 32 at top of page 32; matches the physical page number,32
+,removed,1,VER-fd6e1537c1a42574,33,line 2,printed_page_number,bare number 33 at top of page 33; matches the physical page number,33
+,removed,1,VER-fd6e1537c1a42574,34,line 2,printed_page_number,bare number 34 at top of page 34; matches the physical page number,34
+,removed,1,VER-fd6e1537c1a42574,35,line 2,printed_page_number,bare number 35 at top of page 35; matches the physical page number,35
+,removed,1,VER-fd6e1537c1a42574,36,line 2,printed_page_number,bare number 36 at top of page 36; matches the physical page number,36
+,removed,1,VER-fd6e1537c1a42574,37,line 2,printed_page_number,bare number 37 at top of page 37; matches the physical page number,37
+,retained_edge,7,VER-7c5ad74aba9ebd62,3-9 (7 pages),line 1,,,BI
+,retained_edge,7,VER-7c5ad74aba9ebd62,3-9 (7 pages),line 3,,,P&L or
+,retained_edge,7,VER-7c5ad74aba9ebd62,3-9 (7 pages),line 4,,,balance
+,retained_edge,7,VER-7c5ad74aba9ebd62,3-9 (7 pages),line 2,,,constituents
+,retained_edge,3,VER-7c5ad74aba9ebd62;VER-b8a13c2a7651eb84;VER-fd6e1537c1a42574,1,lines 3-4,,,भारतीय �रज़वर् बैंक
+,retained_edge,2,VER-7c5ad74aba9ebd62,"2,4",lines 47-63,,," Schedule 13, 14"
+,retained_edge,2,VER-7c5ad74aba9ebd62;VER-fd6e1537c1a42574,"10,29",line 13,,,(Sunil T S Nair)
+,retained_edge,2,VER-7c5ad74aba9ebd62;VER-fd6e1537c1a42574,"10,29",line 14,,,Chief General Manager
+,retained_edge,2,VER-fd6e1537c1a42574,26,lines 41-43,,,SFT
+,retained_edge,2,VER-7c5ad74aba9ebd62,"5,6",lines 58-63,,,Schedule 14
+,retained_edge,2,VER-7c5ad74aba9ebd62,"2,3",line 62,,,assets.
+,retained_edge,1,VER-b8a13c2a7651eb84,1,line 34,,," “चेतावनी: -द्वारा बैंक �रज़वर् मेल डाक, एसएमएस या फोन कॉल के ज�रए िकसी की भी व् य��गत जानकारी जैसे बैंक के खाते"
+,retained_edge,1,VER-fd6e1537c1a42574,1,line 32,,,(2) The minimum leverage ratio for a domestic systemically important bank (D-SIB)
+,retained_edge,1,VER-6507f32084d73257,1,line 28,,,"03G (to be read as ‘Numeral Zero, Numeral"
+,retained_edge,1,VER-6507f32084d73257,1,line 26,,,3. Outer North Punjab National
+,retained_edge,1,VER-6507f32084d73257,1,line 27,,,Bank
+,retained_edge,1,VER-b8a13c2a7651eb84,1,line 37,,,"Caution: RBI never sends mails, SMSs or makes calls asking for personal information like bank account details,"
+,retained_edge,1,VER-7c5ad74aba9ebd62,1,line 2,,,"Department of Regulation, Central Office, Central Office Building, 12th/ 13th Floor, Shahid Bhagat Singh Marg, Fort, Mumbai – 400001"
+,retained_edge,1,VER-fd6e1537c1a42574,1,line 31,,,Exposure Measure
+,retained_edge,1,VER-6507f32084d73257,1,line 3,,,"FIDD.CO.LBS.BC.No.12/02.08.001/2026-27 October 26, 2026"
+,retained_edge,1,VER-fd6e1537c1a42574,1,line 30,,,Leverage Ratio = Capital Measure
+,retained_edge,1,VER-6507f32084d73257,1,line 2,,,RBI/2026-27/300
+,retained_edge,1,VER-6507f32084d73257,1,line 4,,,The Chairman / Managing Director & Chief Executive Officer
+,retained_edge,1,VER-6507f32084d73257,1,line 29,,,Three and Alphabet G’)
+,retained_edge,1,VER-fd6e1537c1a42574,1,line 4,,,_________________________ RESERVE BANK OF INDIA ______________________
+,retained_edge,1,VER-b8a13c2a7651eb84,1,line 4,,,_________________________ RESERVE BANK OF INDIA___________________________
+,retained_edge,1,VER-7c5ad74aba9ebd62,1,line 29,,,along with the schedules of the prescribed financial statements format is
+,retained_edge,1,VER-7c5ad74aba9ebd62,1,line 31,,,items of the prescribed financial statements format shall be given in due course.
+,retained_edge,1,VER-b8a13c2a7651eb84,1,line 38,,,"passwords, etc. It never keeps or offers funds to anyone. Please do not respond in any manner to such offers."
+,retained_edge,1,VER-7c5ad74aba9ebd62,1,line 30,,,provided in Table VIII. An indicative mapping of BI items with schedules and line
+,retained_edge,1,VER-fd6e1537c1a42574,1,line 33,,,shall be 4 per cent and 3.5 per cent for other banks. Branch of a global
+,retained_edge,1,VER-fd6e1537c1a42574,1,line 34,,,systemically important bank (G -SIB) in India (hereinafter referred to as ‘G -SIB
+,retained_edge,1,VER-b8a13c2a7651eb84,1,line 35,,,"का ब् य ौरा, पासवडर् आिद नहीं मांगी जाती है। यह धन रखने या देने का प्रस् ताव भी नहीं करता है। ऐसे प्रस् तावों का िकसी भी त र ी के"
+,retained_edge,1,VER-7c5ad74aba9ebd62,1,line 1,,,"टेलीफोन/ Tel No: 22661602, 22601000 फै �/ Fax No: 022-2270 5691"
+,retained_edge,1,VER-fd6e1537c1a42574,1,line 1,,,बेटी पढ़ाओ
+,retained_edge,1,VER-fd6e1537c1a42574,1,line 0,,,बेटी बचाओ
+,retained_edge,1,VER-b8a13c2a7651eb84,1,line 36,,,"से जवाब मत दीिजए।"""
+,retained_edge,1,VER-7c5ad74aba9ebd62,1,line 0,,,"िविनयमन िवभाग, कें द्र ी य कायार्लय, कें द्र ी य कायार्लय भवन, 12वीं/ 13वीं मंिज़ल, शहीद भगत िसंह मागर्, फोटर्, मुंबई - 400001"
+,retained_edge,1,VER-7c5ad74aba9ebd62,1,line 28,,,"“The description for each of these constituents of the BI (i.e., ILDC, SC, and FC)"

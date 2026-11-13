@@ -1,0 +1,95 @@
+# NiyamSetu backend - Phase 1 (PDF ingestion) + Phase 2 (segmentation)
+#
+# Deliberately minimal. Every line is pinned so the five of us run the same
+# code. Add a package only with a written justification (CLAUDE.md §24 rule 5),
+# and pin it here in the same commit that starts using it.
+#
+# Install into a project virtualenv, not globally:
+#   python -m venv .venv
+#   .venv\Scripts\activate          (Windows)
+#   source .venv/bin/activate       (macOS / Linux)
+#   pip install -r requirements.txt
+
+# --- runtime: the production extraction path ---
+# Pure-Python PDF reading. Gives per-page access, which is what page-level
+# provenance depends on, with no compiled extension. This is the library
+# `extract_pdf` actually uses, and Experiment A confirmed it should stay the
+# default. See backend/docs/pdf-extraction.md and
+# evaluation/experiment-a-extractor-comparison.md.
+pypdf==6.18.1
+
+# --- evaluation only: Experiment A extractor comparison ---
+# Approved by the project owner for the Experiment A comparison
+# (CLAUDE.md §15). Imported *lazily*, only by
+# backend/app/document_processing/extractor_backends.py, so the production
+# ingestion path still runs with pypdf alone and the document_processing
+# package stays importable without them.
+#
+# Cost of these two lines, measured: the virtualenv grows from ~25 MB to
+# ~314 MB. PyMuPDF 2.1 is 105 MB on its own and pulls pymupdf-layout,
+# pymupdf4llm and onnxruntime (48 MB) as hard dependencies; pdfplumber pulls
+# pdfminer.six, Pillow and pypdfium2. That footprint is recorded here because
+# it is the main argument against making either one the default extractor for a
+# five-machine student project.
+#
+# Experiment A's verdict (see the report): pypdf stays the default page-text
+# extractor; PyMuPDF is retained for its table API, which is the one capability
+# pypdf genuinely lacks.
+pymupdf==2.1
+pdfplumber==0.11.10
+
+# --- development / test ---
+pytest==8.3.4
+
+# --- NOT dependencies of this phase ---
+# fastapi, uvicorn, psycopg2-binary, SQLAlchemy and alembic are present in some
+# team members' *global* Python installs. They are not used by Phase 1 or 2 and
+# are not pinned here. They will be added, pinned, when Phase 3 (PostgreSQL)
+# and Phase 4 (FastAPI) actually need them.
+#
+# streamlit is NOT pinned here either, deliberately. The developer preview
+# frontend in preview_app/ is a throwaway internal tool, not part of the
+# backend deliverable, so its dependency lives in preview_app/requirements.txt
+# and the backend stays installable and testable without it.
+#
+# No OCR packages (pytesseract, easyocr): scanned PDFs are excluded from the
+# MVP by an approved decision (CLAUDE.md D-6).
+
+# --- Phase 3: PostgreSQL persistence ---
+# Added 2026-11-12, when Phase 3 actually started. D-8 is answered: PostgreSQL
+# 18 is installed and its service is running on this machine, so the standing
+# stop condition's database precondition is met. D-11 is answered and verified
+# (offsets are into normalized_text; see backend/docs/phase3-postgresql.md §7).
+#
+# SQLAlchemy Core only -- no ORM, no Alembic (D-4, confirmed by the owner).
+# Every statement in backend/app/db/ is SQL executed through text() with bound
+# parameters, so the schema has exactly one definition (the .sql migrations)
+# and there is no second Python description of it to drift.
+SQLAlchemy==2.0.46
+
+# The PostgreSQL driver. psycopg 3 rather than psycopg2-binary: it is the
+# current generation, ships prebuilt wheels on Windows (which matters for a
+# five-machine student team), and SQLAlchemy addresses it as the
+# 'postgresql+psycopg://' dialect.
+psycopg[binary]==3.2.12
+
+# --- Phase 4: the FastAPI layer ---
+# Added 2026-11-12 with Work Package 2. The API contains no extraction,
+# cleaning, segmentation or persistence logic of its own -- it delegates to
+# document_processing and db -- so these are a transport dependency, not a
+# second pipeline.
+fastapi==0.122.0
+
+# Pulled in transitively by fastapi (starlette, pydantic) and by the upload
+# path (python-multipart, for multipart/form-data). Pinned here because
+# POST /api/documents/ingest does not work without it and a transitive pin is
+# not a promise.
+python-multipart==0.0.33
+
+# The ASGI server. Dev/run dependency: `python -m uvicorn backend.app.api.main:app`.
+uvicorn==0.54.0
+
+# --- development / test ---
+# fastapi.testclient needs httpx. Test-only, but unpinned it silently breaks
+# every API test on a version bump.
+httpx==0.28.1

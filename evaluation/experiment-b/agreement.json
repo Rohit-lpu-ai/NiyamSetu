@@ -1,0 +1,57 @@
+{
+  "experiment": "E1 - inter-annotator agreement on segmentation boundaries",
+  "generated_at": "2026-11-13T06:18:12+00:00",
+  "tolerance_chars": 5,
+  "metric": "Jaccard over matched boundaries: matched / (|A| + |B| - matched). Not Cohen's kappa - boundary detection has no fixed category set and no defensible chance model; see the module docstring.",
+  "pooled": {
+    "status": "PENDING - no second annotator",
+    "versions_measured": 0,
+    "versions_pending": 2,
+    "boundary_agreement": null,
+    "note": "No second annotator has completed any version. No agreement figure exists, and none may be quoted."
+  },
+  "versions": [
+    {
+      "version_id": "VER-6507f32084d73257",
+      "status": "PENDING - no second annotator",
+      "tolerance_chars": 5,
+      "annotator_primary": null,
+      "annotator_secondary": null,
+      "pages_primary": [],
+      "pages_secondary": [],
+      "pages_compared": [],
+      "boundaries_primary": 0,
+      "boundaries_secondary": 0,
+      "matched_boundaries": 0,
+      "union_boundaries": 0,
+      "boundary_agreement": null,
+      "clause_number_agreement": null,
+      "clause_number_comparable": 0,
+      "boundaries_only_primary": [],
+      "boundaries_only_secondary": [],
+      "clause_number_disagreements": [],
+      "note": "VER-6507f32084d73257.annotator2.jsonl does not exist. A second annotator must complete it; see data/annotations/independent-review/README.md"
+    },
+    {
+      "version_id": "VER-b8a13c2a7651eb84",
+      "status": "PENDING - no second annotator",
+      "tolerance_chars": 5,
+      "annotator_primary": null,
+      "annotator_secondary": null,
+      "pages_primary": [],
+      "pages_secondary": [],
+      "pages_compared": [],
+      "boundaries_primary": 0,
+      "boundaries_secondary": 0,
+      "matched_boundaries": 0,
+      "union_boundaries": 0,
+      "boundary_agreement": null,
+      "clause_number_agreement": null,
+      "clause_number_comparable": 0,
+      "boundaries_only_primary": [],
+      "boundaries_only_secondary": [],
+      "clause_number_disagreements": [],
+      "note": "VER-b8a13c2a7651eb84.annotator2.jsonl does not exist. A second annotator must complete it; see data/annotations/independent-review/README.md"
+    }
+  ]
+}

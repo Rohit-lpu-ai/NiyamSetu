@@ -1,0 +1,112 @@
+NiyamSetu - Experiment B independent annotation worksheet
+======================================================================
+version_id : VER-b8a13c2a7651eb84
+title      : Master Circular - Credit facilities to Scheduled Castes (SCs) & Scheduled Tribes (STs)
+pages      : 2, 3
+
+HOW TO USE THIS FILE
+--------------------
+1. Read data/annotations/README.md first. It is the guideline, and it
+   defines what counts as a clause boundary. Do not skip it.
+2. This worksheet deliberately does NOT show you the system's output.
+   Mark the boundaries you think are correct, from this text and the
+   source PDF in data/raw/.
+3. For every clause you identify, write one JSONL record as specified
+   in the guideline (§4) into:
+       data/annotations/segmentation/VER-b8a13c2a7651eb84.annotator2.jsonl
+   Set "annotator" to your own name, not person1.
+4. Mark "uncertain": true wherever you genuinely cannot decide, and
+   say why in "note". Uncertain records are reported separately and
+   are more useful than a confident guess.
+5. Where the guideline does not answer a case, do NOT invent a rule.
+   Record the disagreement; the guideline gets amended (§7).
+
+Text below is the pipeline's normalised page text -- the same text the
+offsets are measured against, so your markers will line up. Line
+numbers are for discussion only; they are not part of a record.
+
+======================================================================
+--- PAGE 2 ---
+======================================================================
+   0 | 
+   1 | 
+   2 | 2
+   3 | 
+   4 | Master Circular - Credit Facilities to Scheduled Castes (SCs) & Scheduled Tribes
+   5 | (STs)
+   6 | 
+   7 | Banks should take the measures indicated below to step up their advances to
+   8 | SCs/STs.
+   9 | 
+  10 | 1. Planning Process
+  11 | 
+  12 | 1.1 The District Level Consultative Committees formed under the Lead Bank Scheme
+  13 | should continue to be the principal mechanism of co- ordination between banks and
+  14 | development agencies in this regard. The district credit plans formulated by the Lead
+  15 | Banks should clearly indicate the linkage of credit with employment and development
+  16 | schemes.
+  17 | 
+  18 | 1.2 Banks will have to establish closer liaison with the District Industries Centres,
+  19 | which have been set up in different districts for promoting self-employment.
+  20 | 
+  21 | 1.3 At the block level, a certain weightage is to be given to SCs/STs in the planning
+  22 | process. Accordingly, the credit planning should be weighted in their favour and
+  23 | special bankable schemes suited to them should be drawn up to ensure their
+  24 | participation and larger flow of credit to them for self-employment. It will be necessary
+  25 | for the banks to consider their loan proposals with utmost sympathy and
+  26 | understanding.
+  27 | 
+  28 | 1.4 Banks should periodically review their lending procedures and policies to see that
+  29 | loans are sanctioned in time, are adequate and production- oriented and that they
+  30 | generate incremental income to make them self-liquidating.
+  31 | 
+  32 | 1.5 While formulating the Block/ District Credit Plan, special focus may be given to
+  33 | villages with sizeable population of SC/ST communities/ specific localities (bastis) in
+  34 | the towns/villages having a concentration of these communities.
+  35 | 
+  36 | 
+
+======================================================================
+--- PAGE 3 ---
+======================================================================
+   0 | 
+   1 | 
+   2 | 3
+   3 | 
+   4 | 2. Role of Banks
+   5 | 
+   6 | 2.1 Bank staff may help the borrowers in filling up the forms and completing other
+   7 | formalities so that they are able to get credit facility within a stipulated period from the
+   8 | date of receipt of applications.
+   9 | 
+  10 | 2.2 In order to encourage SC/ ST borrowers to take advantage of credit facilities,
+  11 | greater awareness among them about various schemes formulated by banks needs
+  12 | to be created through various means such as brochures, visits by field staff etc so that
+  13 | salient features of the schemes, as also the advantages that will accrue to them are
+  14 | known to such borrowers. Banks should advise their branches to organize meetings
+  15 | more frequently exclusively for SC /ST beneficiaries to understand their credit needs
+  16 | and to incorporate the same in the credit plan.
+  17 | 
+  18 | 2.3 Circulars issued by RBI/ NABARD should be circulated among the staff for
+  19 | compliance.
+  20 | 
+  21 | 2.4 Banks should not insist on deposits while considering loan applications under
+  22 | Government sponsored poverty all eviation schemes /self-employment programmes
+  23 | from borrowers belonging to SCs/ STs. It should also be ensured that applicable
+  24 | subsidy is not held back while releasing the loan component till the full repayment of
+  25 | bank dues. Non-release of subsidy upfront amounts to under-financing and hampers
+  26 | asset creation/income generation.
+  27 | 
+  28 | 2.5 The National Scheduled Tribes Finance & Development Corporation and National
+  29 | Scheduled Castes Finance & Development Corporation have been set up under the
+  30 | administrative control of Ministry of Tribal Affairs and Ministry of Social Justice &
+  31 | Empowerment, respectively. Banks should advise their branches/controlling offices to
+  32 | render all the necessary institutional support to enable these institutions to achieve
+  33 | the desired objectives.
+  34 | 
+  35 | 2.6. Loans sanctioned to State Sponsored Organisations for Scheduled C astes/
+  36 | Scheduled Tribes for the specific purpose of purchase and supply of inputs and/or the
+  37 | marketing of the outputs of the beneficiaries of these organisations are eligible for
+  38 | priority sector classification.
+  39 | 
+

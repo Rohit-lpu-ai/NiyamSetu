@@ -1,0 +1,15 @@
+{
+  "version_id": "VER-b8a13c2a7651eb84",
+  "guideline_version": "1.0",
+  "annotator": "person1-claude-code",
+  "review_status": "awaiting_owner_review",
+  "annotated_pages": [
+    2,
+    3
+  ],
+  "clause_count": 14,
+  "uncertain_count": 0,
+  "pages_reviewed_and_empty": [],
+  "inter_annotator_agreement": "PENDING - no second annotator",
+  "note": "Boundaries decided by reading the extracted text of each listed page against data/annotations/README.md. Marker strings derived mechanically from those boundary decisions and verified unique within the page."
+}
