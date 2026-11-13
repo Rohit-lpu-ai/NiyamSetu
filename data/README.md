@@ -153,7 +153,7 @@ data/processed/<version_id>/extraction.json      # pages + document metadata
 
 `<version_id>` is `VER-` plus the first 16 hex characters of the file's SHA-256,
 so re-running on the same PDF writes to the same path instead of accumulating
-copies. See `docs/pdf-extraction.md` §4 for why identifiers are content-derived.
+copies. See `backend/docs/pdf-extraction.md` §4 for why identifiers are content-derived.
 
 **Built in Phase 2**, alongside the file above:
 
@@ -236,7 +236,7 @@ address.**
   raw text. We never collapse a spanning clause onto one page.
 - Character offsets are into **raw** text. After normalisation they no longer
   align with normalised text, so highlighting over normalised text is approximate
-  — a documented limitation (`docs/architecture.md` §4.4).
+  — a documented limitation (`backend/docs/architecture.md` §4.4).
 - If a clause's page cannot be determined, **ingestion fails loudly**. A guessed
   page reference is worse than no clause, because the whole project's claim is
   that citations can be trusted.
@@ -338,7 +338,7 @@ python -m backend.app.document_processing.cli \
     --output-dir data/processed
 
 # 3. Inspect the result (prints artefacts for a human to read; asserts nothing)
-python -m backend.tests.inspect_real_extraction
+python -m backend.scripts.inspect_real_extraction
 ```
 
 Step 2 exits non-zero if any file is missing, is not a PDF, or fails its

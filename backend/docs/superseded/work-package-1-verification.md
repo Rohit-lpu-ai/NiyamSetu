@@ -70,7 +70,7 @@ The documentation is fixed. The SQL comment still reads 21 and **cannot be
 edited**, because the migration has since been applied and the runner's
 checksum verification correctly refuses an edited applied migration. It needs a
 `COMMENT ON COLUMN` correction in a future migration — logged in
-`docs/evaluation-audit.md` §4. A cosmetic error in a comment, but it is the kind
+`backend/docs/evaluation-audit.md` §4. A cosmetic error in a comment, but it is the kind
 that a viva question would surface.
 
 Everything else in the previous report checked out: 57 pages, 138 paragraph
@@ -150,7 +150,7 @@ Additive except where noted. Nothing was deleted.
 - `data/annotations/independent-review/` — 5 blind worksheets + README
 - `evaluation/2026-11-12-provenance-validation.md`
 - `evaluation/2026-11-12-phase3-postgresql.md`
-- `docs/phase3-postgresql.md`, `docs/work-package-1-verification.md`
+- `backend/docs/phase3-postgresql.md`, `backend/docs/work-package-1-verification.md`
 
 **Edited:**
 1. `evaluation/data_quality.py` — added the `offset_resolution` check (13th) and

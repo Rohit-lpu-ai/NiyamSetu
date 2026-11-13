@@ -2,8 +2,14 @@
 
 > Written 2026-10-28. Owner: Person 1.
 >
-> **Status:** Phase 0 is complete. Phases 1–6 are `[PLANNED]` and have not been
-> started — no application code exists in this repository.
+> **Status — corrected 2026-11-13.** Phases 0–5 are **done** (extraction,
+> segmentation, PostgreSQL, FastAPI, evaluation infrastructure: 600 tests
+> passing, migrations applied, corpus loaded). Phase 6 (integration with
+> Persons 2–5) has not started. The original header said no application code
+> existed; that was true when this was written and is not true now. This file
+> is kept for its per-phase **definitions of done** and its test lists, which
+> are still the standard the next phase is held to — not as a status report.
+> For status, read `BACKEND_FINAL_COMPLETION_REPORT.md`.
 >
 > **Standing rule:** do not start Phase *n+1* until Phase *n*'s definition of done
 > is met and its tests have actually been run with their real output reported.
@@ -46,7 +52,7 @@ before the database exists. Phase 5 is written up continuously, not left to the 
 - Checked the toolchain: Python 3.11.9, pip 26.0.1, git 2.53.0, node 24.15.0;
   `psql` not on PATH.
 - Noted relevant globally-installed packages (not project dependencies).
-- Wrote `CLAUDE.md`, `docs/architecture.md`, `docs/team-responsibilities.md`,
+- Wrote `CLAUDE.md`, `backend/docs/architecture.md`, `backend/docs/team-responsibilities.md`,
   this file, and `data/README.md`.
 - Recorded ten open decisions (D-1 … D-10) and four brief↔repository conflicts.
 
@@ -133,7 +139,7 @@ or PR.
 
 > **STATUS: DONE, 2026-11-12.** Both methods implemented, run on all four
 > documents, 385 passing tests. Design and findings:
-> `docs/phase2-segmentation.md`. Metrics: `evaluation/experiment-b-segmentation.md`.
+> `backend/docs/phase2-segmentation.md`. Metrics: `evaluation/experiment-b-segmentation.md`.
 >
 > **Where it fell short of this plan, and it matters:** the annotated sample is
 > 4 pages and 21 clauses, not the 10 documents x ~5 pages proposed below, and it
@@ -406,7 +412,7 @@ timelines.
 
 **Risks**
 - *Integration left until the final week.* Mitigation: the stub-first contract in
-  `docs/architecture.md` §5.1 means integration should be incremental from week 2,
+  `backend/docs/architecture.md` §5.1 means integration should be incremental from week 2,
   not a single event in week 4.
 - *`clause_id` instability across re-ingestion.* Real risk. Decide early whether
   `public_id` values are regenerated on re-ingest or preserved; Compare and any

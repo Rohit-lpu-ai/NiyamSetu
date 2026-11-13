@@ -7,8 +7,8 @@ from the script having exited zero.
 
 Run it after a corpus extraction::
 
-    python -m backend.tests.inspect_real_extraction
-    python -m backend.tests.inspect_real_extraction --dir data/processed
+    python -m backend.scripts.inspect_real_extraction
+    python -m backend.scripts.inspect_real_extraction --dir data/processed
 """
 
 from __future__ import annotations

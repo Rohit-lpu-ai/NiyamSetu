@@ -3,7 +3,7 @@
 Every PDF used by the automated tests is generated here from
 :mod:`backend.tests.pdf_builder`. They are synthetic fixtures, not government
 documents, and no test asserts anything about the real corpus - real-document
-checks are a separate, manual validation run (see ``docs/pdf-extraction.md``).
+checks are a separate, manual validation run (see ``backend/docs/pdf-extraction.md``).
 """
 
 from __future__ import annotations

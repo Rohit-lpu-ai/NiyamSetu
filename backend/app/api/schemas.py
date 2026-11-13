@@ -5,7 +5,7 @@ models were written against the live payloads from
 ``backend/app/db/repository.py``, not from the §12 sketch, so what the schema
 promises and what the database holds cannot drift. Where §12's illustrative
 example named a field the pipeline does not produce, the real field wins and
-the difference is noted in ``docs/api.md``.
+the difference is noted in ``backend/docs/api.md``.
 
 One deliberate choice worth stating: identifiers are always the ``public_id``
 strings (``DOC-0001``, ``VER-0001``, ``CLS-0000123``), never database

@@ -1,0 +1,19 @@
+{
+  "experiment": "E2 - cleaning correctness",
+  "generated_at": "2026-11-13T06:21:21+00:00",
+  "candidates_total": 91,
+  "candidates_removed": 52,
+  "candidates_retained": 39,
+  "removed_occurrences": 151,
+  "label_vocabulary": [
+    "header",
+    "footer",
+    "page_number",
+    "content",
+    "unsure"
+  ],
+  "edge_lines_per_page": 5,
+  "status": "PENDING - no human labels",
+  "note": "Fill in data\\annotations\\cleaning\\removed-lines.template.csv and save it as data\\annotations\\cleaning\\removed-lines.labelled.csv. Removal precision, recall and the content-destruction count cannot be computed without it.",
+  "scores": null
+}

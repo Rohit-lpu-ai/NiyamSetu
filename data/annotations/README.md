@@ -39,7 +39,7 @@ have been run. An estimated metric is academic dishonesty and is also useless.
 
 **Read §7 before quoting any number produced from these files.** The sample is
 small and single-annotated on purpose: a small honest sample beats a large
-careless one (`docs/backend-roadmap.md`, Phase 2 risks), and the guideline
+careless one (`backend/docs/backend-roadmap.md`, Phase 2 risks), and the guideline
 required that agreement be reported rather than assumed.
 
 ---

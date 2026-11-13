@@ -5,7 +5,7 @@
 > tests. The *evaluation* of it is `[PARTIAL]`: real metrics exist on a 4-page
 > annotated sample, single-annotated, with inter-annotator agreement `PENDING`.
 >
-> Companion documents: `docs/pdf-extraction.md` (Phase 1),
+> Companion documents: `backend/docs/pdf-extraction.md` (Phase 1),
 > `evaluation/experiment-b-segmentation.md` (the numbers and the failure cases),
 > `data/annotations/README.md` (the annotation guideline),
 > `backend/app/db/README.md` (what this output implies for the schema).

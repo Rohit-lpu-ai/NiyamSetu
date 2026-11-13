@@ -50,7 +50,7 @@ The procedure for producing one is `data/annotations/README.md` §8.
 | Records differing from the auto-generated template | **21 of 21** |
 
 Smaller than the 10 documents × ~5 pages `CLAUDE.md` §15 proposed. That was a
-deliberate trade — `docs/backend-roadmap.md` Phase 2 says "shrink the sample and
+deliberate trade — `backend/docs/backend-roadmap.md` Phase 2 says "shrink the sample and
 say so, rather than annotating sloppily". The two documents were chosen to be
 an **easy case and a hard case**, not a representative draw:
 

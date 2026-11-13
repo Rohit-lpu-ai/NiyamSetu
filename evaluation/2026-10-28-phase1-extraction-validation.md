@@ -6,7 +6,7 @@
 - **Pipeline:** `backend/app/document_processing/` at this commit
 - **Command:**
   `python -m backend.app.document_processing.cli --manifest data/manifest.csv --verify-checksums --output-dir data/processed`
-- **Inspection helper:** `python -m backend.tests.inspect_real_extraction`
+- **Inspection helper:** `python -m backend.scripts.inspect_real_extraction`
 
 ## What this report is, and is not
 
@@ -93,7 +93,7 @@ so this is reversible and auditable.
 ### Determinism
 Running the pipeline twice on the same files produced identical `document_id`
 and `version_id` values for all four documents. Identifiers are derived from the
-file checksum, so re-processing is idempotent (see `docs/pdf-extraction.md` §4).
+file checksum, so re-processing is idempotent (see `backend/docs/pdf-extraction.md` §4).
 
 ---
 
@@ -129,7 +129,7 @@ file checksum, so re-processing is idempotent (see `docs/pdf-extraction.md` §4)
 ## 4. Extraction defects found by inspection
 
 These were found by reading the extracted text against the original PDFs. Each
-is reproducible via `python -m backend.tests.inspect_real_extraction`.
+is reproducible via `python -m backend.scripts.inspect_real_extraction`.
 
 ### 4.1 Devanagari (Hindi) letterhead is corrupted — **most serious**
 

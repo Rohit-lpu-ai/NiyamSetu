@@ -2,7 +2,7 @@
 
 SQLAlchemy Core plus plain ``.sql`` migrations, no ORM and no Alembic (D-4).
 See ``README.md`` in this directory for the schema rationale, and
-``docs/phase3-postgresql.md`` for the viva-facing explanation of every design
+``backend/docs/phase3-postgresql.md`` for the viva-facing explanation of every design
 decision.
 
 Nothing here is imported by ``backend/app/document_processing/``: the pipeline

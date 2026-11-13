@@ -1,0 +1,115 @@
+NiyamSetu - Experiment B independent annotation worksheet
+======================================================================
+version_id : VER-6507f32084d73257
+title      : Re-organisation of districts in the NCT of Delhi - Assignment and Review of Lead Bank Responsibility
+pages      : 1, 2
+
+HOW TO USE THIS FILE
+--------------------
+1. Read data/annotations/README.md first. It is the guideline, and it
+   defines what counts as a clause boundary. Do not skip it.
+2. This worksheet deliberately does NOT show you the system's output.
+   Mark the boundaries you think are correct, from this text and the
+   source PDF in data/raw/.
+3. For every clause you identify, write one JSONL record as specified
+   in the guideline (§4) into:
+       data/annotations/segmentation/VER-6507f32084d73257.annotator2.jsonl
+   Set "annotator" to your own name, not person1.
+4. Mark "uncertain": true wherever you genuinely cannot decide, and
+   say why in "note". Uncertain records are reported separately and
+   are more useful than a confident guess.
+5. Where the guideline does not answer a case, do NOT invent a rule.
+   Record the disagreement; the guideline gets amended (§7).
+
+Text below is the pipeline's normalised page text -- the same text the
+offsets are measured against, so your markers will line up. Line
+numbers are for discussion only; they are not part of a record.
+
+======================================================================
+--- PAGE 1 ---
+======================================================================
+   0 | बेटी बचाओ
+   1 | बेटी पढ़ाओ
+   2 |  भारतीय �रज़वर् बैंक
+   3 | ______________________ RESERVE BANK OF INDIA________________________
+   4 | www.rbi.org.in
+   5 | 
+   6 | � व त् त ीय समावेशन और �वकास �वभाग, केन्द्र�य कायार्लय,10 वी मंिजल, क ेंद्र�य कायार्लय भवन, शह�द भगत�संह मागर्,पोस्ट बॉक्स सं. 10014, मुंबई -400001
+   7 | Financial Inclusion & Development Dept, Central Office,10th Floor, Central Office Building, Shahid Bhagat Singh Marg, P.B.No.10014, Mumbai-1
+   8 | टेल� Tel:022-22601000 फै क्सः 91-22-22621011/22610943/22610948 ई-मेल: cgmincfidd@rbi.org.in
+   9 | �हंद� आसान है, इसका प्रयोग बढ़ाइए।
+  10 | “चेतावनी: -मेल �रज़वर् बैंक द्वारा डाक, एसएमएस या फोन कॉल के ज�रए �कसी क� भी व् यिक्तगत जानकार� जैसे बैंक के खाते का ब् यौरा, पासवडर् आ�द नह�ं मांगी जाती है।
+  11 | यह धन रखने या देने का प्रस् ताव भी नह�ं करता है। ऐसे प्रस् तावों का �कसी भी तर�के से जवाब मत द�िजए।"
+  12 | Caution: RBI never sends mails, SMSs or makes calls asking for personal information like bank account details, passwords, etc. It neve r keeps
+  13 | or offers funds to anyone. Please do not respond in any manner to such offers.
+  14 | 
+  15 | RBI/2026-27/300
+  16 | FIDD.CO.LBS.BC.No.12/02.08.001/2026-27 October 26, 2026
+  17 | The Chairman / Managing Director & Chief Executive Officer
+  18 | Lead Banks concerned
+  19 | Madam/ Dear Sir,
+  20 | Re-organisation of districts in the NCT of Delhi – Assignment and Review of Lead
+  21 | Bank Responsibility
+  22 | The Government of National Capital Territory (NCT) of Delhi has notified re-organisation
+  23 | of districts in the NCT of Delhi vide Gazette Notification No. F.223/ SDM-II (HQ)/
+  24 | Land/2025/285 dated December 25, 2025, whereby three new districts, viz., Old Delhi,
+  25 | Central North and Outer North have been formed and Shahdara district has ceased to
+  26 | exist.
+  27 | 2. Lead Bank responsibilities in the newly created districts have been assigned as follows:
+  28 | Sr.
+  29 | No
+  30 | Newly Created
+  31 | District
+  32 | Lead Bank District Working Code
+  33 | 1. Old Delhi Canara Bank 03E (to be read as ‘Numeral Zero, Numeral Three
+  34 | and Alphabet E’)
+  35 | 2. Central North State Bank of
+  36 | India
+  37 | 03F (to be read as ‘Numeral Zero, Numeral Three
+  38 | and Alphabet F’)
+  39 | 3. Outer North Punjab National
+  40 | Bank
+  41 | 03G (to be read as ‘Numeral Zero, Numeral
+  42 | Three and Alphabet G’)
+  43 | 
+
+======================================================================
+--- PAGE 2 ---
+======================================================================
+   0 | बेटी बचाओ
+   1 | बेटी पढ़ाओ
+   2 |  भारतीय �रज़वर् बैंक
+   3 | ______________________ RESERVE BANK OF INDIA________________________
+   4 | www.rbi.org.in
+   5 | 
+   6 | � व त् त ीय समावेशन और �वकास �वभाग, केन्द्र�य कायार्लय,10 वी मंिजल, क ेंद्र�य कायार्लय भवन, शह�द भगत�संह मागर्,पोस्ट बॉक्स सं. 10014, मुंबई -400001
+   7 | Financial Inclusion & Development Dept, Central Office,10th Floor, Central Office Building, Shahid Bhagat Singh Marg, P.B.No.10014, Mumbai-1
+   8 | टेल� Tel:022-22601000 फै क्सः 91-22-22621011/22610943/22610948 ई-मेल: cgmincfidd@rbi.org.in
+   9 | �हंद� आसान है, इसका प्रयोग बढ़ाइए।
+  10 | “चेतावनी: -मेल �रज़वर् बैंक द्वारा डाक, एसएमएस या फोन कॉल के ज�रए �कसी क� भी व् यिक्तगत जानकार� जैसे बैंक के खाते का ब् यौरा, पासवडर् आ�द नह�ं मांगी जाती है।
+  11 | यह धन रखने या देने का प्रस् ताव भी नह�ं करता है। ऐसे प्रस् तावों का �कसी भी तर�के से जवाब मत द�िजए।"
+  12 | Caution: RBI never sends mails, SMSs or makes calls asking for personal information like bank account details, passwords, etc. It neve r keeps
+  13 | or offers funds to anyone. Please do not respond in any manner to such offers.
+  14 | 
+  15 | 3. Lead Bank responsibilities of some of the existing districts in the NCT of Delhi have
+  16 | been reviewed, consequent upon re-organisation and stand modified as follows:
+  17 | Sr. No Name of District Existing Lead Bank District
+  18 | Working
+  19 | Code
+  20 | Newly Assigned
+  21 | Lead Bank
+  22 | 1. Central Canara Bank 358 State Bank of India
+  23 | 2. Northwest Punjab National Bank 362 Union Bank of India
+  24 | 
+  25 | 4. As Shahdara district has ceased to exist, the L ead Bank responsibility notified in
+  26 | respect of the district vide circular RPCD.CO.LBS.BC.No.12/02.08.001/2013-14 dated
+  27 | July 11, 2013 as follows, stands revoked:
+  28 | Sr. No. District (Erstwhile) Lead Bank District Working Code
+  29 | 1 Shahdara Bank of Baroda 369
+  30 | 
+  31 | 5. In the remaining districts, the existing Lead B anks shall remain unchanged, till further
+  32 | communication.
+  33 | Yours faithfully,
+  34 | (Nisha Nambiar)
+  35 | Chief General Manager-in-Charge
+

@@ -81,11 +81,13 @@ backend/
 │       ├── manifest.py          reading data/manifest.csv
 │       ├── pdf_extractor.py     validation + extraction (the library)
 │       └── cli.py               command-line front end only
+├── scripts/
+│   └── inspect_real_extraction.py  manual-inspection helper (not a test;
+│                                   moved here from tests/ on 2026-11-13)
 └── tests/
-    ├── conftest.py                     synthetic PDF fixtures
-    ├── pdf_builder.py                  a minimal PDF writer, test-only
-    ├── inspect_real_extraction.py      manual-inspection helper (not a test)
-    └── test_*.py                       90 tests
+    ├── conftest.py                 synthetic PDF fixtures
+    ├── pdf_builder.py              a minimal PDF writer, test-only
+    └── test_*.py                   90 tests at the time of writing
 ```
 
 **`pdf_extractor.py` imports no FastAPI, no SQLAlchemy and no CLI code.** It can
@@ -443,8 +445,8 @@ python -m pytest backend/tests/test_extraction.py
 ### Inspect real extraction quality
 
 ```bash
-python -m backend.tests.inspect_real_extraction
-python -m backend.tests.inspect_real_extraction --dir data/processed
+python -m backend.scripts.inspect_real_extraction
+python -m backend.scripts.inspect_real_extraction --dir data/processed
 ```
 
 This asserts nothing and computes no score. It surfaces header/footer
@@ -519,7 +521,7 @@ The JSON contract in §5 was shaped to match the proposed schema in
 | `pages[].page_number`, `.original_text`, `.normalized_text`, `.char_count`, `.is_empty` | `pages.page_number`, `.raw_text`, `.normalized_text`, `.char_count`, `.is_empty` |
 
 > **Updated 2026-11-12: step 1 below is done.** Phase 2 is implemented —
-> `docs/phase2-segmentation.md`. Two things this section predicted turned out
+> `backend/docs/phase2-segmentation.md`. Two things this section predicted turned out
 > right: doing segmentation before the database was correct (the schema needed
 > seven additions that only real segments revealed), and the
 > `_extract_page_text` seam was enough to plug in two more extractors for
@@ -531,7 +533,7 @@ The JSON contract in §5 was shaped to match the proposed schema in
 >   above maps `pages[].original_text` to `pages.raw_text` and that still holds,
 >   but `segment_pages.char_start`/`char_end` are on the normalised basis, and
 >   every output records which as `offset_basis`. See
->   `docs/phase2-segmentation.md` §6.3 — it is Open Decision D-11 and needs team
+>   `backend/docs/phase2-segmentation.md` §6.3 — it is Open Decision D-11 and needs team
 >   sign-off before Phase 3 loads anything.
 > - **`page_removed_lines` is a table nobody planned.** Header/footer removal
 >   deletes text, so the reversibility record has to survive into the database

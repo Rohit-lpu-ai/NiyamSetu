@@ -108,7 +108,7 @@ class CleaningOptions:
     """Switches and thresholds for header/footer removal.
 
     Every value is a tuned parameter, and the tuning is reported in
-    ``docs/phase2-segmentation.md`` and ``evaluation/experiment-b-segmentation.md``.
+    ``backend/docs/phase2-segmentation.md`` and ``evaluation/experiment-b-segmentation.md``.
     Turning a rule off is how an experiment isolates its effect — the same
     pattern as :class:`~.normalization.NormalizationOptions`.
     """
@@ -177,7 +177,7 @@ class CleanedPage:
         line_offset_map: ``cleaned line index -> original line index``. This is
             what lets a segment built from cleaned text still report an offset
             into the original page, which is the whole point of doing removal
-            reversibly (see ``docs/phase2-segmentation.md``).
+            reversibly (see ``backend/docs/phase2-segmentation.md``).
     """
 
     page_number: int

@@ -491,7 +491,8 @@ Documentation only; no code, schema or pipeline touched.
    original was right: 21 is the capital-adequacy document alone; the corpus
    total is 31 (21 + 10 in commercial-banks). I made that error by measuring one
    document. Corrected in `backend/app/db/README.md` §4 and
-   `docs/work-package-1-verification.md` §3.
+   `backend/docs/superseded/work-package-1-verification.md` §3 (that file is
+   superseded and pending deletion; see `superseded/README.md`).
 
    **Still outstanding:** the SQL comment itself reads 21 and **cannot be
    edited** — the migration is applied and the runner's checksum verification

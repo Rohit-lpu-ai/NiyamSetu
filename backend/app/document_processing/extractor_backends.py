@@ -11,7 +11,7 @@ all three libraries reachable behind one interface.
 So this module provides that interface and nothing else. It is deliberately
 **not** wired into ``extract_pdf``: the production pipeline still calls
 ``pypdf`` directly through ``_extract_page_text``, which remains the documented
-seam (``docs/pdf-extraction.md`` §2). If Experiment A ever justifies a switch,
+seam (``backend/docs/pdf-extraction.md`` §2). If Experiment A ever justifies a switch,
 the migration is to make ``extract_pdf`` take a backend from here — an additive
 change that leaves the JSON contract untouched.
 

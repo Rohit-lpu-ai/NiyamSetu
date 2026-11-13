@@ -1,7 +1,7 @@
 """Experiment C data-quality checks.
 
 Each check gets a **positive and a negative fixture case**, as
-`docs/backend-roadmap.md` Phase 5 requires: a clean corpus must produce no
+`backend/docs/backend-roadmap.md` Phase 5 requires: a clean corpus must produce no
 error, and a corpus with the specific defect must produce exactly that error.
 A check that only ever ran against good data would pass whether or not it
 worked.

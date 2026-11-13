@@ -1,0 +1,27 @@
+NiyamSetu - extraction fidelity transcription (E5)
+====================================================================
+version_id  : VER-fd6e1537c1a42574
+page_number : 35  (physical PDF page)
+chosen      : large prose page, as a contrast to the hard cases
+
+INSTRUCTIONS
+------------
+1. Open the source PDF in data/raw/ and go to this PAGE NUMBER.
+2. Type what you SEE on the page, reading top to bottom, left
+   to right. Include headers, footers and page numbers.
+3. For a table, type it row by row, separating cells with a
+   single space - the extractor has no cell structure either,
+   so this keeps the comparison about characters, not layout.
+4. Type Devanagari text as printed. If a glyph is unreadable in
+   the PDF itself, write [?]. Do NOT guess.
+5. Do not correct the document's own typos. The reference is
+   what the page says, not what it should say.
+
+DELIBERATELY NOT SHOWN: what the extractor produced for this
+page. Seeing it would anchor your transcription to it, and the
+reference would then agree with the extractor by suggestion.
+
+Save your transcription as: VER-fd6e1537c1a42574.page035.truth.txt
+in this same directory. Everything below this line is ignored;
+put the transcription in the .truth.txt file, not here.
+====================================================================

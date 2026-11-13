@@ -1092,7 +1092,7 @@ def render_cleaning(data: ProjectData) -> None:
                 "The frequency threshold is 0.90, not the 0.60 originally "
                 "proposed: at 0.60 the commercial-banks amendment's repeated "
                 "table column headers (7 of 10 pages) were deleted as if they "
-                "were a running header. See docs/phase2-segmentation.md."
+                "were a running header. See backend/docs/phase2-segmentation.md."
             ),
             unsafe_allow_html=True,
         )

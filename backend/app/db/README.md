@@ -12,7 +12,7 @@
 >
 > Results, including the two defects found on first apply:
 > `evaluation/2026-11-12-phase3-postgresql.md`. Viva-facing explanation of every
-> design decision: `docs/phase3-postgresql.md`.
+> design decision: `backend/docs/phase3-postgresql.md`.
 >
 > `SQLAlchemy==2.0.46` and `psycopg[binary]==3.2.12` are pinned. The access
 > layer is **Core only** — no ORM, no Alembic (D-4).
@@ -42,7 +42,7 @@
 
 ## 1. Why this directory exists before Phase 3 does
 
-`CLAUDE.md` §12 and `docs/pdf-extraction.md` §12 both argue the same thing: the
+`CLAUDE.md` §12 and `backend/docs/pdf-extraction.md` §12 both argue the same thing: the
 hardest part of the schema is the segment tables, and they are easier to design
 against **real segments** than against a sketch. That was the reason for doing
 segmentation before the database.
@@ -128,7 +128,7 @@ CLI's `--use-raw-text` flag produces the other basis, which is why the column
 exists rather than a global constant.
 
 This is a change to a documented contract that four other modules read. It is
-flagged here, in `docs/phase2-segmentation.md`, in the segmentation module
+flagged here, in `backend/docs/phase2-segmentation.md`, in the segmentation module
 docstring and in the committed segment JSON. It should be agreed before Phase 3
 loads anything.
 
@@ -221,7 +221,7 @@ Sketched so the next step is obvious, not as a commitment.
    representation, which keeps ingestion and persistence separately testable.
 6. **Re-run Experiment B against the stored data** to confirm nothing was lost
    in persistence — that is already a Phase 3 task in
-   `docs/backend-roadmap.md`, and the point of it is precisely that this schema
+   `backend/docs/backend-roadmap.md`, and the point of it is precisely that this schema
    is unverified until something has round-tripped through it.
 7. **Add the data-quality checks as SQL** alongside the JSON ones, so the same
    invariants are checked on both representations.

@@ -14,7 +14,7 @@
 # Pure-Python PDF reading. Gives per-page access, which is what page-level
 # provenance depends on, with no compiled extension. This is the library
 # `extract_pdf` actually uses, and Experiment A confirmed it should stay the
-# default. See docs/pdf-extraction.md and
+# default. See backend/docs/pdf-extraction.md and
 # evaluation/experiment-a-extractor-comparison.md.
 pypdf==6.18.1
 
@@ -59,7 +59,7 @@ pytest==8.3.4
 # Added 2026-11-12, when Phase 3 actually started. D-8 is answered: PostgreSQL
 # 18 is installed and its service is running on this machine, so the standing
 # stop condition's database precondition is met. D-11 is answered and verified
-# (offsets are into normalized_text; see docs/phase3-postgresql.md §7).
+# (offsets are into normalized_text; see backend/docs/phase3-postgresql.md §7).
 #
 # SQLAlchemy Core only -- no ORM, no Alembic (D-4, confirmed by the owner).
 # Every statement in backend/app/db/ is SQL executed through text() with bound

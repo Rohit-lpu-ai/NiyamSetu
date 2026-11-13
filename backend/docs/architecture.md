@@ -3,9 +3,14 @@
 > Written 2026-10-28. Companion to `CLAUDE.md`; this file carries the technical
 > detail, alternatives and reasoning. `CLAUDE.md` is the summary reference.
 >
-> **Status:** every component described here is `[PROPOSED]` or `[PLANNED]`.
-> At the time of writing the repository contains `README.md` plus the
-> documentation set created in this audit. No application code exists.
+> **Status — corrected 2026-11-13.** This file was written before any code
+> existed and its original header said so. That is no longer true: ingestion,
+> PostgreSQL persistence and the FastAPI layer are `[IMPLEMENTED]` and
+> verified. What remains valuable here is the **reasoning** — §8's architecture
+> decisions (AD-1…AD-9) and the "why" behind §4's schema. For *what is built*,
+> read `BACKEND_FINAL_COMPLETION_REPORT.md` and
+> `PROJECT_STRUCTURE_AND_MODULE_GUIDE.md`; where this file's module paths
+> differ from the repository, the repository is right.
 > Status labels are defined in `CLAUDE.md` §0.
 
 ---
@@ -31,7 +36,14 @@ Hard constraints:
 
 ## 2. Component responsibilities
 
-### 2.1 Ingestion service (`backend/app/services/`) — Person 1
+### 2.1 Ingestion service — Person 1
+
+**Built as `backend/app/document_processing/` and `backend/app/api/ingestion.py`,
+not the `services/` package this section proposed.** The responsibilities below
+all exist; the module names below were the plan, and the table maps them:
+`validation` + `extraction` → `pdf_extractor.py`, `normalisation` →
+`normalization.py`, `segmentation` → `segmentation.py` + `page_cleaning.py`,
+`quality` → `evaluation/data_quality.py`, `persistence` → `db/loader.py`.
 | Module | Responsibility | Must not |
 |---|---|---|
 | `validation` | Extension and MIME sniff, size cap, SHA-256 checksum, duplicate lookup | Trust the client-supplied filename or content-type alone |
@@ -46,7 +58,11 @@ Thin routers over the services. Responsibilities: request validation via
 Pydantic, mapping domain errors to the error envelope, pagination, and nothing
 else. No business logic in routers; no SQL in routers.
 
-### 2.3 Storage layer (`backend/app/db/`, `backend/app/models/`) — Person 1
+### 2.3 Storage layer (`backend/app/db/`) — Person 1
+
+**No `models/` package was built.** D-4 chose SQLAlchemy Core and plain SQL
+migrations, so the schema has exactly one definition — the `.sql` files — and
+no Python mirror of it that could drift.
 Table definitions, migrations as numbered `.sql` files, a migration runner, and
 query functions. Read access for NLP modules is allowed through the API;
 direct read-only SQL is tolerated for batch experiments, **write access is not**.

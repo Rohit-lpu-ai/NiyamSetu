@@ -26,8 +26,10 @@ statement as **[PROPOSED]**.
 bottom of this section for its verified status.** The code exists in full:
 `backend/app/db/{config,engine,migrate,loader,repository}.py`, two SQL
 migrations, and two test modules. Design and viva preparation:
-`docs/phase3-postgresql.md`. Repository audit:
-`docs/work-package-1-verification.md`.
+`backend/docs/phase3-postgresql.md`. The repository-audit snapshot that
+verified it has been superseded by
+`backend/docs/BACKEND_FINAL_COMPLETION_REPORT.md` (the old copy sits in
+`backend/docs/superseded/`, pending deletion).
 
 **D-8 is answered: PostgreSQL 18 is installed and its service is running** on
 the owner's machine. `psql` is not on `PATH`, which is all the earlier
@@ -45,7 +47,7 @@ all 501 segments: `normalized_text` 501/501, `cleaned_text` 14/501,
 
 
 **Phase 1 (PDF ingestion and page-level extraction) is `[IMPLEMENTED]`.** Built,
-tested and run against four real RBI documents. `docs/pdf-extraction.md` for the
+tested and run against four real RBI documents. `backend/docs/pdf-extraction.md` for the
 design and contract; `evaluation/2026-10-28-phase1-extraction-validation.md` for
 what the real-document run showed, defects included.
 
@@ -54,7 +56,7 @@ what the real-document run showed, defects included.
 Measured output: 151 running-header lines removed reversibly, 138 paragraph
 segments and 363 clause segments, all 501 carrying valid page provenance
 including the 45 that span a page break. Design and findings:
-`docs/phase2-segmentation.md`.
+`backend/docs/phase2-segmentation.md`.
 
 **Experiment A (extractor comparison) is `[IMPLEMENTED]`** —
 `evaluation/experiment-a-extractor-comparison.md`. Conclusion: keep `pypdf` as
@@ -80,10 +82,15 @@ version pair exists, D-10).
 product frontend. The `preview_app/` is a throwaway developer tool, not
 Person 2's frontend. Do not tell anyone otherwise.
 
-**Current phase:** Phase 3 — PostgreSQL — and it is **`[BLOCKED]`**: see §24's
-standing stop condition, D-8 and D-10.
-**Next milestone:** owner review of Phase 2's segmentation output, then the
-`offset_basis` contract point (§11.4 note below), then Phase 3.
+**Current phase — updated 2026-11-13.** Phases 0–5 are **done**: extraction,
+segmentation, PostgreSQL (applied and loaded), the FastAPI layer (6 endpoints,
+verified against the live database) and the evaluation framework. Phase 3 is no
+longer blocked — that note was written before D-8 and D-11 were answered.
+**Next milestone:** Library & Search (Person 5), scaffolded at
+`backend/app/library_search/` and documented in its README — plus Phase 6
+integration. **Still blocking meaningful evaluation, not the next phase:** D-10.
+**Start here for orientation:**
+`backend/docs/PROJECT_STRUCTURE_AND_MODULE_GUIDE.md`.
 
 The ordering recommendation from Phase 1 held: **segmentation before the
 database** was right. The schema's segment tables needed seven additions that
@@ -231,7 +238,7 @@ demo Compare.
 
 ## 7. Team responsibilities (summary)
 
-Full detail, deliverables and dependencies: **`docs/team-responsibilities.md`**.
+Full detail, deliverables and dependencies: **`backend/docs/team-responsibilities.md`**.
 
 | # | Person | Implementation | NLP |
 |---|---|---|---|
@@ -284,7 +291,7 @@ manager.
 8. Data-quality and extraction evaluation report (`evaluation/`).
 9. Integration instructions for Persons 2–5.
 
-Build these **incrementally**, in the phase order of `docs/backend-roadmap.md`.
+Build these **incrementally**, in the phase order of `backend/docs/backend-roadmap.md`.
 Do not attempt the whole backend in one pass.
 
 ---
@@ -617,7 +624,7 @@ The approximation is therefore **inverted, not removed** — it now falls on the
 `text=raw` path instead, which is the less-used direction — and the trade is
 explicit and recorded per segment rather than implied. The segmentation CLI's
 `--use-raw-text` produces the other basis, which is why `offset_basis` is a
-stored column rather than a global constant. See `docs/phase2-segmentation.md`
+stored column rather than a global constant. See `backend/docs/phase2-segmentation.md`
 §6.3 and `backend/app/db/README.md` §3.
 
 ### 11.5 Data access layer
@@ -805,7 +812,7 @@ entries; page filter; pagination; unknown method.
 P5 (search corpus).
 
 ### 12.4 Contract change process
-The contract is versioned in this file and in `docs/architecture.md`. Any change
+The contract is versioned in this file and in `backend/docs/architecture.md`. Any change
 that removes or renames a field is announced to all four consumers **before** it
 is merged. Additive fields may be added freely.
 
@@ -826,7 +833,7 @@ is merged. Additive fields may be added freely.
   deletes the commercial-banks amendment's repeated table column headers from 7
   of 10 pages — those are clause content. Real running headers score 97% and
   100%; the table headers score 70%. Full reasoning and the regression test:
-  `docs/phase2-segmentation.md` §3.2. Frequency alone is also not enough: see
+  `backend/docs/phase2-segmentation.md` §3.2. Frequency alone is also not enough: see
   §3.4 there for the printed-page-number rule, which no frequency rule can
   catch.
 - A page yielding 0 characters is recorded as `is_empty = true` with a warning —
@@ -938,19 +945,35 @@ methodology; known limitations; exact reproduction steps.
 
 ## 17. Repository structure
 
-### 17.1 Current — verified 2026-11-12, after Phase 2
+### 17.1 Current — verified 2026-11-13, after the repository cleanup
 ```text
 NiyamSetu-diw_backend/
-├── README.md                      # the project idea
+├── README.md                      # product idea + how to run the backend
 ├── CLAUDE.md                      # this file
-├── requirements.txt               # pypdf + pytest; pymupdf/pdfplumber eval-only
-├── pytest.ini
+├── requirements.txt               # ROOT on purpose: covers backend/, evaluation/ and data/ scripts
+├── pytest.ini                     # ROOT on purpose: rootdir must be the repo for `backend.*` imports
+├── .env.example                   # committed placeholders; .env is git-ignored
 ├── .gitignore
 ├── .venv/                         # git-ignored
 ├── backend/
 │   ├── app/
+│   │   ├── api/                   # PHASE 4 - FastAPI, 6 endpoints, implemented
+│   │   │   ├── main.py            #   create_app() factory + module-level `app`
+│   │   │   ├── routes.py          #   health + documents routers
+│   │   │   ├── schemas.py         #   Pydantic request/response models
+│   │   │   ├── dependencies.py    #   Settings + Repository injection seams
+│   │   │   ├── ingestion.py       #   upload -> pipeline -> loader, one transaction
+│   │   │   └── errors.py          #   the single §12.1 error envelope
+│   │   ├── db/                    # PHASE 3 - applied to PostgreSQL 18.6, loaded
+│   │   │   ├── config.py          #   .env / NIYAMSETU_DB_* resolution; REPO_ROOT
+│   │   │   ├── engine.py          #   one pooled SQLAlchemy Core engine
+│   │   │   ├── migrate.py         #   runner + applied-migration checksum guard
+│   │   │   ├── loader.py          #   the ONLY writer of document tables
+│   │   │   ├── repository.py      #   read queries in the §12 shapes
+│   │   │   ├── README.md          #   the 7 additions real segments forced
+│   │   │   └── migrations/        #   0001_initial_schema.sql, 0002_public_id_sequences.sql
 │   │   ├── document_processing/   # PHASES 1 and 2 - implemented and tested
-│   │   │   ├── __init__.py        #   public API re-exports (50 names)
+│   │   │   ├── __init__.py        #   public API re-exports
 │   │   │   ├── errors.py          #   typed exceptions with stable codes
 │   │   │   ├── identity.py        #   checksums, stable document/version/segment ids
 │   │   │   ├── normalization.py   #   the conservative per-page cleaning steps
@@ -958,47 +981,59 @@ NiyamSetu-diw_backend/
 │   │   │   ├── manifest.py        #   reading data/manifest.csv
 │   │   │   ├── pdf_extractor.py   #   validation + extraction (the library)
 │   │   │   ├── cli.py             #   Phase 1 command-line front end
-│   │   │   ├── extractor_backends.py  # PHASE 2: pypdf/PyMuPDF/pdfplumber seam
-│   │   │   ├── page_cleaning.py   #   PHASE 2: reversible header/footer removal
-│   │   │   ├── segmentation.py    #   PHASE 2: both methods + segment contract
-│   │   │   └── segmentation_cli.py#   PHASE 2 command-line front end
-│   │   └── db/                    # PHASE 3 - PROPOSAL ONLY, NEVER EXECUTED
-│   │       ├── README.md          #   status, the 7 additions, the open questions
-│   │       └── migrations/
-│   │           └── 0001_initial_schema.sql   # reviewable; no DB has been created
-│   └── tests/                     # 385 tests, all passing
-│       ├── conftest.py            #   synthetic PDF fixtures
+│   │   │   ├── extractor_backends.py  # pypdf/PyMuPDF/pdfplumber seam
+│   │   │   ├── page_cleaning.py   #   reversible header/footer removal
+│   │   │   ├── segmentation.py    #   both methods + segment contract
+│   │   │   └── segmentation_cli.py#   Phase 2 command-line front end
+│   │   └── library_search/        # NEXT MODULE - SCAFFOLD ONLY, nothing implemented
+│   │       ├── README.md          #   responsibility, reuse map, planned endpoints
+│   │       ├── service.py         #   strategy seam: keyword | semantic | hybrid
+│   │       ├── repository.py      #   planned SQL over segments.text_search
+│   │       └── schemas.py         #   deliberately empty: reuse api/schemas.py
+│   ├── docs/                      # ALL project documentation lives here
+│   │   ├── PROJECT_STRUCTURE_AND_MODULE_GUIDE.md  # START HERE
+│   │   ├── BACKEND_FINAL_COMPLETION_REPORT.md     # what is built + verified
+│   │   ├── backend-integration-contract.md        # what teammates code against
+│   │   ├── final-backend-evaluation.md            # every metric + sample sizes
+│   │   ├── evaluation-audit.md                    # measured vs pending; failure taxonomy
+│   │   ├── api.md                 #   endpoints, real examples, limitations
+│   │   ├── phase3-postgresql.md   #   schema design + viva Q&A
+│   │   ├── pdf-extraction.md      #   Phase 1 design, contract and findings
+│   │   ├── phase2-segmentation.md #   Phase 2 design, contract and findings
+│   │   ├── architecture.md        #   AD-1..AD-9 decisions and alternatives
+│   │   ├── backend-roadmap.md     #   per-phase definitions of done
+│   │   ├── team-responsibilities.md
+│   │   └── superseded/            #   2 obsolete reports, pending deletion
+│   ├── scripts/                   # run by hand; nothing in app/ imports these
+│   │   └── inspect_real_extraction.py   # manual-inspection helper, not a test
+│   └── tests/                     # tests only, nothing else
+│       ├── conftest.py            #   synthetic PDF fixtures; derives the `integration` marker
 │       ├── pdf_builder.py         #   a minimal PDF writer, test-only
-│       ├── inspect_real_extraction.py   # manual-inspection helper, not a test
-│       └── test_*.py              #   12 modules
+│       └── test_*.py              #   17 modules
 ├── data/
 │   ├── README.md
 │   ├── manifest.csv               # 4 rows, verified provenance
 │   ├── annotations/               # COMMITTED - the only unregenerable evaluation input
 │   │   ├── README.md              #   the guideline, written before annotating
 │   │   ├── build_annotations.py   #   rebuilds the files from recorded boundaries
-│   │   └── segmentation/          #   21 clause records over 4 pages, 2 documents
+│   │   ├── segmentation/          #   21 clause records over 4 pages, 2 documents
+│   │   ├── independent-review/    #   blind worksheets, incl. 2 overlap sheets (E1)
+│   │   ├── cleaning/              #   E2 labelling template
+│   │   └── extraction/            #   E5 transcription templates
 │   ├── raw/                       # git-ignored: 4 real RBI PDFs
 │   └── processed/                 # git-ignored: extraction + segments + cleaning JSON
-├── docs/
-│   ├── api.md                     # Phase 4: endpoints, examples, limitations
-│   ├── architecture.md
-│   ├── backend-roadmap.md
-│   ├── team-responsibilities.md
-│   ├── pdf-extraction.md          # Phase 1 design, contract and findings
-│   └── phase2-segmentation.md     # Phase 2 design, contract and findings
-├── evaluation/
-│   ├── __init__.py                # it is a package: tests import from it
+├── evaluation/                    # ROOT on purpose: an importable package tests use
+│   ├── __init__.py
 │   ├── text_artifacts.py          #   the Phase 1 defects, as counters
 │   ├── experiment_a_extractor_comparison.py
-│   ├── experiment_b_segmentation.py   # template / validate / score
-│   ├── data_quality.py            #   Experiment C: 12 checks, reports only
-│   ├── 2026-10-28-phase1-extraction-validation.md
-│   ├── experiment-a-extractor-comparison.md
-│   ├── experiment-b-segmentation.md
-│   ├── experiment-a/results.json  # committed evidence
-│   ├── experiment-b/results.json  # committed evidence
-│   └── data-quality/              # committed evidence
+│   ├── experiment_b_segmentation.py   # template / validate / score / blind
+│   ├── data_quality.py            #   Experiment C: 13 checks, reports only
+│   ├── annotator_agreement.py     #   E1 scorer - reports PENDING until a 2nd annotator
+│   ├── cleaning_correctness.py    #   E2 scorer - reports PENDING until labels exist
+│   ├── table_overlap.py           #   E4 - measured: 39.9% upper bound
+│   ├── extraction_fidelity.py     #   E5 CER/WER - reports PENDING until transcripts
+│   ├── *.md                       #   dated evidence reports
+│   └── experiment-*/ , data-quality/   # committed results JSON
 └── preview_app/                   # THROWAWAY developer preview - NOT the product
     ├── README.md
     ├── requirements.txt           #   streamlit only, deliberately separate
@@ -1009,12 +1044,32 @@ NiyamSetu-diw_backend/
         └── styles.py              #   CSS and presentation helpers
 ```
 
-Still **no** database (only the unexecuted proposal above), no FastAPI
-application, no `nlp/`, and no product `frontend/`.
+Still **no** `nlp/` and no product `frontend/` — D-1 is still open, so neither
+directory is created (§17.2). `backend/app/library_search/` is a scaffold whose
+every entry point raises `NotImplementedError`, pinned by
+`backend/tests/test_library_search_scaffold.py`; it is **not** wired into the
+FastAPI app, so the verified six-endpoint surface is unchanged.
 
-`backend/app/main.py` does **not** exist. The brief's suggested structure
-included it, but there is no application to serve yet and an empty `main.py`
-would be a lie about the project's state. It arrives in Phase 4 with the API.
+**Four things stay at the repository root deliberately**, and moving them would
+break something:
+
+| Stays at root | Why |
+|---|---|
+| `pytest.ini` | `testpaths = backend/tests` and the tests import the project as `backend.*`; pytest's rootdir must be the repo root or `backend.tests` stops being a package |
+| `requirements.txt` | It is not backend-only: `evaluation/` and `data/annotations/` scripts need the same pins. `preview_app/requirements.txt` stays separate on purpose |
+| `.env`, `.env.example` | `db/config.py` resolves `REPO_ROOT / ".env"` via `Path(__file__).parents[3]` |
+| `data/`, `evaluation/` | `evaluation` is an importable package the tests use, and both are shared team deliverables, not backend internals |
+
+`backend/app/db/migrations/` also stays where it is: `migrate.py` finds it as
+`Path(__file__).parent / "migrations"`, both files are **already applied** to
+the live database, and the runner verifies the SHA-256 of each applied file.
+Moving the directory buys nothing and puts the one guard protecting schema
+integrity at risk.
+
+`backend/app/main.py` does **not** exist, and will not: Phase 4 put the
+application factory at `backend/app/api/main.py` instead, so the ASGI target is
+`backend.app.api.main:app`. The brief's suggested top-level `main.py` would now
+be a second entry point to the same app.
 
 `preview_app/` is **not** Person 2's frontend and must not be mistaken for it
 (§5, §7). It is an internal tool for looking at pipeline output during
@@ -1025,45 +1080,56 @@ affects nothing but itself.
 unit tests of its own. Nothing in `backend/app/` imports from it — a metric must
 never be able to change what the pipeline produces.
 
-### 17.2 Target `[PROPOSED]` — create directories only when a phase needs them
+### 17.2 Target — updated 2026-11-13
+
+The original sketch here proposed `backend/app/{core,models,schemas,services}`.
+**Four of those were never built, and should not be**, because the decisions
+that followed made them wrong:
+
+| Proposed | What happened |
+|---|---|
+| `services/` | Became `document_processing/` — one package per *feature*, not a generic services bucket. The repo's convention is `backend/app/<feature>/` (§22.3.4) |
+| `models/` | **Deliberately absent.** D-4 chose SQLAlchemy Core + plain SQL, so the schema has exactly one definition and no Python mirror to drift |
+| `schemas/` | Each feature owns its own: `document_processing/schemas.py` (dataclasses), `api/schemas.py` (Pydantic) |
+| `core/` | Config lives in `db/config.py`, error handling in `api/errors.py`, logging in `api/main.py`. One file each, next to what uses it |
+| `main.py` | Lives at `api/main.py` as `create_app()` + `app` |
+
+So the target for the remaining work is the structure in §17.1 plus whichever
+of these a phase actually needs:
+
 ```text
-niyamsetu/
-├── CLAUDE.md
-├── README.md
-├── requirements.txt
-├── .env.example
+NiyamSetu-diw_backend/
 ├── backend/
 │   ├── app/
-│   │   ├── api/          # routers
-│   │   ├── core/         # config, logging, error handling
-│   │   ├── db/           # engine, migrations/*.sql, migration runner
-│   │   ├── models/       # table definitions
-│   │   ├── schemas/      # pydantic request / response models
-│   │   ├── services/     # extraction, normalisation, segmentation, quality
-│   │   └── main.py
+│   │   ├── api/                 # built
+│   │   ├── db/                  # built
+│   │   ├── document_processing/  # built
+│   │   └── library_search/      # SCAFFOLD - Person 5's module, next up
+│   ├── docs/                    # all documentation
+│   ├── scripts/                 # hand-run helpers
 │   └── tests/
-│       └── fixtures/
-├── frontend/             # Person 2
-├── nlp/
-│   ├── classification/   # Person 2
-│   ├── rag_qa/           # Person 3
-│   ├── extraction_diff/  # Person 4
-│   └── library_search/   # Person 5
-├── data/
-│   ├── raw/              # git-ignored
-│   ├── processed/
-│   ├── annotations/
-│   └── README.md
-├── evaluation/
-└── docs/
+├── data/ · evaluation/ · preview_app/     # stay at root, see §17.1
+├── frontend/                    # NOT CREATED - Person 2, blocked on D-1
+└── nlp/                         # NOT CREATED - blocked on D-1
+    ├── classification/          #   Person 2
+    ├── rag_qa/                  #   Person 3
+    └── extraction_diff/         #   Person 4
 ```
 
-**Conflict to resolve (Open Decision D-1):** this directory is named
-`NiyamSetu-diw_backend`, which reads like a *backend-only* repository, while the
-structure above is a monorepo holding all five members' work. Either the team
-adopts a shared monorepo, or `frontend/` and `nlp/` live in other repositories
-and this one keeps only `backend/`, `data/`, `docs/` and `evaluation/`. I will
-not create `frontend/` or `nlp/` until this is settled.
+**Note on `library_search`:** this sketch originally put it under `nlp/`. It is
+scaffolded at `backend/app/library_search/` instead, because search is SQL over
+tables the backend already owns, through the engine the backend already pools —
+a separate top-level package would need its own database access and would
+duplicate the read layer. Its reasoning is in
+`backend/app/library_search/README.md` §3. The other three NLP modules have no
+such pull toward the backend and stay outside it.
+
+**Conflict still unresolved (Open Decision D-1):** this directory is named
+`NiyamSetu-diw_backend`, which reads like a *backend-only* repository, while a
+monorepo would hold all five members' work. Either the team adopts a shared
+monorepo, or `frontend/` and `nlp/` live in other repositories and this one
+keeps only `backend/`, `data/` and `evaluation/`. I will not create
+`frontend/` or `nlp/` until this is settled.
 
 ---
 
@@ -1114,8 +1180,13 @@ with a small local stub rather than waiting for my server.
 ## 19. Coding and testing rules
 
 - Python 3.11 (3.11.9 confirmed on this machine).
-- A project virtualenv and a pinned `requirements.txt`. **Both now exist**:
-  `.venv/` holds exactly `pypdf==6.18.1` and `pytest==8.3.4`. The many packages
+- A project virtualenv and a pinned `requirements.txt`. **Both now exist.**
+  `.venv/` no longer holds "exactly pypdf and pytest" — it has ~50 packages,
+  because `requirements.txt` has since pinned pymupdf/pdfplumber
+  (evaluation-only), SQLAlchemy + psycopg (Phase 3), fastapi + uvicorn +
+  python-multipart + httpx (Phase 4), and `preview_app/` adds streamlit. Each
+  was approved and justified in the commit that pinned it; the venv is not a
+  violation, the old sentence was just out of date. The many packages
   found globally on this machine (`fastapi`, `uvicorn`, `psycopg2-binary`,
   `SQLAlchemy`, `alembic`, `streamlit`, `scikit-learn`, and much more) are the
   *user's global* install, **not** project dependencies. Run everything through
@@ -1159,7 +1230,7 @@ with a small local stub rather than waiting for my server.
 | **Page-level PDF extraction** | `[IMPLEMENTED]` | `pdf_extractor.extract_pdf`; run on 4 real RBI PDFs, 57 pages, all `ok` |
 | **Text normalisation** | `[IMPLEMENTED]` | `normalization.py`, 7 independently toggleable steps; 15 tests |
 | **Stable document/version ids** | `[IMPLEMENTED]` | `identity.py`; verified idempotent across re-runs; 10 tests |
-| **JSON output contract** | `[IMPLEMENTED]` | `schemas.py`, `schema_version` 1.0.0; `docs/pdf-extraction.md` §5 |
+| **JSON output contract** | `[IMPLEMENTED]` | `schemas.py`, `schema_version` 1.0.0; `backend/docs/pdf-extraction.md` §5 |
 | **Extraction CLI** | `[IMPLEMENTED]` | `cli.py`, incl. `--manifest`; 14 + 12 tests |
 | **Tests** | `[IMPLEMENTED]` | **385 passing**, `python -m pytest`, `pytest.ini` present |
 | **Pinned dependencies** | `[IMPLEMENTED]` | `requirements.txt`: `pypdf==6.18.1`, `pytest==8.3.4`, plus `pymupdf==2.1` and `pdfplumber==0.11.10` as **evaluation-only** (Experiment A). `streamlit==1.67.0` is in `preview_app/requirements.txt`, deliberately not a backend dependency |
@@ -1175,13 +1246,14 @@ with a small local stub rather than waiting for my server.
 | **Segment page provenance** | `[IMPLEMENTED]` | All 501 segments verified; enforced in `Segment.__post_init__`, the CLI, and `data_quality.py` |
 | **Segmentation CLI + JSON output** | `[IMPLEMENTED]` | `segmentation_cli.py`; `segments_{paragraph,clause_aware}.json` + `page_cleaning.json` per version; determinism checked |
 | Database schema | `[IMPLEMENTED]` | Two migrations applied to PostgreSQL 18.6: `0001_initial_schema.sql` (7 tables, 1 view, 4 triggers, 15 indexes) + `0002_public_id_sequences.sql`. 7 additions the §11.3 sketch lacked: `backend/app/db/README.md` §4 |
-| Database access layer | `[IMPLEMENTED]` | `backend/app/db/{config,engine,migrate,loader,repository}.py`. SQLAlchemy Core, explicit transactions, idempotent loader, read queries in the §12 shapes. **462 tests pass, 0 skipped.** Corpus in the DB: 4 documents, 4 versions, 57 pages, 501 segments, 552 segment_pages. `docs/phase3-postgresql.md`, `evaluation/2026-11-12-phase3-postgresql.md` |
-| API endpoints | `[IMPLEMENTED]` | 6 endpoints under `/api`, `backend/app/api/`. FastAPI + Pydantic, DI'd repository, centralised §12.1 error envelope, Swagger at `/docs`. 39 mocked + 13 real-database tests. `docs/api.md` |
+| Database access layer | `[IMPLEMENTED]` | `backend/app/db/{config,engine,migrate,loader,repository}.py`. SQLAlchemy Core, explicit transactions, idempotent loader, read queries in the §12 shapes. **462 tests pass, 0 skipped.** Corpus in the DB: 4 documents, 4 versions, 57 pages, 501 segments, 552 segment_pages. `backend/docs/phase3-postgresql.md`, `evaluation/2026-11-12-phase3-postgresql.md` |
+| API endpoints | `[IMPLEMENTED]` | 6 endpoints under `/api`, `backend/app/api/`. FastAPI + Pydantic, DI'd repository, centralised §12.1 error envelope, Swagger at `/docs`. 39 mocked + 13 real-database tests. `backend/docs/api.md` |
+| **Library & Search module** | `[PLANNED]` — scaffold exists | `backend/app/library_search/` (4 files + README). Every entry point raises `NotImplementedError`; 10 tests pin that, pin the absence of competing schemas, and pin the API at exactly 6 paths. Reuse map and planned endpoints in its README |
 | NLP code (any module) | `[PLANNED]` | none |
 | Frontend code | `[PLANNED]` | none |
 | Document corpus | `[PARTIAL]` | 4 real RBI PDFs as a validation sample. The corpus is **not** chosen (D-10), has one authority only, and contains **zero version pairs** |
 | Annotations | `[PARTIAL]` | `data/annotations/README.md` (guideline, written before annotating) + 21 clause records over 4 pages of 2 documents. **Single annotator, not independent of the system; agreement `PENDING`** — see that file's §7 |
-| Evaluation **metrics** | `[PARTIAL]` | **Experiment A and C: real counts, no accuracy claimed.** Experiment B: real boundary P/R/F1 from a committed script and committed annotations, on a 4-page sample — quotable **only with** the §0 caveats in `evaluation/experiment-b-segmentation.md`. No other metric exists for any other part of the project |
+| Evaluation **metrics** | `[PARTIAL]` — see `backend/docs/final-backend-evaluation.md` for all of them with sample sizes | **Experiment A and C: real counts, no accuracy claimed.** Experiment B: real boundary P/R/F1 from a committed script and committed annotations, on a 4-page sample — quotable **only with** the §0 caveats in `evaluation/experiment-b-segmentation.md`. No other metric exists for any other part of the project |
 | Git repository | initialised | branch `diw_backend`; remote `origin` with `main` present |
 | Python toolchain | available | Python 3.11.9, pip 26.0.1, git 2.53.0 |
 | PostgreSQL | **installed and running** | PostgreSQL 18, service `postgresql-x64-18` Running; `psql.exe` at `C:\Program Files\PostgreSQL8in`. Not on PATH, which is all the old note observed. Auth is `scram-sha-256`, so a password in `.env` is required and is held by the owner, not the repo |
@@ -1248,7 +1320,7 @@ with a small local stub rather than waiting for my server.
 
 ## 23. Prioritised roadmap
 
-Phase detail, inputs, tests and definitions of done: **`docs/backend-roadmap.md`**.
+Phase detail, inputs, tests and definitions of done: **`backend/docs/backend-roadmap.md`**.
 
 | Phase | Goal | Status | Blocking dependency |
 |---|---|---|---|
@@ -1257,8 +1329,9 @@ Phase detail, inputs, tests and definitions of done: **`docs/backend-roadmap.md`
 | 2 | Paragraph and clause-aware segmentation; annotated sample; comparison | **done** (small annotated sample; agreement `PENDING`) | Phase 1 (met) |
 | 3 | PostgreSQL schema, access layer, persistence | **done** — applied, loaded, 462 tests passing | — |
 | 4 | FastAPI endpoints with validation and tests | **done** — 6 endpoints, 516 tests passing, verified against the live DB | — |
-| 5 | Data-quality and segmentation evaluation reports | planned | Phases 2–4 |
+| 5 | Data-quality and segmentation evaluation reports | **done** — E1/E2/E3/E4/E5 infrastructure built and tested; E4 measured; E1/E2/E5 PENDING human input | human annotators for E1, E2, E5 |
 | 6 | Integration with Persons 2–5; end-to-end tests | planned | Phase 4 plus their modules |
+| — | **Library & Search** (Person 5's module) | **scaffold only** — `backend/app/library_search/`, nothing implemented, not wired into the API | its *evaluation* needs D-10; its keyword baseline does not |
 
 Phase 1 shipped the pipeline but **not** the corpus: four verified RBI documents
 exist as a validation sample, D-10 is still open, and there are no version pairs
@@ -1312,22 +1385,41 @@ owner explicitly approved PostgreSQL + SQLAlchemy Core + plain SQL migrations,
 so `SQLAlchemy` and `psycopg[binary]` are now pinned dependencies and the
 schema may be applied.
 
-**Phases 3 and 4 are now done and verified** — migrations applied to
-PostgreSQL 18.6, the corpus loaded, the FastAPI layer built and exercised
-against the live database. **516 tests passing, 0 skipped** (443 of them need
-no database; `-m integration` selects the 73 that do).
+**Phases 3, 4 and 5 are now done and verified** — migrations applied to
+PostgreSQL 18.6, the corpus loaded, the FastAPI layer exercised against the
+live database, and the evaluation framework completed. **600 tests passing, 0
+failed, 0 skipped** as re-run on 2026-11-13 after the repository cleanup (527
+need no database; `-m integration` selects the 73 that do). 590 of those
+predate the cleanup; the other 10 pin the Library & Search scaffold as a
+scaffold.
 
-The condition now applies to **Phase 5 onward**: **no frontend, no RAG, no
-Compare, no classification, no library search and no new runtime dependency**
-until the owner approves the next work package. D-10 remains open and blocks
-meaningful evaluation rather than the next phase itself.
+**Evaluation status, stated precisely** (`backend/docs/final-backend-evaluation.md`):
+measured — extraction defect counters, cleaning reversibility, provenance
+501/501, the table-overlap proxy (39.9%, an upper bound), database integrity,
+API behaviour. **PENDING human input** — inter-annotator agreement (E1),
+cleaning correctness (E2), CER/WER (E5). Every scorer for those is built and
+tested and reports `PENDING`; a test pins each one so it cannot silently start
+emitting a number.
+
+**Updated 2026-11-13.** The owner authorised **Library & Search as the next
+module** ("we are now moving towards building the remaining feature modules,
+starting with Library & Search") together with a repository cleanup. Under that
+authorisation, `backend/app/library_search/` was **scaffolded only** — four
+files, every entry point raising `NotImplementedError`, nothing wired into the
+FastAPI app, 10 tests pinning it as a scaffold. No search is implemented.
+
+The condition therefore still applies to **no frontend, no RAG, no Compare and
+no classification** until the owner approves each. D-10 remains open and blocks
+meaningful *evaluation* of search rather than its construction: the keyword
+baseline can be built on 4 documents, but a relevance metric over 4 documents
+from 1 authority is not a measurement.
 
 What has been done under this condition, and why it does not breach it:
 
 - `backend/app/db/migrations/0001_initial_schema.sql` is written and committed
   but **has never been executed**. No server was reached, no database created,
   and neither SQLAlchemy nor psycopg2 was installed. It exists because this
-  file's §12 and `docs/pdf-extraction.md` §12 both argued for designing the
+  file's §12 and `backend/docs/pdf-extraction.md` §12 both argued for designing the
   segment tables against *real* segments — and the segments now exist.
 - `pymupdf` and `pdfplumber` were installed and pinned, with the owner's
   explicit approval, for Experiment A only. They are imported lazily, so the

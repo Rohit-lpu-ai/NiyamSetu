@@ -313,7 +313,7 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "Fraction of pages a line must repeat on to count as a running "
             f"header (default: {CleaningOptions().frequency_threshold}). See "
-            "docs/phase2-segmentation.md for why it is not 0.60."
+            "backend/docs/phase2-segmentation.md for why it is not 0.60."
         ),
     )
     tuning.add_argument(

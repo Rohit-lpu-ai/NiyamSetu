@@ -83,7 +83,7 @@ Everything downstream: all four other members consume my clause and document JSO
 ## Person 2 — Frontend + Classification NLP
 
 ### Implementation
-- Streamlit frontend **[NEEDS TEAM AGREEMENT — see `docs/architecture.md` AD-7]**.
+- Streamlit frontend **[NEEDS TEAM AGREEMENT — see `backend/docs/architecture.md` AD-7]**.
 - Library interface: browse, search box, filters, recently-added list.
 - Document view: metadata, extracted text, page references, clause list, extracted
   entities when Person 4's output is available.
@@ -278,7 +278,7 @@ everyone else.** Those are the two things to unblock first.
 | 4 | Document JSON shape | `CLAUDE.md` §12.3 | P1 |
 | 5 | Endpoint names and paths | `CLAUDE.md` §12.3 | P1 |
 | 6 | Error envelope and codes | `CLAUDE.md` §12.1 | P1 |
-| 7 | NLP module input/output JSON | `docs/architecture.md` §2.4 | each module owner |
+| 7 | NLP module input/output JSON | `backend/docs/architecture.md` §2.4 | each module owner |
 | 8 | Citation format | `CLAUDE.md` §12.2 | P1 defines, P3/P4 emit |
 | 9 | Dataset and annotation file formats | `data/README.md` | P1, with P5 |
 | 10 | Evaluation report format and location | `evaluation/` | P5 |

@@ -1,6 +1,6 @@
 {
   "experiment": "C - data quality",
-  "generated_at": "2026-11-12T07:43:43+00:00",
+  "generated_at": "2026-11-13T17:47:28+00:00",
   "processed_dir": "data\\processed",
   "manifest": "data\\manifest.csv",
   "versions_inspected": [
@@ -19,16 +19,17 @@
     "extraction_status",
     "cleaning_reversibility",
     "segment_provenance",
+    "offset_resolution",
     "segment_structure",
     "segmentation_consistency",
     "manifest"
   ],
   "checks_not_applicable": {},
   "totals": {
-    "findings": 13,
+    "findings": 14,
     "errors": 0,
     "warnings": 1,
-    "info": 12
+    "info": 13
   },
   "findings": [
     {
@@ -94,6 +95,13 @@
       "check": "segment_provenance",
       "severity": "info",
       "message": "all 501 segment(s) carry valid page provenance",
+      "subjects": [],
+      "count": 0
+    },
+    {
+      "check": "offset_resolution",
+      "severity": "info",
+      "message": "all 501 segment(s) rebuild exactly from their stored offsets into normalized_text (whitespace-insensitive)",
       "subjects": [],
       "count": 0
     },

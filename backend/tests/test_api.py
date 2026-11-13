@@ -42,7 +42,7 @@ from backend.tests.pdf_builder import build_pdf_bytes, page_lines  # noqa: E402
 # --------------------------------------------------------------------------- #
 #
 # Returns payloads shaped exactly like the real repository's. Kept in sync by
-# being written from the live output (see docs/api.md) -- and, more usefully,
+# being written from the live output (see backend/docs/api.md) -- and, more usefully,
 # by test_api_integration.py asserting the same fields against real data.
 
 CLAUSE: Dict[str, Any] = {
