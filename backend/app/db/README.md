@@ -91,13 +91,14 @@ then update it. See that file's header for why a generated column cannot do
 this.
 
 The five Python modules were added in Work Package 1, together with
-`SQLAlchemy==2.0.46` and `psycopg[binary]==3.2.12` in `requirements.txt`. They
-are written and reviewable; **none of them has been run against a server yet**
-(see the status block at the top of this file).
+`SQLAlchemy==2.0.46` and `psycopg[binary]==3.2.12` in `requirements.txt`. All
+five have since been **run against PostgreSQL 18.6** — see the status block at
+the top of this file.
 
-**Still not here:** anything FastAPI. The API is Phase 4, and `repository.py`
-deliberately stops at returning plain dicts in the agreed payload shapes so the
-routers have nothing to do but serialise them.
+**Not here:** anything FastAPI. The API lives in `backend/app/api/` (added in
+Work Package 2), and `repository.py` deliberately stops at returning plain
+dicts in the agreed payload shapes so the routers have nothing to do but
+serialise them.
 
 ---
 
@@ -141,7 +142,7 @@ Each one came out of running segmentation on the real documents.
 |---|---|---|
 | 1 | `segments.parent_id` | Clause hierarchy to depth 4; 241 of 254 segments in the capital-adequacy document have a parent. Person 2 cannot render a clause tree without it and Person 4 cannot align sub-clauses. |
 | 2 | `segments.segment_type` | The sketch assumed every segment is a clause. Reality: clause 355, paragraph 138, preamble 4, annexure 3, heading 1. Unattributable text is kept, not discarded, so the distinction must be storable. |
-| 3 | `segments.level`, `.marker_style`, `.clause_number_ambiguous` | Needed for per-style accuracy in Experiment B, and to explain a nesting decision afterwards. 21 bracketed markers across the corpus are genuinely ambiguous between a roman numeral and a list letter. |
+| 3 | `segments.level`, `.marker_style`, `.clause_number_ambiguous` | Needed for per-style accuracy in Experiment B, and to explain a nesting decision afterwards. 31 bracketed markers across the corpus are genuinely ambiguous between a roman numeral and a list letter (21 in the capital-adequacy amendment, 10 in the commercial-banks amendment). |
 | 4 | `segment_pages.line_index_start/end` | The sketch had character offsets only. Line indices are what the preview highlights with, and what locates a removed header line relative to a segment. |
 | 5 | `document_versions.offset_basis` | §3 above. |
 | 6 | **`page_removed_lines`** — a whole table | Cleaning is the only stage that *deletes* text, and its guarantee is reversibility. If that trail lives only in a JSON file, a database deployment has silently lost source evidence. 151 rows on the current corpus. |

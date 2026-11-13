@@ -59,9 +59,19 @@ This is a documentation error, not a pipeline defect: the JSON files, the
 `segment_count` fields, and the sum all agree on 363. Corrected in `CLAUDE.md`
 §0 and §21. No code was affected.
 
-A second, smaller instance: a comment in `0001_initial_schema.sql` said there
-were **31** ambiguous clause markers across the corpus; the measured figure is
-**21** (all in the capital-adequacy document). Corrected.
+A second, smaller instance — **and this one I got wrong, now corrected.** A
+comment in `0001_initial_schema.sql` said there were **31** ambiguous clause
+markers across the corpus. I measured only the capital-adequacy document, found
+**21**, and "corrected" the comment to 21. The original was right: the corpus
+total is **31** — 21 in capital-adequacy plus 10 in the commercial-banks
+amendment.
+
+The documentation is fixed. The SQL comment still reads 21 and **cannot be
+edited**, because the migration has since been applied and the runner's
+checksum verification correctly refuses an edited applied migration. It needs a
+`COMMENT ON COLUMN` correction in a future migration — logged in
+`docs/evaluation-audit.md` §4. A cosmetic error in a comment, but it is the kind
+that a viva question would surface.
 
 Everything else in the previous report checked out: 57 pages, 138 paragraph
 segments, 151 removed header lines, 45 page-spanning segments, 4 marker styles
