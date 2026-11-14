@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NiyamSetu — Library &amp; Search</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b4f8f'/%3E%3Ctext x='16' y='23' font-size='20' font-family='system-ui' text-anchor='middle' fill='white'%3E%C2%A7%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!--
+  NiyamSetu Library & Search — temporary developer frontend.
+
+  NOT Person 2's product frontend (CLAUDE.md §5, §7, D-1). It exists to test
+  the Library & Search API against the real backend, by hand, in a browser.
+
+  No build step, no npm, no CDN, no framework: three static files served by
+  any HTTP server. Every number and every document on screen comes from the
+  running FastAPI backend — there is no hardcoded result anywhere in app.js,
+  and if the backend is down the page says so rather than showing something.
+-->
+<header class="topbar">
+  <div class="brand">
+    <span class="logo" aria-hidden="true">§</span>
+    <div>
+      <h1>NiyamSetu</h1>
+      <p class="tagline">Library &amp; Search — government policy documents</p>
+    </div>
+  </div>
+  <div class="api-state">
+    <span id="api-status" class="pill pill-muted">checking backend…</span>
+    <label class="api-url">
+      API
+      <input id="api-base" type="text" spellcheck="false" aria-label="API base URL">
+    </label>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab" id="tab-library" role="tab" aria-selected="true" aria-controls="view-library">Library</button>
+  <button class="tab" id="tab-results" role="tab" aria-selected="false" aria-controls="view-results">Search results</button>
+  <button class="tab" id="tab-document" role="tab" aria-selected="false" aria-controls="view-document">Document</button>
+</nav>
+
+<main>
+  <!-- ------------------------------------------------------------------ -->
+  <!-- Search bar: shared by the Library and the results view            -->
+  <!-- ------------------------------------------------------------------ -->
+  <form id="search-form" class="searchbar" autocomplete="off">
+    <div class="search-field">
+      <input id="q" type="search" name="q" placeholder="Search policy text — try: capital adequacy, &quot;priority sector&quot; lending, KYC"
+             aria-label="Search query" spellcheck="false">
+      <ul id="suggestions" class="suggestions" hidden role="listbox" aria-label="Suggestions"></ul>
+    </div>
+    <button type="submit" class="primary">Search</button>
+    <button type="button" id="clear" class="ghost">Clear</button>
+  </form>
+
+  <div class="search-options">
+    <label>Scope
+      <select id="scope">
+        <option value="documents">Documents</option>
+        <option value="clauses" selected>Clauses</option>
+      </select>
+    </label>
+    <label>Strategy
+      <select id="strategy">
+        <option value="fts" selected>PostgreSQL full-text (baseline)</option>
+        <option value="ilike">ILIKE substring (comparison)</option>
+      </select>
+    </label>
+    <label>Segmentation
+      <select id="method">
+        <option value="clause_aware" selected>clause_aware</option>
+        <option value="paragraph">paragraph</option>
+      </select>
+    </label>
+    <label>Sort
+      <select id="sort">
+        <option value="relevance" selected>Relevance</option>
+        <option value="date_desc">Newest first</option>
+        <option value="date_asc">Oldest first</option>
+        <option value="title">Title</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- ------------------------------------------------------------------ -->
+  <!-- Library                                                            -->
+  <!-- ------------------------------------------------------------------ -->
+  <section id="view-library" class="view" role="tabpanel" aria-labelledby="tab-library">
+    <div id="corpus-stats" class="stats" aria-live="polite"></div>
+
+    <div class="layout">
+      <aside class="filters">
+        <div class="filters-head">
+          <h2>Filters</h2>
+          <button type="button" id="reset-filters" class="link-button">Reset</button>
+        </div>
+        <div id="active-filters" class="chips" aria-live="polite"></div>
+
+        <!--
+          The counts beside each value come from GET /api/library/facets, which
+          is documented as returning *corpus* counts and takes no filters. They
+          therefore do not shrink as filters are applied: with the IRDAI
+          authority selected the list still reads "circular 8" while clicking
+          it returns 6. Saying so is the honest fix for a labelling problem;
+          making the counts filter-aware is an API change, recommended
+          separately.
+        -->
+        <p class="facet-note">Counts are corpus-wide, not filtered.</p>
+
+        <fieldset>
+          <legend>Issuing authority</legend>
+          <div id="facet-departments" class="facet-list"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Document type</legend>
+          <div id="facet-types" class="facet-list"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Publication year</legend>
+          <div id="facet-years" class="facet-list"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Date range</legend>
+          <label class="stack">From <input type="date" id="date-from"></label>
+          <label class="stack">To <input type="date" id="date-to"></label>
+          <button type="button" id="apply-dates" class="ghost small">Apply dates</button>
+        </fieldset>
+      </aside>
+
+      <div class="results-pane">
+        <div class="pane-head">
+          <h2 id="library-heading">Documents</h2>
+          <label class="inline">Order
+            <select id="library-sort">
+              <option value="public_id" selected>Document id</option>
+              <option value="date_desc">Newest first</option>
+              <option value="date_asc">Oldest first</option>
+              <option value="title">Title A–Z</option>
+              <option value="recent">Recently ingested</option>
+            </select>
+          </label>
+        </div>
+        <div id="library-list" class="cards" aria-live="polite"></div>
+        <div id="library-pager" class="pager"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <!-- Search results                                                     -->
+  <!-- ------------------------------------------------------------------ -->
+  <section id="view-results" class="view" role="tabpanel" aria-labelledby="tab-results" hidden>
+    <div id="results-summary" class="summary" aria-live="polite"></div>
+    <div class="layout">
+      <aside class="filters">
+        <div class="filters-head">
+          <h2>Filters</h2>
+          <button type="button" id="reset-filters-2" class="link-button">Reset</button>
+        </div>
+        <div id="active-filters-2" class="chips" aria-live="polite"></div>
+        <p class="facet-note">Counts are corpus-wide, not filtered.</p>
+        <fieldset>
+          <legend>Issuing authority</legend>
+          <div id="facet-departments-2" class="facet-list"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Document type</legend>
+          <div id="facet-types-2" class="facet-list"></div>
+        </fieldset>
+      </aside>
+      <div class="results-pane">
+        <div id="results-list" class="cards" aria-live="polite"></div>
+        <div id="results-pager" class="pager"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <!-- Document detail                                                    -->
+  <!-- ------------------------------------------------------------------ -->
+  <section id="view-document" class="view" role="tabpanel" aria-labelledby="tab-document" hidden>
+    <div id="document-detail"></div>
+  </section>
+</main>
+
+<footer class="footnote">
+  <p>
+    Temporary developer frontend for testing the Library &amp; Search API. Not the
+    product UI. Every result, count and filter value on this page is read live
+    from the backend; snippets are rendered as text, never as HTML.
+  </p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -24,7 +24,10 @@ Official policy PDF
   ├─ segment_paragraphs   the baseline method                           Phase 2
   ├─ segment_clauses      clause-aware: numbering, headings, hierarchy  Phase 2
   ├─ load_version         one PostgreSQL transaction per version        Phase 3
-  └─ FastAPI              6 endpoints under /api                        Phase 4
+  └─ FastAPI              14 endpoints under /api                       Phase 4+
+       ├─ 6  documents, pages, clauses, health, ingest                  Phase 4
+       ├─ 4  Library & Search                                          §4
+       └─ 4  Compare                                                   §5
 ```
 
 **The property the whole system is built around:** every segment knows which
@@ -36,9 +39,16 @@ A clause spanning two pages returns **both** pages, never collapsed onto one.
 
 | Check | Command | Result |
 |---|---|---|
-| Full suite | `python -m pytest` | **600 passed, 0 failed, 0 errors, 0 skipped** |
-| Needs PostgreSQL | `python -m pytest -m integration` | **73 passed** |
-| Needs no server | `python -m pytest -m "not integration"` | **527** |
+| Full suite | `python -m pytest` | **1,083 passed, 1 skipped, 0 failed** (2026-11-14, after the browser session) |
+| Needs PostgreSQL | `python -m pytest -m integration` | **196 passed** |
+| Real browser | Brave + Claude in Chrome, by hand | both previews driven; **4 defects found and fixed**, each re-verified (COMPARISON_IMPLEMENTATION_REPORT.md §9.1) |
+| Needs no server | `python -m pytest -m "not integration"` | **879 passed, 1 skipped** |
+| Search retrieval | `python -m evaluation.library_search_eval` | P@5 **0.84** fts vs **0.34** ilike; 12/12 filter checks, 40/40 provenance, 15/15 edge cases |
+| Search flow (HTTP) | `python -m evaluation.library_search_e2e` | **51/51** checks |
+| Compare over real pairs | `python -m evaluation.comparison_eval` | **12/12** pairs pass every invariant; **5,104/5,104** citations verified; self-comparison 100% unchanged |
+| Compare flow (HTTP) | hand-run against a live server | **59/59** checks |
+| Compare frontend | `node compare_preview/check_render.mjs` | **55/55** checks |
+| Entity extraction | `python -m evaluation.entity_extraction_eval` | regex exact F1 **0.61**, relaxed **0.69**; CRF and transformer **NOT RUN**, with reasons |
 | Data quality | `python -m evaluation.data_quality` | 14 findings: **0 errors**, 1 warning (D-10), 13 info |
 | Migrations applied | `applied_migrations()` | `0001_initial_schema.sql`, `0002_public_id_sequences.sql` |
 | Dev database | `ping(database_url())` | **reachable** (PostgreSQL 18.6) |
@@ -75,16 +85,28 @@ NiyamSetu-diw_backend/
 │   │   │                      migrations/*.sql
 │   │   ├── document_processing/  extraction, normalisation, cleaning,
 │   │   │                      segmentation, identity, CLIs
-│   │   └── library_search/    SCAFFOLD — the next module (§4)
+│   │   ├── library_search/    IMPLEMENTED — search, 4 endpoints (§4)
+│   │   └── comparison/        IMPLEMENTED — Compare, 4 endpoints (§5)
 │   ├── docs/              all documentation (this file included)
 │   ├── scripts/           hand-run helpers; nothing in app/ imports these
-│   └── tests/             600 tests, 17 modules, tests only
+│   └── tests/             1,076 tests, 31 modules, tests only
 │
 ├── data/                  manifest, annotations (committed), raw + processed
 │                          (git-ignored)
 ├── evaluation/            importable package: scorers + dated evidence reports
-└── preview_app/           THROWAWAY developer preview — not the product frontend
+├── preview_app/           THROWAWAY developer preview over pipeline JSON
+├── search_preview/        THROWAWAY browser UI over the live search API (§4)
+└── compare_preview/       THROWAWAY browser UI over the live Compare API (§5)
 ```
+
+`data/` holds three corpora, in three separate databases, and the separation is
+deliberate — each one has published numbers measured against it:
+
+| Corpus | Database | Why it is separate |
+|---|---|---|
+| `data/raw/` — 4 RBI documents | `niyamsetu` | Every number in `final-backend-evaluation.md` was measured on it |
+| `data/sample_corpus/` — 17 documents, 3 authorities | `niyamsetu_sample` | The Library & Search relevance numbers were measured on it |
+| `data/version_pairs/` — 9 documents, **3 genuine version chains** | `niyamsetu_compare` | Compare's only real test data; see §5 |
 
 ### Why four things are not inside `backend/`
 
@@ -103,7 +125,9 @@ the runner verifies each applied file's SHA-256. See §7.
 
 ## 3. The existing contract: APIs and tables
 
-### 3.1 Six endpoints, all under `/api`
+### 3.1 Fourteen endpoints, all under `/api`
+
+Six from Phase 4, unchanged:
 
 | Method | Path | Purpose |
 |---|---|---|
@@ -113,6 +137,31 @@ the runner verifies each applied file's SHA-256. See §7.
 | GET | `/api/documents/{document_id}` | metadata + every version |
 | GET | `/api/documents/{document_id}/pages` | page text (`normalized` \| `raw` \| `both`) |
 | GET | `/api/documents/{document_id}/clauses` | segments by method, with page provenance |
+
+Four from Library & Search (§4):
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/api/search` | documents ranked by their best matching clause |
+| GET | `/api/search/clauses` | clause hits, with page provenance |
+| GET | `/api/search/suggest` | type-ahead over document identity fields |
+| GET | `/api/library/facets` | filter values and corpus counts |
+
+Four from Compare (§5):
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/api/compare/options` | documents, their comparable versions, and every older→newer pair |
+| POST | `/api/compare` | run a comparison; filters and thresholds in the body |
+| GET | `/api/compare/entities` | rule-based entity extraction over one version |
+| GET | `/api/compare/entities/labels` | the label vocabulary **and its limitations** |
+
+**Two tests pin this surface**: one asserts the exact set of fourteen paths by
+name, the other the count. A route added by accident fails both.
+
+`GET /api/documents` additionally gained `date_from`, `date_to` and `sort`, plus
+five `latest_version` fields per item — additive, so no existing consumer is
+affected (§12.4).
 
 Run it: `.venv\Scripts\python -m uvicorn backend.app.api.main:app --reload` →
 Swagger at `/docs`. Full detail in `api.md`; the guarantees teammates may rely
@@ -131,7 +180,7 @@ error envelope, `offset_basis` is `normalized_text`, and **citations use
 | `document_versions` | 4 | one published issue; carries the file + checksum + `offset_basis` |
 | `pages` | 57 | `raw_text` never overwritten; `normalized_text` separate |
 | `page_removed_lines` | 151 | every cleaning removal, reversibly, with evidence |
-| `segments` | 501 | both methods side by side; has an unused `text_search` tsvector |
+| `segments` | 501 | both methods side by side; its `text_search` tsvector is what Library & Search queries |
 | `segment_pages` | 552 | per-page `char_start`/`char_end` — how a hit becomes a citation |
 | `ingestion_jobs` | 4 | processing log |
 
@@ -141,67 +190,206 @@ the original sketch to add: `backend/app/db/README.md` §4.
 
 ---
 
-## 4. Where Library & Search goes
+## 4. Library & Search — implemented
 
-**`backend/app/library_search/` — scaffolded, not implemented.**
+**`backend/app/library_search/` — `[IMPLEMENTED]` 2026-11-14.** PostgreSQL
+full-text search over the corpus, four endpoints, 170 tests, no new dependency
+and no migration. Measured results, defects and limitations:
+**`LIBRARY_SEARCH_IMPLEMENTATION_REPORT.md`**.
 
 ```
 backend/app/library_search/
-├── README.md        responsibility, reuse map, planned endpoints, open decisions
-├── __init__.py      exports nothing yet, on purpose
-├── service.py       strategy seam: keyword (baseline) | semantic | hybrid
-├── repository.py    planned SQL over segments.text_search
-└── schemas.py       deliberately contains no models — reuse api/schemas.py
+├── README.md        endpoint reference + the reuse map
+├── __init__.py      public surface, CONTRACT_VERSION = "1.0.0"
+├── api.py           the two routers, mounted by api/main.py
+├── service.py       validation, strategy (fts | ilike), timing, envelope
+├── repository.py    SQL over segments.text_search + the GIN index
+└── schemas.py       ranking metadata and facets only
 ```
 
-Every entry point raises `NotImplementedError`, and
-`backend/tests/test_library_search_scaffold.py` (10 tests) asserts that it
-still does, that `schemas.py` defines no competing models, that no write
-statement appears anywhere in the package, and that **the API still exposes
-exactly six paths** — so a scaffold cannot quietly look finished.
+| Endpoint | What it returns |
+|---|---|
+| `GET /api/search` | documents, ranked by their best matching clause |
+| `GET /api/search/clauses` | clauses, each citable to a document and page |
+| `GET /api/search/suggest` | type-ahead over titles, reference numbers, departments |
+| `GET /api/library/facets` | filter values and corpus counts, from the tables |
 
-**Why inside the backend rather than a separate `nlp/library_search/`:** search
-is SQL over tables the backend already owns, through the connection pool the
-backend already manages, and its results must carry the same provenance fields
-as `/clauses` or they cannot be cited. A separate top-level package would need
-its own database access and would end up duplicating the read layer. The other
-three NLP modules (classification, rag_qa, extraction_diff) have no such pull
-and stay outside — they consume the HTTP API.
-
-**The one piece of unused infrastructure it exists to light up:**
+The piece of infrastructure it lit up:
 
 ```sql
-segments.text_search tsvector GENERATED ALWAYS AS (to_tsvector('english', text)) STORED
+segments.text_search TSVECTOR GENERATED ALWAYS AS (to_tsvector('english', text)) STORED
 CREATE INDEX segments_text_search_idx ON segments USING GIN (text_search);
 ```
 
-Created by `0001_initial_schema.sql` for this module, already populated for all
-501 segments, and **queried by nothing today**. The keyword baseline is
-`@@ plainto_tsquery` + `ts_rank_cd` over it: no migration, no new dependency,
-no index build. Its known defect — the `'english'` configuration is the wrong
-stemmer for the Devanagari text in the corpus — is recorded in the schema and
-must be reported, not hidden.
+Created by `0001_initial_schema.sql` for exactly this and queried by nothing
+until now — which is why the module needed **no migration**. The match is
+`websearch_to_tsquery` (phrases, OR, exclusion, and it never raises on
+punctuation), ranked by `ts_rank_cd` with length normalisation, snippets from
+`ts_headline`.
 
-Full plan, including the four `[PROPOSED]` endpoints and the decisions that gate
-them (D-7, D-10): **`backend/app/library_search/README.md`**.
+**Why inside the backend rather than a separate `nlp/library_search/`:** search
+is SQL over tables the backend already owns, through the connection pool it
+already manages, and its results must carry the same provenance fields as
+`/clauses` or they cannot be cited. A separate top-level package would need its
+own database access and would duplicate the read layer. The other three NLP
+modules (classification, rag_qa, extraction_diff) have no such pull and stay
+outside — they consume the HTTP API.
+
+**What it reuses instead of re-declaring:** `db.engine.connection` (one pool),
+`db.config.database_url` (one place the password is read), `api.errors.ApiError`
+(one envelope), `api.schemas` (one definition of a document, page and clause),
+and `GET /api/documents` for the Library listing — extended additively with
+`date_from`, `date_to` and `sort` rather than duplicated.
+
+**Measured:** P@5 **0.84** and MRR **0.97** for full-text against **0.34** for a
+substring baseline on a 20-query set, better on 11 queries and worse on none.
+**That is a diagnostic, not a validated measurement** — one annotator, not
+independent of the system, 17 documents. `data/annotations/search_relevance/README.md`
+§0 before quoting it.
+
+### The corpus it was tested on
+
+| Database | Contents | Purpose |
+|---|---|---|
+| `niyamsetu` | 4 documents · 57 pages · 501 segments | the **verified development corpus**. Untouched by this work |
+| `niyamsetu_sample` | **17 documents · 3 authorities · 148 pages · 1,503 segments** | the enlarged search corpus |
+| `niyamsetu_test` | throwaway | truncated and reloaded by the integration fixtures |
+
+Built by `backend/scripts/setup_sample_database.py`, which refuses any database
+name without "sample" in it and contains no `DROP`, `TRUNCATE` or `--replace`.
+14 PDFs were downloaded from `irdai.gov.in` and `www.nabard.org` with SHA-256
+provenance recorded per file; 1 was excluded with a written reason; 9 selected
+RBI documents could not be downloaded because their host does not complete a
+TLS handshake from this machine. See `data/sample_corpus/sources.py`.
+
+### The temporary frontend
+
+`search_preview/` — `index.html`, `app.js`, `styles.css` and a 120-line stdlib
+server that also proxies `/api`. No build step, no npm, no CDN. It is a
+**throwaway developer UI for testing search**, not Person 2's product frontend,
+and `frontend/` was deliberately not created (D-1).
+
+```bat
+set NIYAMSETU_DB_NAME=niyamsetu_sample
+.venv\Scripts\python -m uvicorn backend.app.api.main:app --port 8000
+.venv\Scripts\python search_preview\serve.py --port 5173
+```
+
+**Browser click-through was not performed** — the Chrome extension was not
+connected on this machine. `evaluation/library_search_e2e.py` replays the
+frontend's exact request sequence instead (51 checks, all passing); DOM
+rendering, input handling and CSS remain unverified.
 
 ---
 
-## 5. Test inventory (measured 2026-11-13, post-cleanup)
+## 5. Compare — implemented
+
+**`backend/app/comparison/` — `[IMPLEMENTED]` 2026-11-14.** Clause alignment,
+change classification and verified evidence between two issues of a policy.
+Four endpoints, 316 tests, **no new dependency, no new table, no migration**.
+Full audit of the teammate's prototype and every measured number:
+**`COMPARISON_IMPLEMENTATION_REPORT.md`**. Module reference:
+`backend/app/comparison/README.md`.
+
+```
+backend/app/comparison/
+├── similarity.py   formatting-insensitive comparison key + TF-IDF cosine
+├── alignment.py    the four-stage matcher, classification, confidence
+├── entities.py     the rule-based entity extractor (the regex baseline)
+├── explain.py      word-level diff + plain-language description
+├── repository.py   read-only SQL over the existing tables
+├── service.py      validation, direction, evidence resolution, filtering
+├── schemas.py      Pydantic models (change metadata only)
+└── api.py          the router, mounted by api/main.py
+```
+
+### How it aligns clauses
+
+Four stages, strongest evidence first, one-to-one throughout. Measured over
+the whole real corpus: **73.2%** of matches are settled by identical text,
+**16.7%** by an equal printed clause number with related text, **10.1%** by
+similarity.
+
+The consequence that matters: **renumbering and reordering are not
+modifications.** A clause whose text is identical once its printed number is
+removed comes back as `unchanged` with `renumbered = true`. Reordering is
+computed as the complement of a longest-increasing-subsequence over the
+matched ordinals, so one clause promoted to the top flags one clause and not
+the whole run.
+
+Nothing is forced into a match. When the runner-up scored within
+`ambiguity_margin` of the winner, the change is `ambiguous`, `confidence` is
+`low`, and the clause the matcher nearly chose instead is named.
+
+### Evidence — the part that matters
+
+Every side of every change carries an `evidence` object whose `status` was
+**verified, not assumed**: the stored character offsets are sliced out of the
+stored page text on the version's own `offset_basis`, rejoined, and compared
+against the clause under the comparison key. A `quote` is populated **only**
+when that resolved, so a client rendering `quote` unconditionally still cannot
+display an unverified citation.
+
+**Measured: 5,104 of 5,104 clause sides across all 12 real version pairs
+resolved.** A clause spanning a page break arrives with both pages, each span
+verified separately.
+
+### Why no `comparison_results` table
+
+A comparison is a pure function of two stored versions, a method and four
+thresholds. A stored row would go stale the moment a version is re-ingested.
+Instead every response carries a `comparison_id` — a hash of the two version
+fingerprints, the method and every threshold — so a result can be cited and
+re-derived exactly, with nothing to invalidate.
+`GET /api/compare/{comparison_id}` is deliberately absent and a test keeps it
+absent.
+
+### What Compare needed from the loader
+
+`document_versions.supersedes_version_id` was never populated: the manifest's
+`supersedes` column reached `extraction.json` and nothing read it back out.
+`db/loader.link_supersedes` closes that, reading the declaration from the
+artefacts so no new column and no migration were needed. It is what lets
+`/compare/options` report `supersedes_declared` — the one statement about
+version order asserted by a human rather than inferred (D-9). **6 links
+written** across the real corpus.
+
+### What is not measured
+
+**There is no alignment accuracy figure, and that is deliberate.** No
+clause-level annotation exists for 288 pages of master circulars, so
+`evaluation/comparison_eval.py` reports invariants (12/12 pairs pass), a
+self-comparison check (929 clauses against themselves: 100% unchanged), and
+descriptive counts — never a score. The entity benchmark measures the regex
+condition and reports CRF and transformer as **NOT RUN** with the reason, each
+pinned by a test.
+
+---
+
+## 6. Test inventory (measured 2026-11-14)
 
 | Module | Tests | Kind |
 |---|---:|---|
+| `test_comparison_unit.py` | 119 | unit — key, TF-IDF, the 4 stages, diff, entities · **new** |
+| `test_comparison_integration.py` | 67 | **PostgreSQL** — 6 synthetic fixtures + the real RBI pairs · **new** |
 | `test_segmentation.py` | 63 | unit |
 | `test_data_quality.py` | 57 | unit (fixture corpus) |
+| `test_library_search_integration.py` | 56 | **PostgreSQL** — search over the real corpus · **new** |
+| `test_library_search_unit.py` | 54 | unit — validation, SQL predicates, envelope · **new** |
+| `test_comparison_api.py` | 64 | **mocked service** — all 4 compare endpoints · **new** |
 | `test_experiment_b.py` | 52 | unit (scorer) |
 | `test_db_schema.py` | 49 | 10 unit + 39 **PostgreSQL** |
 | `test_preview_app.py` | 42 | unit |
 | `test_api.py` | 39 | **mocked API** (dependency overrides) |
+| `test_library_search_api.py` | 38 | **mocked service** — no database · **new** |
+| `test_compare_preview.py` | 41 | unit — the preview as source: nothing hardcoded, no markup · **new** |
+| `test_entity_extraction_eval.py` | 33 | unit — the gold file, the scorer, the unrun conditions · **new** |
 | `test_extractor_backends.py` | 32 | unit |
 | `test_segmentation_cli.py` | 29 | unit |
 | `test_page_cleaning.py` | 28 | unit |
 | `test_extraction.py` | 23 | unit |
 | `test_extraction_fidelity.py` | 22 | unit (E5 scorer) |
+| `test_library_search_scaffold.py` | 22 | unit — module boundaries (read-only, API surface) · **new** |
 | `test_cleaning_correctness.py` | 20 | unit (E2 scorer) |
 | `test_annotator_agreement.py` | 18 | unit (E1 scorer) |
 | `test_db_integration.py` | 17 | **PostgreSQL** |
@@ -212,9 +400,26 @@ them (D-7, D-10): **`backend/app/library_search/README.md`**.
 | `test_manifest.py` | 12 | unit |
 | `test_validation.py` | 12 | unit |
 | `test_identity.py` | 10 | unit |
-| `test_library_search_scaffold.py` | **10** | unit — **new in this cleanup** |
 | `test_schemas.py` | 7 | unit |
-| **Total** | **600** | **527 need no server · 73 need PostgreSQL** |
+| **Total** | **1,084** | **888 need no server · 196 need PostgreSQL** |
+
+1,083 pass and **1 skips**: the single skip is
+`test_this_tfidf_agrees_with_scikit_learn_when_it_is_installed`, which checks
+`comparison/similarity.py` against scikit-learn's `TfidfVectorizer` to within
+1e-9 and skips because scikit-learn is deliberately **not** a project
+dependency. It is a visible "not run", not a gap.
+
+170 of those are Library & Search (§4) and **324 are Compare (§5)**. The five
+Compare modules replace nothing. Two existing tests were edited in place, and
+both kept their strength: the exact-path-set assertion in
+`test_library_search_scaffold.py` now lists the four compare paths, and the
+path-count assertion in `test_library_search_api.py` went from 10 to 14 with
+the reason written next to it. No test was weakened or removed.
+
+Earlier, `test_library_search_scaffold.py` had itself been rewritten in place:
+it used to assert that the module was an unimplemented scaffold, and now asserts
+the module's boundaries — read-only, no duplicate payload definitions, and an
+exact API surface.
 
 The `integration` marker is **derived, not hand-maintained**:
 `conftest.py::pytest_collection_modifyitems` applies it to any test requesting
@@ -224,7 +429,7 @@ skip themselves — visibly — when `NIYAMSETU_TEST_DATABASE_URL` is unset, and
 
 ---
 
-## 6. How a future module integrates without duplicating the backend
+## 7. How a future module integrates without duplicating the backend
 
 Five rules. The first two are the ones that cost the most to get wrong.
 
@@ -250,20 +455,33 @@ Where each module belongs:
 
 | Module | Owner | Location | Consumes |
 |---|---|---|---|
-| Library & Search | Person 5 | `backend/app/library_search/` (scaffolded) | tables directly, read-only, via `db.engine` |
+| Library & Search | Person 5 | `backend/app/library_search/` — **implemented** (§4) | tables directly, read-only, via `db.engine` |
+| Compare | Person 4 | `backend/app/comparison/` — **implemented** (§5) | tables directly, read-only, via `db.engine` |
 | Classification | Person 2 | `nlp/classification/` — **not created**, D-1 | `GET /clauses` |
 | Ask / RAG | Person 3 | `nlp/rag_qa/` — **not created**, D-1 | `GET /clauses` as the retrieval corpus |
-| Compare | Person 4 | `nlp/extraction_diff/` — **not created**, D-1 | two versions' clauses |
 | Frontend | Person 2 | `frontend/` — **not created**, D-1 | the HTTP API only |
+
+**Compare moved inside `backend/` for the same reason Library & Search did**,
+and the earlier sketch putting it at `nlp/extraction_diff/` is superseded: a
+diff is SQL over `segments` and `segment_pages`, through the engine the backend
+already pools, and a separate top-level package would need its own database
+access and would duplicate the read layer. The other two NLP modules have no
+such pull toward the backend and stay outside it.
+
+Two rules hold *inside* `backend/app/comparison/`, and tests pin both:
+`alignment.py` may not import `entities.py` or `explain.py` — entity patterns
+and wording must never be able to change which clauses are reported as
+modified — and nothing in the package writes.
 
 `frontend/` and `nlp/` are not created because D-1 (monorepo vs backend-only
 repo) is unresolved, and creating empty directories would pre-empt a team
-decision. `preview_app/` is **not** the frontend: it is a throwaway developer
-tool, nothing in `backend/` imports it, and deleting it affects nothing else.
+decision. `preview_app/`, `search_preview/` and `compare_preview/` are **not**
+the frontend: all three are throwaway developer tools, nothing in `backend/`
+imports any of them, and deleting one affects nothing else.
 
 ---
 
-## 7. Two traps to know about before you touch anything
+## 8. Two traps to know about before you touch anything
 
 **Applied migrations are immutable.** `migrate.py` records the SHA-256 of each
 applied file and refuses to continue if the file on disk has changed. During
@@ -296,7 +514,7 @@ break every response model in the API.
 
 ---
 
-## 8. Environment facts worth knowing
+## 9. Environment facts worth knowing
 
 - **Python 3.11.9**, PostgreSQL **18.6** (service `postgresql-x64-18`). `psql`
   is at `C:\Program Files\PostgreSQL\18\bin` and is **not on PATH** — normal,
@@ -324,7 +542,7 @@ break every response model in the API.
 
 ---
 
-## 9. Where to read next
+## 10. Where to read next
 
 | Question | Document |
 |---|---|
@@ -336,6 +554,9 @@ break every response model in the API.
 | How does extraction / segmentation work? | `pdf-extraction.md`, `phase2-segmentation.md` |
 | Why these architectural choices? | `architecture.md` §8 (AD-1…AD-9) |
 | What is the next phase's definition of done? | `backend-roadmap.md` |
+| How does Library & Search work? | `LIBRARY_SEARCH_IMPLEMENTATION_REPORT.md`, `backend/app/library_search/README.md` |
+| How does Compare work, and what is *not* measured? | `COMPARISON_IMPLEMENTATION_REPORT.md`, `backend/app/comparison/README.md` |
+| Where did the genuine version pairs come from? | `data/version_pairs/README.md` |
 | Who owns what? | `team-responsibilities.md`, `CLAUDE.md` §7 |
 | What is still undecided? | `CLAUDE.md` §22.2 — **D-10 is the binding one** |
 

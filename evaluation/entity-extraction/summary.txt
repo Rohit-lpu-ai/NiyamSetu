@@ -1,0 +1,68 @@
+NiyamSetu — entity-extraction benchmark
+========================================================================
+
+READ THIS FIRST
+------------------------------------------------------------------------
+  sample                 : 30 clauses, 90 gold mentions
+  annotator              : 1, independent of system: False
+  agreement              : PENDING - there is no second annotator
+  therefore              : DIAGNOSTIC, not a validated accuracy measurement.
+  guideline              : data/annotations/entities/README.md
+
+CONDITIONS
+------------------------------------------------------------------------
+  regex        MEASURED
+  crf          NOT RUN
+               reason: A CRF is a supervised sequence labeller and needs labelled training data. The gold set is 30 clauses / 88 mentions and was drawn as a test sample; training on part of it would leave ~20 clauses to fit
+  transformer  NOT RUN
+               reason: Same data problem as the CRF, plus a compute one: neither transformers nor torch is installed, there is no GPU on this machine, and a zero-shot pretrained NER would predict PERSON / ORG / LOC / DATE r
+
+REGEX CONDITION
+------------------------------------------------------------------------
+  predicted 52 mentions against 90 gold
+  inference: 0.1417 ms/clause, 1733198.5 chars/second
+
+  EXACT span match
+    overall    P 0.8269  R 0.4778  F1 0.6056   (macro F1 0.7386)
+    label                P       R      F1   TP   FP   FN
+    AUTHORITY          1.0  0.2157  0.3548   11    0   40
+    DATE            0.8235     1.0  0.9032   14    3    0
+    OBLIGATION         1.0     1.0     1.0   10    0    0
+    REFERENCE_NO    0.4545  0.4167  0.4348    5    6    7
+    SECTION_REF        1.0     1.0     1.0    3    0    0
+
+  RELAXED span match
+    overall    P 0.9423  R 0.5444  F1 0.6901   (macro F1 0.8429)
+    label                P       R      F1   TP   FP   FN
+    AUTHORITY          1.0  0.2157  0.3548   11    0   40
+    DATE            0.8235     1.0  0.9032   14    3    0
+    OBLIGATION         1.0     1.0     1.0   10    0    0
+    REFERENCE_NO       1.0  0.9167  0.9565   11    0    1
+    SECTION_REF        1.0     1.0     1.0    3    0    0
+
+FAILURE CASES (exact match)
+------------------------------------------------------------------------
+  false positives: 9
+    CLS-0001752 REFERENCE_NO  'LBS.BC.57'
+    CLS-0001752 DATE          '02.19.10'
+    CLS-0001778 REFERENCE_NO  'RPCD.No.LBS.BC.12/65/8'
+    CLS-0004014 REFERENCE_NO  'BC.55/PS.160-87-88'
+    CLS-0004016 REFERENCE_NO  'SP.649/PS.160-88-89'
+    CLS-0005066 DATE          '02.01.001'
+    CLS-0001790 REFERENCE_NO  'DBOD.No.BP.B.BC'
+    CLS-0001750 REFERENCE_NO  'RPCD.CO.LBS.HLC.BC'
+    CLS-0001750 DATE          '21/02.19'
+  false negatives: 47
+    CLS-0001752 REFERENCE_NO  'RPCD.CO. LBS.BC.57/ 02.19.10/2009-2010'
+    CLS-0001752 AUTHORITY     'High Level Committee to Review Lead Bank Scheme'
+    CLS-0003797 AUTHORITY     'District Consultative Committees'
+    CLS-0003797 AUTHORITY     'DCCs'
+    CLS-0004070 AUTHORITY     'District Level Consultative Committees'
+    CLS-0002803 AUTHORITY     'UCO Bank'
+    CLS-0002803 AUTHORITY     'Andhra Bank'
+    CLS-0002803 AUTHORITY     'Andhra Bank'
+    CLS-0002803 AUTHORITY     'UCO Bank'
+    CLS-0002803 AUTHORITY     'State Bank of India'
+    CLS-0002803 AUTHORITY     'State Bank of India'
+    CLS-0002803 AUTHORITY     'State Bank of India'
+    ... and 35 more

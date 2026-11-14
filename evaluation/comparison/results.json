@@ -1,0 +1,767 @@
+{
+ "generated_at": "2026-11-14",
+ "database": "niyamsetu_compare",
+ "method": "clause_aware",
+ "corpus": {
+  "documents": 6,
+  "versions": 13,
+  "ok_versions": 13,
+  "documents_with_pairs": 3
+ },
+ "pairs_evaluated": 12,
+ "declared_pairs": 6,
+ "consecutive_pairs": 7,
+ "ground_truth": "NONE. No clause-level annotation exists for these documents, so this report contains no alignment accuracy, precision, recall or F1. Every count below describes what the system reported, not whether it was right.",
+ "invariants": {
+  "pairs_passing_all": 12,
+  "pairs_failing": 0,
+  "failures": []
+ },
+ "evidence": {
+  "sides_checked": 5104,
+  "sides_resolved": 5104,
+  "resolution_rate": 1.0,
+  "by_status": {
+   "resolved": 5104
+  }
+ },
+ "self_comparison": {
+  "version_id": "VER-0006",
+  "clauses": 929,
+  "counts": {
+   "added": 0,
+   "removed": 0,
+   "modified": 0,
+   "unchanged": 929
+  },
+  "all_unchanged": true,
+  "no_spurious_reordering": true,
+  "no_spurious_renumbering": true
+ },
+ "threshold_sensitivity": {
+  "pair": "VER-0012->VER-0005",
+  "sweep": [
+   {
+    "match_threshold": 0.2,
+    "counts": {
+     "added": 2,
+     "removed": 0,
+     "modified": 20,
+     "unchanged": 40
+    },
+    "ambiguous": 0,
+    "match_basis_counts": {
+     "exact_text": 40,
+     "clause_number": 13,
+     "similarity": 7
+    }
+   },
+   {
+    "match_threshold": 0.35,
+    "counts": {
+     "added": 3,
+     "removed": 1,
+     "modified": 19,
+     "unchanged": 40
+    },
+    "ambiguous": 0,
+    "match_basis_counts": {
+     "exact_text": 40,
+     "clause_number": 13,
+     "similarity": 6
+    }
+   },
+   {
+    "match_threshold": 0.45,
+    "counts": {
+     "added": 3,
+     "removed": 1,
+     "modified": 19,
+     "unchanged": 40
+    },
+    "ambiguous": 0,
+    "match_basis_counts": {
+     "exact_text": 40,
+     "clause_number": 13,
+     "similarity": 6
+    }
+   },
+   {
+    "match_threshold": 0.6,
+    "counts": {
+     "added": 3,
+     "removed": 1,
+     "modified": 19,
+     "unchanged": 40
+    },
+    "ambiguous": 0,
+    "match_basis_counts": {
+     "exact_text": 40,
+     "clause_number": 13,
+     "similarity": 6
+    }
+   },
+   {
+    "match_threshold": 0.8,
+    "counts": {
+     "added": 6,
+     "removed": 4,
+     "modified": 16,
+     "unchanged": 40
+    },
+    "ambiguous": 0,
+    "match_basis_counts": {
+     "exact_text": 40,
+     "clause_number": 13,
+     "similarity": 3
+    }
+   }
+  ]
+ },
+ "timing": {
+  "align_ms_median": 72.9,
+  "align_ms_max": 858.4,
+  "largest_pair": "VER-0013"
+ },
+ "unchanged_ratio": {
+  "declared_consecutive_median": 0.6054
+ },
+ "pairs": [
+  {
+   "document_id": "DOC-0003",
+   "base_version_id": "VER-0005",
+   "compare_version_id": "VER-0003",
+   "base_label": "2019-07-01",
+   "compare_label": "2026-10-01",
+   "consecutive": true,
+   "supersedes_declared": false,
+   "method": "clause_aware",
+   "comparison_id": "CMP-cc5a5ab3ed1e3dcc0cdb0a65",
+   "clauses": {
+    "base": 62,
+    "compare": 49
+   },
+   "counts": {
+    "added": 3,
+    "removed": 16,
+    "modified": 41,
+    "unchanged": 5
+   },
+   "match_basis_counts": {
+    "exact_text": 5,
+    "clause_number": 21,
+    "similarity": 20
+   },
+   "confidence_counts": {
+    "high": 18,
+    "medium": 45,
+    "low": 2
+   },
+   "ambiguous_matches": 2,
+   "renumbered_matches": 21,
+   "reordered_matches": 2,
+   "unchanged_ratio": 0.076923,
+   "similarity_mean": 0.752732,
+   "evidence_sides": 111,
+   "evidence_by_status": {
+    "resolved": 111
+   },
+   "evidence_problems": [],
+   "warnings": [],
+   "invariants": {
+    "conservation_base": true,
+    "conservation_compare": true,
+    "every_change_has_a_side": true,
+    "no_quote_without_resolution": true,
+    "deterministic": true,
+    "direction_as_requested": true,
+    "same_document": true
+   },
+   "align_ms": 35.118,
+   "wall_ms": 290.2
+  },
+  {
+   "document_id": "DOC-0003",
+   "base_version_id": "VER-0012",
+   "compare_version_id": "VER-0003",
+   "base_label": "2017-07-01",
+   "compare_label": "2026-10-01",
+   "consecutive": false,
+   "supersedes_declared": false,
+   "method": "clause_aware",
+   "comparison_id": "CMP-6434cab0045a7933605afdab",
+   "clauses": {
+    "base": 60,
+    "compare": 49
+   },
+   "counts": {
+    "added": 4,
+    "removed": 15,
+    "modified": 39,
+    "unchanged": 6
+   },
+   "match_basis_counts": {
+    "exact_text": 6,
+    "clause_number": 18,
+    "similarity": 21
+   },
+   "confidence_counts": {
+    "high": 18,
+    "medium": 45,
+    "low": 1
+   },
+   "ambiguous_matches": 1,
+   "renumbered_matches": 23,
+   "reordered_matches": 2,
+   "unchanged_ratio": 0.09375,
+   "similarity_mean": 0.753051,
+   "evidence_sides": 109,
+   "evidence_by_status": {
+    "resolved": 109
+   },
+   "evidence_problems": [],
+   "warnings": [],
+   "invariants": {
+    "conservation_base": true,
+    "conservation_compare": true,
+    "every_change_has_a_side": true,
+    "no_quote_without_resolution": true,
+    "deterministic": true,
+    "direction_as_requested": true,
+    "same_document": true
+   },
+   "align_ms": 27.478,
+   "wall_ms": 300.3
+  },
+  {
+   "document_id": "DOC-0003",
+   "base_version_id": "VER-0009",
+   "compare_version_id": "VER-0003",
+   "base_label": "2016-07-01",
+   "compare_label": "2026-10-01",
+   "consecutive": false,
+   "supersedes_declared": false,
+   "method": "clause_aware",
+   "comparison_id": "CMP-77a0f71aac4dfe36aeac4c49",
+   "clauses": {
+    "base": 108,
+    "compare": 49
+   },
+   "counts": {
+    "added": 8,
+    "removed": 67,
+    "modified": 38,
+    "unchanged": 3
+   },
+   "match_basis_counts": {
+    "exact_text": 3,
+    "clause_number": 10,
+    "similarity": 28
+   },
+   "confidence_counts": {
+    "high": 14,
+    "medium": 101,
+    "low": 1
+   },
+   "ambiguous_matches": 1,
+   "renumbered_matches": 30,
+   "reordered_matches": 5,
+   "unchanged_ratio": 0.025862,
+   "similarity_mean": 0.681814,
+   "evidence_sides": 157,
+   "evidence_by_status": {
+    "resolved": 157
+   },
+   "evidence_problems": [],
+   "warnings": [],
+   "invariants": {
+    "conservation_base": true,
+    "conservation_compare": true,
+    "every_change_has_a_side": true,
+    "no_quote_without_resolution": true,
+    "deterministic": true,
+    "direction_as_requested": true,
+    "same_document": true
+   },
+   "align_ms": 30.567,
+   "wall_ms": 196.0
+  },
+  {
+   "document_id": "DOC-0003",
+   "base_version_id": "VER-0012",
+   "compare_version_id": "VER-0005",
+   "base_label": "2017-07-01",
+   "compare_label": "2019-07-01",
+   "consecutive": true,
+   "supersedes_declared": true,
+   "method": "clause_aware",
+   "comparison_id": "CMP-5ed5601e6f565b652807912f",
+   "clauses": {
+    "base": 60,
+    "compare": 62
+   },
+   "counts": {
+    "added": 3,
+    "removed": 1,
+    "modified": 19,
+    "unchanged": 40
+   },
+   "match_basis_counts": {
+    "exact_text": 40,
+    "clause_number": 13,
+    "similarity": 6
+   },
+   "confidence_counts": {
+    "high": 57,
+    "medium": 6,
+    "low": 0
+   },
+   "ambiguous_matches": 0,
+   "renumbered_matches": 7,
+   "reordered_matches": 0,
+   "unchanged_ratio": 0.634921,
+   "similarity_mean": 0.973131,
+   "evidence_sides": 122,
+   "evidence_by_status": {
+    "resolved": 122
+   },
+   "evidence_problems": [],
+   "warnings": [],
+   "invariants": {
+    "conservation_base": true,
+    "conservation_compare": true,
+    "every_change_has_a_side": true,
+    "no_quote_without_resolution": true,
+    "deterministic": true,
+    "direction_as_requested": true,
+    "same_document": true
+   },
+   "align_ms": 28.766,
+   "wall_ms": 257.9
+  },
+  {
+   "document_id": "DOC-0003",
+   "base_version_id": "VER-0009",
+   "compare_version_id": "VER-0005",
+   "base_label": "2016-07-01",
+   "compare_label": "2019-07-01",
+   "consecutive": false,
+   "supersedes_declared": false,
+   "method": "clause_aware",
+   "comparison_id": "CMP-636381ac1ed488a0e00a0b12",
+   "clauses": {
+    "base": 108,
+    "compare": 62
+   },
+   "counts": {
+    "added": 8,
+    "removed": 54,
+    "modified": 29,
+    "unchanged": 25
+   },
+   "match_basis_counts": {
+    "exact_text": 25,
+    "clause_number": 13,
+    "similarity": 16
+   },
+   "confidence_counts": {
+    "high": 42,
+    "medium": 74,
+    "low": 0
+   },
+   "ambiguous_matches": 0,
+   "renumbered_matches": 22,
+   "reordered_matches": 1,
+   "unchanged_ratio": 0.215517,
+   "similarity_mean": 0.877727,
+   "evidence_sides": 170,
+   "evidence_by_status": {
+    "resolved": 170
+   },
+   "evidence_problems": [],
+   "warnings": [],
+   "invariants": {
+    "conservation_base": true,
+    "conservation_compare": true,
+    "every_change_has_a_side": true,
+    "no_quote_without_resolution": true,
+    "deterministic": true,
+    "direction_as_requested": true,
+    "same_document": true
+   },
+   "align_ms": 35.738,
+   "wall_ms": 252.9
+  },
+  {
+   "document_id": "DOC-0003",
+   "base_version_id": "VER-0009",
+   "compare_version_id": "VER-0012",
+   "base_label": "2016-07-01",
+   "compare_label": "2017-07-01",
+   "consecutive": true,
+   "supersedes_declared": true,
+   "method": "clause_aware",
+   "comparison_id": "CMP-3884045f44deda1e33bb3b6c",
+   "clauses": {
+    "base": 108,
+    "compare": 60
+   },
+   "counts": {
+    "added": 6,
+    "removed": 54,
+    "modified": 31,
+    "unchanged": 23
+   },
+   "match_basis_counts": {
+    "exact_text": 23,
+    "clause_number": 14,
+    "similarity": 17
+   },
+   "confidence_counts": {
+    "high": 42,
+    "medium": 72,
+    "low": 0
+   },
+   "ambiguous_matches": 0,
+   "renumbered_matches": 21,
+   "reordered_matches": 1,
+   "unchanged_ratio": 0.201754,
+   "similarity_mean": 0.888374,
+   "evidence_sides": 168,
+   "evidence_by_status": {
+    "resolved": 168
+   },
+   "evidence_problems": [],
+   "warnings": [],
+   "invariants": {
+    "conservation_base": true,
+    "conservation_compare": true,
+    "every_change_has_a_side": true,
+    "no_quote_without_resolution": true,
+    "deterministic": true,
+    "direction_as_requested": true,
+    "same_document": true
+   },
+   "align_ms": 33.123,
+   "wall_ms": 278.4
+  },
+  {
+   "document_id": "DOC-0005",
+   "base_version_id": "VER-0006",
+   "compare_version_id": "VER-0008",
+   "base_label": "2018-07-02",
+   "compare_label": "2019-07-02",
+   "consecutive": true,
+   "supersedes_declared": true,
+   "method": "clause_aware",
+   "comparison_id": "CMP-b86d4b44e0973061a584e487",
+   "clauses": {
+    "base": 929,
+    "compare": 554
+   },
+   "counts": {
+    "added": 35,
+    "removed": 410,
+    "modified": 144,
+    "unchanged": 375
+   },
+   "match_basis_counts": {
+    "exact_text": 375,
+    "clause_number": 94,
+    "similarity": 50
+   },
+   "confidence_counts": {
+    "high": 461,
+    "medium": 485,
+    "low": 18
+   },
+   "ambiguous_matches": 18,
+   "renumbered_matches": 74,
+   "reordered_matches": 27,
+   "unchanged_ratio": 0.389004,
+   "similarity_mean": 0.923743,
+   "evidence_sides": 841,
+   "evidence_by_status": {
+    "resolved": 841
+   },
+   "evidence_problems": [],
+   "warnings": [],
+   "invariants": {
+    "conservation_base": true,
+    "conservation_compare": true,
+    "every_change_has_a_side": true,
+    "no_quote_without_resolution": true,
+    "deterministic": true,
+    "direction_as_requested": true,
+    "same_document": true
+   },
+   "align_ms": 716.71,
+   "wall_ms": 2944.6
+  },
+  {
+   "document_id": "DOC-0005",
+   "base_version_id": "VER-0013",
+   "compare_version_id": "VER-0008",
+   "base_label": "2017-07-03",
+   "compare_label": "2019-07-02",
+   "consecutive": false,
+   "supersedes_declared": false,
+   "method": "clause_aware",
+   "comparison_id": "CMP-6247e7c6bab4ddeedcaf1e27",
+   "clauses": {
+    "base": 707,
+    "compare": 554
+   },
+   "counts": {
+    "added": 71,
+    "removed": 224,
+    "modified": 160,
+    "unchanged": 323
+   },
+   "match_basis_counts": {
+    "exact_text": 323,
+    "clause_number": 82,
+    "similarity": 78
+   },
+   "confidence_counts": {
+    "high": 429,
+    "medium": 335,
+    "low": 14
+   },
+   "ambiguous_matches": 14,
+   "renumbered_matches": 116,
+   "reordered_matches": 22,
+   "unchanged_ratio": 0.415167,
+   "similarity_mean": 0.920143,
+   "evidence_sides": 807,
+   "evidence_by_status": {
+    "resolved": 807
+   },
+   "evidence_problems": [],
+   "warnings": [],
+   "invariants": {
+    "conservation_base": true,
+    "conservation_compare": true,
+    "every_change_has_a_side": true,
+    "no_quote_without_resolution": true,
+    "deterministic": true,
+    "direction_as_requested": true,
+    "same_document": true
+   },
+   "align_ms": 571.397,
+   "wall_ms": 2758.7
+  },
+  {
+   "document_id": "DOC-0005",
+   "base_version_id": "VER-0013",
+   "compare_version_id": "VER-0006",
+   "base_label": "2017-07-03",
+   "compare_label": "2018-07-02",
+   "consecutive": true,
+   "supersedes_declared": true,
+   "method": "clause_aware",
+   "comparison_id": "CMP-218446fffafd0e6071c813c9",
+   "clauses": {
+    "base": 707,
+    "compare": 929
+   },
+   "counts": {
+    "added": 243,
+    "removed": 21,
+    "modified": 139,
+    "unchanged": 547
+   },
+   "match_basis_counts": {
+    "exact_text": 547,
+    "clause_number": 93,
+    "similarity": 46
+   },
+   "confidence_counts": {
+    "high": 626,
+    "medium": 292,
+    "low": 32
+   },
+   "ambiguous_matches": 32,
+   "renumbered_matches": 82,
+   "reordered_matches": 20,
+   "unchanged_ratio": 0.575789,
+   "similarity_mean": 0.942132,
+   "evidence_sides": 943,
+   "evidence_by_status": {
+    "resolved": 943
+   },
+   "evidence_problems": [],
+   "warnings": [],
+   "invariants": {
+    "conservation_base": true,
+    "conservation_compare": true,
+    "every_change_has_a_side": true,
+    "no_quote_without_resolution": true,
+    "deterministic": true,
+    "direction_as_requested": true,
+    "same_document": true
+   },
+   "align_ms": 858.432,
+   "wall_ms": 3012.8
+  },
+  {
+   "document_id": "DOC-0006",
+   "base_version_id": "VER-0011",
+   "compare_version_id": "VER-0007",
+   "base_label": "2018-07-02",
+   "compare_label": "2019-07-01",
+   "consecutive": true,
+   "supersedes_declared": true,
+   "method": "clause_aware",
+   "comparison_id": "CMP-e240777603c574e5922c24e1",
+   "clauses": {
+    "base": 277,
+    "compare": 286
+   },
+   "counts": {
+    "added": 9,
+    "removed": 0,
+    "modified": 32,
+    "unchanged": 245
+   },
+   "match_basis_counts": {
+    "exact_text": 245,
+    "clause_number": 31,
+    "similarity": 1
+   },
+   "confidence_counts": {
+    "high": 272,
+    "medium": 10,
+    "low": 4
+   },
+   "ambiguous_matches": 4,
+   "renumbered_matches": 1,
+   "reordered_matches": 0,
+   "unchanged_ratio": 0.856643,
+   "similarity_mean": 0.986762,
+   "evidence_sides": 563,
+   "evidence_by_status": {
+    "resolved": 563
+   },
+   "evidence_problems": [],
+   "warnings": [],
+   "invariants": {
+    "conservation_base": true,
+    "conservation_compare": true,
+    "every_change_has_a_side": true,
+    "no_quote_without_resolution": true,
+    "deterministic": true,
+    "direction_as_requested": true,
+    "same_document": true
+   },
+   "align_ms": 118.598,
+   "wall_ms": 459.8
+  },
+  {
+   "document_id": "DOC-0006",
+   "base_version_id": "VER-0010",
+   "compare_version_id": "VER-0007",
+   "base_label": "2017-07-01",
+   "compare_label": "2019-07-01",
+   "consecutive": false,
+   "supersedes_declared": false,
+   "method": "clause_aware",
+   "comparison_id": "CMP-84c38f2a1f5453d6d3005726",
+   "clauses": {
+    "base": 275,
+    "compare": 286
+   },
+   "counts": {
+    "added": 11,
+    "removed": 0,
+    "modified": 43,
+    "unchanged": 232
+   },
+   "match_basis_counts": {
+    "exact_text": 232,
+    "clause_number": 42,
+    "similarity": 1
+   },
+   "confidence_counts": {
+    "high": 267,
+    "medium": 13,
+    "low": 6
+   },
+   "ambiguous_matches": 6,
+   "renumbered_matches": 1,
+   "reordered_matches": 0,
+   "unchanged_ratio": 0.811189,
+   "similarity_mean": 0.979264,
+   "evidence_sides": 561,
+   "evidence_by_status": {
+    "resolved": 561
+   },
+   "evidence_problems": [],
+   "warnings": [],
+   "invariants": {
+    "conservation_base": true,
+    "conservation_compare": true,
+    "every_change_has_a_side": true,
+    "no_quote_without_resolution": true,
+    "deterministic": true,
+    "direction_as_requested": true,
+    "same_document": true
+   },
+   "align_ms": 112.141,
+   "wall_ms": 510.2
+  },
+  {
+   "document_id": "DOC-0006",
+   "base_version_id": "VER-0010",
+   "compare_version_id": "VER-0011",
+   "base_label": "2017-07-01",
+   "compare_label": "2018-07-02",
+   "consecutive": true,
+   "supersedes_declared": true,
+   "method": "clause_aware",
+   "comparison_id": "CMP-177dad2376812d21fbe2af8b",
+   "clauses": {
+    "base": 275,
+    "compare": 277
+   },
+   "counts": {
+    "added": 2,
+    "removed": 0,
+    "modified": 40,
+    "unchanged": 235
+   },
+   "match_basis_counts": {
+    "exact_text": 235,
+    "clause_number": 39,
+    "similarity": 1
+   },
+   "confidence_counts": {
+    "high": 272,
+    "medium": 4,
+    "low": 1
+   },
+   "ambiguous_matches": 1,
+   "renumbered_matches": 0,
+   "reordered_matches": 0,
+   "unchanged_ratio": 0.848375,
+   "similarity_mean": 0.98771,
+   "evidence_sides": 552,
+   "evidence_by_status": {
+    "resolved": 552
+   },
+   "evidence_problems": [],
+   "warnings": [],
+   "invariants": {
+    "conservation_base": true,
+    "conservation_compare": true,
+    "every_change_has_a_side": true,
+    "no_quote_without_resolution": true,
+    "deterministic": true,
+    "direction_as_requested": true,
+    "same_document": true
+   },
+   "align_ms": 109.993,
+   "wall_ms": 531.3
+  }
+ ]
+}

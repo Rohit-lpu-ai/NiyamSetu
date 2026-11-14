@@ -57,3 +57,16 @@ data/processed/
 Thumbs.db
 .idea/
 .vscode/
+
+# Library & Search sample corpus: the PDFs and the regenerable pipeline output.
+# The manifest, the fetch log and sources.py ARE committed - they are the
+# provenance record and the only unregenerable part.
+data/sample_corpus/raw/
+data/sample_corpus/processed/
+
+# Compare version-pair corpus: the PDFs and the regenerable pipeline output.
+# The manifest, the fetch log and sources.py ARE committed - they are the
+# provenance record and the only unregenerable part. Same policy as the
+# sample corpus above.
+data/version_pairs/raw/
+data/version_pairs/processed/

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NiyamSetu — Compare</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b4f8f'/%3E%3Ctext x='16' y='23' font-size='20' font-family='system-ui' text-anchor='middle' fill='white'%3E%E2%87%84%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!--
+  NiyamSetu Compare — temporary developer frontend.
+
+  NOT Person 4's product Compare interface and NOT Person 2's product
+  frontend (CLAUDE.md §5, §7, D-1). It exists to test the Compare API
+  against the real backend, by hand, in a browser.
+
+  No build step, no npm, no CDN, no framework: three static files served by
+  any HTTP server. Every clause, page number, similarity score and citation
+  on screen comes from the running FastAPI backend — there is no hardcoded
+  comparison anywhere in app.js. If the corpus has no version pairs the page
+  says so; it never invents a pair to have something to show.
+-->
+<header class="topbar">
+  <div class="brand">
+    <span class="logo" aria-hidden="true">⇄</span>
+    <div>
+      <h1>NiyamSetu</h1>
+      <p class="tagline">Compare — what changed between two issues of a policy</p>
+    </div>
+  </div>
+  <div class="api-state">
+    <span id="api-status" class="pill pill-muted">checking backend…</span>
+    <label class="api-url">
+      API
+      <input id="api-base" type="text" spellcheck="false" aria-label="API base URL">
+    </label>
+  </div>
+</header>
+
+<main>
+  <!-- ------------------------------------------------------- version picker -->
+  <section class="panel" id="picker">
+    <h2>1 · Choose a document and two issues</h2>
+
+    <div id="corpus-note" class="note note-muted" hidden></div>
+
+    <div class="picker-grid">
+      <label class="field">
+        <span>Document</span>
+        <select id="document" disabled>
+          <option>loading…</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Older issue <em>(base)</em></span>
+        <select id="base-version" disabled></select>
+      </label>
+
+      <label class="field">
+        <span>Newer issue <em>(compare)</em></span>
+        <select id="compare-version" disabled></select>
+      </label>
+
+      <label class="field field-narrow">
+        <span>Segmentation</span>
+        <select id="method">
+          <option value="clause_aware" selected>clause_aware</option>
+          <option value="paragraph">paragraph</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="pair-note" class="note" hidden></div>
+
+    <details class="thresholds">
+      <summary>Thresholds <span class="muted">— all four are reported with every result</span></summary>
+      <div class="picker-grid">
+        <label class="field field-narrow">
+          <span>match_threshold</span>
+          <input id="match-threshold" type="number" min="0" max="1" step="0.05" placeholder="0.45">
+        </label>
+        <label class="field field-narrow">
+          <span>number_match_threshold</span>
+          <input id="number-threshold" type="number" min="0" max="1" step="0.05" placeholder="0.20">
+        </label>
+        <label class="field field-narrow">
+          <span>ambiguity_margin</span>
+          <input id="ambiguity-margin" type="number" min="0" max="1" step="0.01" placeholder="0.05">
+        </label>
+        <label class="field field-narrow">
+          <span>high_confidence_similarity</span>
+          <input id="high-confidence" type="number" min="0" max="1" step="0.05" placeholder="0.75">
+        </label>
+      </div>
+      <p class="muted small">
+        Leave a box empty to use the backend's own default. A value here is sent
+        in the request and echoed back in <code>config</code>, so a screenshot
+        can always be traced to the thresholds that produced it.
+      </p>
+    </details>
+
+    <div class="actions">
+      <button id="run" class="primary" disabled>Compare</button>
+      <button id="swap" class="ghost" disabled title="Swap the two issues">⇅ swap</button>
+      <span id="run-state" class="muted small"></span>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------- summary -->
+  <section class="panel" id="summary-panel" hidden>
+    <h2>2 · What changed</h2>
+    <div id="version-heads" class="version-heads"></div>
+    <div id="warnings"></div>
+    <div id="metrics" class="metrics"></div>
+    <p id="similarity-note" class="muted small"></p>
+    <p id="comparison-id" class="muted small mono"></p>
+  </section>
+
+  <!-- ------------------------------------------------------------- filters -->
+  <section class="panel" id="filter-panel" hidden>
+    <h2>3 · Filter the changes</h2>
+    <div class="filters">
+      <fieldset>
+        <legend>Change type</legend>
+        <label><input type="checkbox" class="ctype" value="added" checked> added</label>
+        <label><input type="checkbox" class="ctype" value="removed" checked> removed</label>
+        <label><input type="checkbox" class="ctype" value="modified" checked> modified</label>
+        <label><input type="checkbox" class="ctype" value="unchanged"> unchanged</label>
+      </fieldset>
+      <fieldset>
+        <legend>Confidence</legend>
+        <label><input type="checkbox" class="conf" value="high" checked> high</label>
+        <label><input type="checkbox" class="conf" value="medium" checked> medium</label>
+        <label><input type="checkbox" class="conf" value="low" checked> low</label>
+      </fieldset>
+      <fieldset>
+        <legend>Similarity</legend>
+        <label class="inline">min <input id="min-sim" type="number" min="0" max="1" step="0.05" placeholder="0"></label>
+        <label class="inline">max <input id="max-sim" type="number" min="0" max="1" step="0.05" placeholder="1"></label>
+        <label class="inline"><input id="only-ambiguous" type="checkbox"> only ambiguous matches</label>
+      </fieldset>
+      <fieldset>
+        <legend>Show</legend>
+        <label class="inline"><input id="show-diff" type="checkbox" checked> word-level diff</label>
+        <label class="inline"><input id="show-entities" type="checkbox"> extracted entities</label>
+      </fieldset>
+    </div>
+    <p class="muted small">
+      Filtering re-runs the comparison on the backend, so what you see is what
+      the API returns for those filters — not a subset hidden in the browser.
+      <strong>Unchanged clauses are off by default</strong> because two
+      consecutive issues of a master circular are mostly unchanged, and the
+      changes are what you came for.
+    </p>
+  </section>
+
+  <!-- ------------------------------------------------------------- changes -->
+  <section class="panel" id="changes-panel" hidden>
+    <div class="panel-head">
+      <h2>4 · Side by side</h2>
+      <span id="changes-count" class="muted small"></span>
+    </div>
+    <div id="changes"></div>
+    <div class="actions" id="pager" hidden>
+      <button id="more" class="ghost">Load more changes</button>
+      <span id="pager-state" class="muted small"></span>
+    </div>
+  </section>
+
+  <section class="panel" id="empty-panel">
+    <h2>No comparison yet</h2>
+    <p class="muted">
+      Choose a document and two of its issues above, then press
+      <strong>Compare</strong>. Everything on this page is read from the live
+      API; nothing is hardcoded.
+    </p>
+  </section>
+</main>
+
+<!-- ------------------------------------------------------- evidence drawer -->
+<aside id="evidence" class="drawer" hidden aria-live="polite">
+  <div class="drawer-head">
+    <h3 id="evidence-title">Evidence</h3>
+    <button id="evidence-close" class="ghost" aria-label="Close">✕</button>
+  </div>
+  <div id="evidence-body"></div>
+</aside>
+
+<footer class="footer">
+  <p>
+    <strong>Developer tool.</strong> Not the product Compare interface
+    (<code>CLAUDE.md</code> §5.4, §7, D-1). Clause text shown here is quoted
+    verbatim from official RBI documents in the local corpus; the
+    <em>descriptions</em> of changes are generated and describe wording, never
+    legal effect. A clause marked <span class="pill pill-low">low</span>
+    confidence, or any change whose evidence is not
+    <span class="pill pill-good">resolved</span>, must be checked against the
+    source PDF before it is relied on.
+  </p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -2,9 +2,11 @@
 
 > Written 2026-10-28. Owner: Person 1.
 >
-> **Status — corrected 2026-11-13.** Phases 0–5 are **done** (extraction,
-> segmentation, PostgreSQL, FastAPI, evaluation infrastructure: 600 tests
-> passing, migrations applied, corpus loaded). Phase 6 (integration with
+> **Status — corrected 2026-11-14, after Compare.** Phases 0–5 are **done**
+> (extraction, segmentation, PostgreSQL, FastAPI, evaluation infrastructure),
+> and so are two feature modules: **Library & Search** and **Compare**.
+> **1,075 tests passing, 1 skipped, 0 failed**; migrations applied; three
+> corpora loaded into three separate databases. Phase 6 (integration with
 > Persons 2–5) has not started. The original header said no application code
 > existed; that was true when this was written and is not true now. This file
 > is kept for its per-phase **definitions of done** and its test lists, which
@@ -31,6 +33,21 @@
 | 4 | FastAPI endpoints with validation and tests | week 2–3 | Phase 3, D-5 |
 | 5 | Data-quality and segmentation evaluation reports | week 3 | Phases 2–4 |
 | 6 | Integration with Persons 2–5; end-to-end tests | week 3–4 | Phase 4 + their modules |
+| — | **Library & Search** (Person 5's module) | done 2026-11-14 | — |
+| — | **Compare** (Person 4's module) | done 2026-11-14 | — |
+
+**The two feature modules sit outside the phase numbering on purpose.** They
+are not backend phases — they are other people's deliverables, built inside
+`backend/app/` because both are SQL over tables the backend already owns
+(`PROJECT_STRUCTURE_AND_MODULE_GUIDE.md` §4, §5). Their definitions of done
+are their own reports: `LIBRARY_SEARCH_IMPLEMENTATION_REPORT.md` and
+`COMPARISON_IMPLEMENTATION_REPORT.md`.
+
+What Compare changed about the phases behind it: **ingestion gained a
+`supersedes` link step.** `db/loader.link_supersedes` resolves the manifest's
+declared predecessor into `document_versions.supersedes_version_id`, which
+Phase 3 created and nothing had ever written. Additive, no migration, and it is
+what makes a version pair's direction a fact rather than an inference (D-9).
 
 Phases 2 and 3 can overlap: segmentation is pure-Python and testable on files
 before the database exists. Phase 5 is written up continuously, not left to the end.

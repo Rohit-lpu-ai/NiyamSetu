@@ -53,6 +53,15 @@ class Settings:
     processed_dir: Path = REPO_ROOT / "data" / "processed"
     raw_dir: Path = REPO_ROOT / "data" / "raw"
     docs_enabled: bool = True
+    #: Browser origins allowed to call this API. The search UI runs on its own
+    #: port, so without this it cannot read a single response. A tuple rather
+    #: than a list because Settings is frozen and a list is not hashable.
+    cors_origins: tuple = (
+        "http://127.0.0.1:5173",
+        "http://localhost:5173",
+        "http://127.0.0.1:8000",
+        "http://localhost:8000",
+    )
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -72,7 +81,22 @@ class Settings:
             # Swagger is on by default for development and can be switched off
             # for a deployment that should not advertise its surface.
             docs_enabled=os.environ.get("NIYAMSETU_DOCS", "1") != "0",
+            cors_origins=_cors_origins(),
         )
+
+
+def _cors_origins() -> tuple:
+    """Allowed browser origins, from NIYAMSETU_CORS_ORIGINS if set.
+
+    Comma-separated. ``*`` is accepted for a throwaway local demo and is
+    deliberately not the default: this API serves document text, and a
+    wide-open default is the kind of thing that survives into a deployment.
+    """
+    raw = os.environ.get("NIYAMSETU_CORS_ORIGINS")
+    if raw is None:
+        return Settings.__dataclass_fields__["cors_origins"].default
+    parts = tuple(part.strip() for part in raw.split(",") if part.strip())
+    return parts
 
 
 @lru_cache(maxsize=1)

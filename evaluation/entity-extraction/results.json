@@ -1,0 +1,760 @@
+{
+ "condition": "regex",
+ "clauses": 30,
+ "characters": 7368,
+ "gold_mentions": 90,
+ "predicted_mentions": 52,
+ "timing": {
+  "elapsed_seconds": 0.004251,
+  "ms_per_clause": 0.1417,
+  "chars_per_second": 1733198.5
+ },
+ "modes": {
+  "exact": {
+   "overall": {
+    "true_positives": 43,
+    "false_positives": 9,
+    "false_negatives": 47,
+    "precision": 0.8269,
+    "recall": 0.4778,
+    "f1": 0.6056,
+    "macro_f1": 0.7386
+   },
+   "per_label": {
+    "DATE": {
+     "true_positives": 14,
+     "false_positives": 3,
+     "false_negatives": 0,
+     "precision": 0.8235,
+     "recall": 1.0,
+     "f1": 0.9032
+    },
+    "OBLIGATION": {
+     "true_positives": 10,
+     "false_positives": 0,
+     "false_negatives": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0
+    },
+    "AUTHORITY": {
+     "true_positives": 11,
+     "false_positives": 0,
+     "false_negatives": 40,
+     "precision": 1.0,
+     "recall": 0.2157,
+     "f1": 0.3548
+    },
+    "REFERENCE_NO": {
+     "true_positives": 5,
+     "false_positives": 6,
+     "false_negatives": 7,
+     "precision": 0.4545,
+     "recall": 0.4167,
+     "f1": 0.4348
+    },
+    "SECTION_REF": {
+     "true_positives": 3,
+     "false_positives": 0,
+     "false_negatives": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0
+    }
+   },
+   "false_positives": [
+    {
+     "clause_id": "CLS-0001752",
+     "label": "REFERENCE_NO",
+     "text": "LBS.BC.57",
+     "start": 12
+    },
+    {
+     "clause_id": "CLS-0001752",
+     "label": "DATE",
+     "text": "02.19.10",
+     "start": 23
+    },
+    {
+     "clause_id": "CLS-0001778",
+     "label": "REFERENCE_NO",
+     "text": "RPCD.No.LBS.BC.12/65/8",
+     "start": 3
+    },
+    {
+     "clause_id": "CLS-0004014",
+     "label": "REFERENCE_NO",
+     "text": "BC.55/PS.160-87-88",
+     "start": 15
+    },
+    {
+     "clause_id": "CLS-0004016",
+     "label": "REFERENCE_NO",
+     "text": "SP.649/PS.160-88-89",
+     "start": 11
+    },
+    {
+     "clause_id": "CLS-0005066",
+     "label": "DATE",
+     "text": "02.01.001",
+     "start": 28
+    },
+    {
+     "clause_id": "CLS-0001790",
+     "label": "REFERENCE_NO",
+     "text": "DBOD.No.BP.B.BC",
+     "start": 3
+    },
+    {
+     "clause_id": "CLS-0001750",
+     "label": "REFERENCE_NO",
+     "text": "RPCD.CO.LBS.HLC.BC",
+     "start": 3
+    },
+    {
+     "clause_id": "CLS-0001750",
+     "label": "DATE",
+     "text": "21/02.19",
+     "start": 27
+    }
+   ],
+   "false_negatives": [
+    {
+     "clause_id": "CLS-0001752",
+     "label": "REFERENCE_NO",
+     "text": "RPCD.CO. LBS.BC.57/ 02.19.10/2009-2010",
+     "start": 3
+    },
+    {
+     "clause_id": "CLS-0001752",
+     "label": "AUTHORITY",
+     "text": "High Level Committee to Review Lead Bank Scheme",
+     "start": 67
+    },
+    {
+     "clause_id": "CLS-0003797",
+     "label": "AUTHORITY",
+     "text": "District Consultative Committees",
+     "start": 134
+    },
+    {
+     "clause_id": "CLS-0003797",
+     "label": "AUTHORITY",
+     "text": "DCCs",
+     "start": 168
+    },
+    {
+     "clause_id": "CLS-0004070",
+     "label": "AUTHORITY",
+     "text": "District Level Consultative Committees",
+     "start": 8
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "UCO Bank",
+     "start": 13
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "Andhra Bank",
+     "start": 34
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "Andhra Bank",
+     "start": 56
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "UCO Bank",
+     "start": 85
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "State Bank of India",
+     "start": 104
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "State Bank of India",
+     "start": 138
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "State Bank of India",
+     "start": 171
+    },
+    {
+     "clause_id": "CLS-0002531",
+     "label": "AUTHORITY",
+     "text": "Committee of Executive Directors",
+     "start": 136
+    },
+    {
+     "clause_id": "CLS-0001778",
+     "label": "REFERENCE_NO",
+     "text": "RPCD.No.LBS.BC.12/65/8 8-89",
+     "start": 3
+    },
+    {
+     "clause_id": "CLS-0001778",
+     "label": "AUTHORITY",
+     "text": "Block Level Bankers",
+     "start": 82
+    },
+    {
+     "clause_id": "CLS-0000155",
+     "label": "AUTHORITY",
+     "text": "Working Group on the Development of Scheduled Castes",
+     "start": 70
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "United Bank of India",
+     "start": 10
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "United Bank of India",
+     "start": 41
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "UCO Bank",
+     "start": 72
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "UCO Bank",
+     "start": 97
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "State Bank of India",
+     "start": 123
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "United Bank of India",
+     "start": 156
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "UCO Bank",
+     "start": 190
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "United Bank of India",
+     "start": 212
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "Krishi Vigyan Kendra",
+     "start": 69
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "KVK",
+     "start": 92
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "Horticulture Mission",
+     "start": 98
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "National Skill Development C orporation",
+     "start": 120
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "Agriculture Skill Council of India",
+     "start": 161
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "ASCI",
+     "start": 198
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "RSETIs",
+     "start": 247
+    },
+    {
+     "clause_id": "CLS-0004014",
+     "label": "REFERENCE_NO",
+     "text": "RPCD No. SP. BC.55/PS.160-87-88",
+     "start": 2
+    },
+    {
+     "clause_id": "CLS-0004016",
+     "label": "REFERENCE_NO",
+     "text": "RPCD No.SP.649/PS.160-88-89",
+     "start": 3
+    },
+    {
+     "clause_id": "CLS-0004016",
+     "label": "AUTHORITY",
+     "text": "Prime Minister",
+     "start": 40
+    },
+    {
+     "clause_id": "CLS-0000148",
+     "label": "AUTHORITY",
+     "text": "State Level Scheduled Caste/Scheduled Tribe Corporations",
+     "start": 222
+    },
+    {
+     "clause_id": "CLS-0002998",
+     "label": "AUTHORITY",
+     "text": "High Level Committee to Review Lead Bank Scheme",
+     "start": 65
+    },
+    {
+     "clause_id": "CLS-0005066",
+     "label": "REFERENCE_NO",
+     "text": "RPCD. CO.LBS. BC. No.85 /02.01.001/2000-01",
+     "start": 3
+    },
+    {
+     "clause_id": "CLS-0005066",
+     "label": "AUTHORITY",
+     "text": "Parliament",
+     "start": 104
+    },
+    {
+     "clause_id": "CLS-0005066",
+     "label": "AUTHORITY",
+     "text": "District Level Review Committee",
+     "start": 145
+    },
+    {
+     "clause_id": "CLS-0005066",
+     "label": "AUTHORITY",
+     "text": "DLRC",
+     "start": 178
+    },
+    {
+     "clause_id": "CLS-0003017",
+     "label": "AUTHORITY",
+     "text": "Parliament",
+     "start": 100
+    },
+    {
+     "clause_id": "CLS-0003017",
+     "label": "AUTHORITY",
+     "text": "District Level Review Committee",
+     "start": 141
+    },
+    {
+     "clause_id": "CLS-0003017",
+     "label": "AUTHORITY",
+     "text": "DLRC",
+     "start": 174
+    },
+    {
+     "clause_id": "CLS-0001790",
+     "label": "REFERENCE_NO",
+     "text": "DBOD.No.BP.B.BC 74/C/462(E.9)-80",
+     "start": 3
+    },
+    {
+     "clause_id": "CLS-0001750",
+     "label": "REFERENCE_NO",
+     "text": "RPCD.CO.LBS.HLC.BC. No. 21/02.19.10/2010-11",
+     "start": 3
+    },
+    {
+     "clause_id": "CLS-0001750",
+     "label": "AUTHORITY",
+     "text": "High Level Committee to Review Lead Bank scheme",
+     "start": 58
+    },
+    {
+     "clause_id": "CLS-0000904",
+     "label": "AUTHORITY",
+     "text": "Gadgil Study Group",
+     "start": 109
+    }
+   ]
+  },
+  "relaxed": {
+   "overall": {
+    "true_positives": 49,
+    "false_positives": 3,
+    "false_negatives": 41,
+    "precision": 0.9423,
+    "recall": 0.5444,
+    "f1": 0.6901,
+    "macro_f1": 0.8429
+   },
+   "per_label": {
+    "DATE": {
+     "true_positives": 14,
+     "false_positives": 3,
+     "false_negatives": 0,
+     "precision": 0.8235,
+     "recall": 1.0,
+     "f1": 0.9032
+    },
+    "OBLIGATION": {
+     "true_positives": 10,
+     "false_positives": 0,
+     "false_negatives": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0
+    },
+    "AUTHORITY": {
+     "true_positives": 11,
+     "false_positives": 0,
+     "false_negatives": 40,
+     "precision": 1.0,
+     "recall": 0.2157,
+     "f1": 0.3548
+    },
+    "REFERENCE_NO": {
+     "true_positives": 11,
+     "false_positives": 0,
+     "false_negatives": 1,
+     "precision": 1.0,
+     "recall": 0.9167,
+     "f1": 0.9565
+    },
+    "SECTION_REF": {
+     "true_positives": 3,
+     "false_positives": 0,
+     "false_negatives": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0
+    }
+   },
+   "false_positives": [
+    {
+     "clause_id": "CLS-0001752",
+     "label": "DATE",
+     "text": "02.19.10",
+     "start": 23
+    },
+    {
+     "clause_id": "CLS-0005066",
+     "label": "DATE",
+     "text": "02.01.001",
+     "start": 28
+    },
+    {
+     "clause_id": "CLS-0001750",
+     "label": "DATE",
+     "text": "21/02.19",
+     "start": 27
+    }
+   ],
+   "false_negatives": [
+    {
+     "clause_id": "CLS-0001752",
+     "label": "AUTHORITY",
+     "text": "High Level Committee to Review Lead Bank Scheme",
+     "start": 67
+    },
+    {
+     "clause_id": "CLS-0003797",
+     "label": "AUTHORITY",
+     "text": "District Consultative Committees",
+     "start": 134
+    },
+    {
+     "clause_id": "CLS-0003797",
+     "label": "AUTHORITY",
+     "text": "DCCs",
+     "start": 168
+    },
+    {
+     "clause_id": "CLS-0004070",
+     "label": "AUTHORITY",
+     "text": "District Level Consultative Committees",
+     "start": 8
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "UCO Bank",
+     "start": 13
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "Andhra Bank",
+     "start": 34
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "Andhra Bank",
+     "start": 56
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "UCO Bank",
+     "start": 85
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "State Bank of India",
+     "start": 104
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "State Bank of India",
+     "start": 138
+    },
+    {
+     "clause_id": "CLS-0002803",
+     "label": "AUTHORITY",
+     "text": "State Bank of India",
+     "start": 171
+    },
+    {
+     "clause_id": "CLS-0002531",
+     "label": "AUTHORITY",
+     "text": "Committee of Executive Directors",
+     "start": 136
+    },
+    {
+     "clause_id": "CLS-0001778",
+     "label": "AUTHORITY",
+     "text": "Block Level Bankers",
+     "start": 82
+    },
+    {
+     "clause_id": "CLS-0000155",
+     "label": "AUTHORITY",
+     "text": "Working Group on the Development of Scheduled Castes",
+     "start": 70
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "United Bank of India",
+     "start": 10
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "United Bank of India",
+     "start": 41
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "UCO Bank",
+     "start": 72
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "UCO Bank",
+     "start": 97
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "State Bank of India",
+     "start": 123
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "United Bank of India",
+     "start": 156
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "UCO Bank",
+     "start": 190
+    },
+    {
+     "clause_id": "CLS-0002637",
+     "label": "AUTHORITY",
+     "text": "United Bank of India",
+     "start": 212
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "Krishi Vigyan Kendra",
+     "start": 69
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "KVK",
+     "start": 92
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "Horticulture Mission",
+     "start": 98
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "National Skill Development C orporation",
+     "start": 120
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "Agriculture Skill Council of India",
+     "start": 161
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "ASCI",
+     "start": 198
+    },
+    {
+     "clause_id": "CLS-0002554",
+     "label": "AUTHORITY",
+     "text": "RSETIs",
+     "start": 247
+    },
+    {
+     "clause_id": "CLS-0004016",
+     "label": "AUTHORITY",
+     "text": "Prime Minister",
+     "start": 40
+    },
+    {
+     "clause_id": "CLS-0000148",
+     "label": "AUTHORITY",
+     "text": "State Level Scheduled Caste/Scheduled Tribe Corporations",
+     "start": 222
+    },
+    {
+     "clause_id": "CLS-0002998",
+     "label": "AUTHORITY",
+     "text": "High Level Committee to Review Lead Bank Scheme",
+     "start": 65
+    },
+    {
+     "clause_id": "CLS-0005066",
+     "label": "REFERENCE_NO",
+     "text": "RPCD. CO.LBS. BC. No.85 /02.01.001/2000-01",
+     "start": 3
+    },
+    {
+     "clause_id": "CLS-0005066",
+     "label": "AUTHORITY",
+     "text": "Parliament",
+     "start": 104
+    },
+    {
+     "clause_id": "CLS-0005066",
+     "label": "AUTHORITY",
+     "text": "District Level Review Committee",
+     "start": 145
+    },
+    {
+     "clause_id": "CLS-0005066",
+     "label": "AUTHORITY",
+     "text": "DLRC",
+     "start": 178
+    },
+    {
+     "clause_id": "CLS-0003017",
+     "label": "AUTHORITY",
+     "text": "Parliament",
+     "start": 100
+    },
+    {
+     "clause_id": "CLS-0003017",
+     "label": "AUTHORITY",
+     "text": "District Level Review Committee",
+     "start": 141
+    },
+    {
+     "clause_id": "CLS-0003017",
+     "label": "AUTHORITY",
+     "text": "DLRC",
+     "start": 174
+    },
+    {
+     "clause_id": "CLS-0001750",
+     "label": "AUTHORITY",
+     "text": "High Level Committee to Review Lead Bank scheme",
+     "start": 58
+    },
+    {
+     "clause_id": "CLS-0000904",
+     "label": "AUTHORITY",
+     "text": "Gadgil Study Group",
+     "start": 109
+    }
+   ]
+  }
+ },
+ "conditions": {
+  "regex": {
+   "status": "MEASURED",
+   "implementation": "backend/app/comparison/entities.py",
+   "description": "Ordered pattern cascade with precedence-based overlap resolution. Grown from the teammate's prototype extract_facts."
+  },
+  "crf": {
+   "status": "NOT RUN",
+   "implementation": null,
+   "reason": "A CRF is a supervised sequence labeller and needs labelled training data. The gold set is 30 clauses / 88 mentions and was drawn as a test sample; training on part of it would leave ~20 clauses to fit and ~10 to score, which measures the split rather than the model. sklearn-crfsuite is not installed and is not in requirements.txt; pinning it would need the written justification CLAUDE.md §24 rule 5 requires, and that justification cannot honestly be written for a comparison that the data cannot support.",
+   "what_would_change_this": "Of the order of 1,000 labelled sentences, which is a corpus decision (D-10) and an annotation effort, not a code change. The guideline and the scorer are both in place, so the labels could be produced without redesigning anything."
+  },
+  "transformer": {
+   "status": "NOT RUN",
+   "implementation": null,
+   "reason": "Same data problem as the CRF, plus a compute one: neither transformers nor torch is installed, there is no GPU on this machine, and a zero-shot pretrained NER would predict PERSON / ORG / LOC / DATE rather than this project's eight labels -- so its output would not be comparable to the gold set without a label-mapping decision that would itself need validating.",
+   "what_would_change_this": "A label mapping agreed with the team (ORG -> AUTHORITY, DATE -> DATE, and an explicit decision about the five labels no general-purpose NER has) would make a **zero-shot** comparison possible on AUTHORITY and DATE alone, without any training data. That is the cheapest honest next step and it is recommended in the implementation report."
+  }
+ },
+ "annotator": {
+  "count": 1,
+  "independent_of_system": false,
+  "agreement": "PENDING - there is no second annotator"
+ },
+ "sampling": {
+  "seed": 20261114,
+  "method": "random.Random(seed).shuffle over clause_aware segments of 80-700 characters across all 9 issues; first 30 kept",
+  "population": 747,
+  "sample": 30
+ },
+ "guideline": "data/annotations/entities/README.md",
+ "corpus": "data/version_pairs (genuine RBI master-circular version chains)"
+}

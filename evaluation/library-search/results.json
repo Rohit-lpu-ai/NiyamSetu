@@ -1,0 +1,1754 @@
+{
+  "experiment": "F - Library & Search retrieval quality",
+  "generated_at": "2026-11-14T00:51:42+0530",
+  "api_base": "http://127.0.0.1:8000/api",
+  "health": {
+    "status": "ok",
+    "database": "ok",
+    "version": "0.1.0"
+  },
+  "caveat": "Single non-independent annotator. See README.md section 0 before quoting any metric.",
+  "annotator": {
+    "annotator": "person-1-backend-owner",
+    "independent": false,
+    "guideline": "data/annotations/search_relevance/README.md"
+  },
+  "corpus_as_served": {
+    "documents": 17,
+    "versions": 17,
+    "pages": 148,
+    "segments": {
+      "clause_aware": 728,
+      "paragraph": 775
+    },
+    "authorities": 6,
+    "date_range": {
+      "earliest": "2021-05-20",
+      "latest": "2026-11-02"
+    }
+  },
+  "corpus_as_judged": {
+    "database": "niyamsetu_sample",
+    "documents": 17,
+    "pages": 148,
+    "clause_aware_segments": 728,
+    "authorities": [
+      "RBI",
+      "IRDAI",
+      "NABARD"
+    ]
+  },
+  "fts": {
+    "summary": {
+      "queries": 20,
+      "queries_with_a_relevant_document": 16,
+      "deliberate_zero_queries": 4,
+      "precision_at_5": 0.8438,
+      "recall_at_5": 0.9688,
+      "mean_reciprocal_rank": 0.9688,
+      "top_1_correct": 15,
+      "found_in_top_k": 16,
+      "missed_entirely": [],
+      "deliberate_zeros_correct": 4,
+      "deliberate_zeros_wrong": [],
+      "median_took_ms": 8.95,
+      "max_took_ms": 11.77
+    },
+    "per_query": [
+      {
+        "id": "q01",
+        "query": "capital adequacy",
+        "strategy": "fts",
+        "theme": "capital adequacy requirements",
+        "relevant": [
+          "DOC-0004"
+        ],
+        "returned": [
+          "DOC-0004",
+          "DOC-0002"
+        ],
+        "total": 2,
+        "parsed_query": "'capit' & 'adequaci'",
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 9.52,
+        "round_trip_ms": 21.99,
+        "warnings": []
+      },
+      {
+        "id": "q02",
+        "query": "\"capital adequacy\"",
+        "strategy": "fts",
+        "theme": "phrase search",
+        "relevant": [
+          "DOC-0004"
+        ],
+        "returned": [
+          "DOC-0004",
+          "DOC-0002"
+        ],
+        "total": 2,
+        "parsed_query": "'capit' <-> 'adequaci'",
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 9.4,
+        "round_trip_ms": 22.89,
+        "warnings": []
+      },
+      {
+        "id": "q03",
+        "query": "priority sector lending",
+        "strategy": "fts",
+        "theme": "priority sector lending",
+        "relevant": [
+          "DOC-0003"
+        ],
+        "returned": [
+          "DOC-0003"
+        ],
+        "total": 1,
+        "parsed_query": "'prioriti' & 'sector' & 'lend'",
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 8.26,
+        "round_trip_ms": 11.17,
+        "warnings": []
+      },
+      {
+        "id": "q04",
+        "query": "credit facilities to scheduled castes and scheduled tribes",
+        "strategy": "fts",
+        "theme": "commercial bank regulation / financial inclusion",
+        "relevant": [
+          "DOC-0003"
+        ],
+        "returned": [
+          "DOC-0003"
+        ],
+        "total": 1,
+        "parsed_query": "'credit' & 'facil' & 'schedul' & 'cast' & 'schedul' & 'tribe'",
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 10.16,
+        "round_trip_ms": 23.3,
+        "warnings": []
+      },
+      {
+        "id": "q05",
+        "query": "lead bank responsibility districts",
+        "strategy": "fts",
+        "theme": "commercial bank regulation",
+        "relevant": [
+          "DOC-0001"
+        ],
+        "returned": [
+          "DOC-0001"
+        ],
+        "total": 1,
+        "parsed_query": "'lead' & 'bank' & 'respons' & 'district'",
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 10.69,
+        "round_trip_ms": 14.83,
+        "warnings": []
+      },
+      {
+        "id": "q06",
+        "query": "cyber security",
+        "strategy": "fts",
+        "theme": "digital payment security",
+        "relevant": [
+          "DOC-0007"
+        ],
+        "returned": [
+          "DOC-0007"
+        ],
+        "total": 1,
+        "parsed_query": "'cyber' & 'secur'",
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 11.77,
+        "round_trip_ms": 15.49,
+        "warnings": []
+      },
+      {
+        "id": "q07",
+        "query": "insurance ombudsman",
+        "strategy": "fts",
+        "theme": "grievance redress",
+        "relevant": [
+          "DOC-0009"
+        ],
+        "returned": [
+          "DOC-0009"
+        ],
+        "total": 1,
+        "parsed_query": "'insur' & 'ombudsman'",
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 10.64,
+        "round_trip_ms": 14.5,
+        "warnings": []
+      },
+      {
+        "id": "q08",
+        "query": "foreign investment in insurance companies",
+        "strategy": "fts",
+        "theme": "foreign investment",
+        "relevant": [
+          "DOC-0011"
+        ],
+        "returned": [
+          "DOC-0011",
+          "DOC-0005",
+          "DOC-0015"
+        ],
+        "total": 3,
+        "parsed_query": "'foreign' & 'invest' & 'insur' & 'compani'",
+        "precision_at_k": 0.3333333333333333,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 10.42,
+        "round_trip_ms": 13.93,
+        "warnings": []
+      },
+      {
+        "id": "q09",
+        "query": "transfer of shares of insurers",
+        "strategy": "fts",
+        "theme": "corporate approvals",
+        "relevant": [
+          "DOC-0015"
+        ],
+        "returned": [
+          "DOC-0015"
+        ],
+        "total": 1,
+        "parsed_query": "'transfer' & 'share' & 'insur'",
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 9.51,
+        "round_trip_ms": 12.21,
+        "warnings": []
+      },
+      {
+        "id": "q10",
+        "query": "annual fee payment certificate of registration",
+        "strategy": "fts",
+        "theme": "regulatory fees",
+        "relevant": [
+          "DOC-0010",
+          "DOC-0013"
+        ],
+        "returned": [
+          "DOC-0013",
+          "DOC-0010",
+          "DOC-0015"
+        ],
+        "total": 3,
+        "parsed_query": "'annual' & 'fee' & 'payment' & 'certif' & 'registr'",
+        "precision_at_k": 0.6666666666666666,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 9.16,
+        "round_trip_ms": 22.68,
+        "warnings": []
+      },
+      {
+        "id": "q11",
+        "query": "obligatory cession reinsurance",
+        "strategy": "fts",
+        "theme": "reinsurance",
+        "relevant": [
+          "DOC-0016"
+        ],
+        "returned": [
+          "DOC-0016"
+        ],
+        "total": 1,
+        "parsed_query": "'obligatori' & 'cession' & 'reinsur'",
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 8.71,
+        "round_trip_ms": 11.61,
+        "warnings": []
+      },
+      {
+        "id": "q12",
+        "query": "alternative investment funds",
+        "strategy": "fts",
+        "theme": "investment norms",
+        "relevant": [
+          "DOC-0017"
+        ],
+        "returned": [
+          "DOC-0017"
+        ],
+        "total": 1,
+        "parsed_query": "'altern' & 'invest' & 'fund'",
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 8.24,
+        "round_trip_ms": 11.1,
+        "warnings": []
+      },
+      {
+        "id": "q13",
+        "query": "formats for publishing financial results",
+        "strategy": "fts",
+        "theme": "regulatory reporting",
+        "relevant": [
+          "DOC-0008"
+        ],
+        "returned": [
+          "DOC-0008"
+        ],
+        "total": 1,
+        "parsed_query": "'format' & 'publish' & 'financi' & 'result'",
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 9.45,
+        "round_trip_ms": 12.12,
+        "warnings": []
+      },
+      {
+        "id": "q14",
+        "query": "gender policy women",
+        "strategy": "fts",
+        "theme": "development policy",
+        "relevant": [
+          "DOC-0006"
+        ],
+        "returned": [
+          "DOC-0006"
+        ],
+        "total": 1,
+        "parsed_query": "'gender' & 'polici' & 'women'",
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 8.36,
+        "round_trip_ms": 11.11,
+        "warnings": []
+      },
+      {
+        "id": "q15",
+        "query": "insurance intermediaries registration",
+        "strategy": "fts",
+        "theme": "intermediary regulation",
+        "relevant": [
+          "DOC-0012",
+          "DOC-0015"
+        ],
+        "returned": [
+          "DOC-0010",
+          "DOC-0015"
+        ],
+        "total": 2,
+        "parsed_query": "'insur' & 'intermediari' & 'registr'",
+        "precision_at_k": 0.5,
+        "recall_at_k": 0.5,
+        "reciprocal_rank": 0.5,
+        "correct_empty": null,
+        "first_relevant_rank": 2,
+        "took_ms": 8.74,
+        "round_trip_ms": 21.16,
+        "warnings": []
+      },
+      {
+        "id": "q16",
+        "query": "tariff de-notification",
+        "strategy": "fts",
+        "theme": "pricing",
+        "relevant": [
+          "DOC-0014"
+        ],
+        "returned": [
+          "DOC-0014"
+        ],
+        "total": 1,
+        "parsed_query": "'tariff' & 'de-notif' <-> 'de' <-> 'notif'",
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 8.48,
+        "round_trip_ms": 11.07,
+        "warnings": []
+      },
+      {
+        "id": "q17",
+        "query": "know your customer",
+        "strategy": "fts",
+        "theme": "KYC (brief theme, no document behind it)",
+        "relevant": [],
+        "returned": [],
+        "total": 0,
+        "parsed_query": "'know' & 'custom'",
+        "precision_at_k": null,
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "correct_empty": true,
+        "first_relevant_rank": null,
+        "took_ms": 6.19,
+        "round_trip_ms": 18.84,
+        "warnings": []
+      },
+      {
+        "id": "q18",
+        "query": "digital payment security controls",
+        "strategy": "fts",
+        "theme": "digital payment security (no document behind it)",
+        "relevant": [],
+        "returned": [],
+        "total": 0,
+        "parsed_query": "'digit' & 'payment' & 'secur' & 'control'",
+        "precision_at_k": null,
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "correct_empty": true,
+        "first_relevant_rank": null,
+        "took_ms": 6.51,
+        "round_trip_ms": 8.88,
+        "warnings": []
+      },
+      {
+        "id": "q19",
+        "query": "liquidity coverage ratio requirements",
+        "strategy": "fts",
+        "theme": "liquidity requirements (no document behind it)",
+        "relevant": [],
+        "returned": [],
+        "total": 0,
+        "parsed_query": "'liquid' & 'coverag' & 'ratio' & 'requir'",
+        "precision_at_k": null,
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "correct_empty": true,
+        "first_relevant_rank": null,
+        "took_ms": 6.32,
+        "round_trip_ms": 8.94,
+        "warnings": []
+      },
+      {
+        "id": "q20",
+        "query": "zzzzqqq nonexistent term",
+        "strategy": "fts",
+        "theme": "negative control",
+        "relevant": [],
+        "returned": [],
+        "total": 0,
+        "parsed_query": "'zzzzqqq' & 'nonexist' & 'term'",
+        "precision_at_k": null,
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "correct_empty": true,
+        "first_relevant_rank": null,
+        "took_ms": 7.2,
+        "round_trip_ms": 9.49,
+        "warnings": []
+      }
+    ]
+  },
+  "ilike": {
+    "summary": {
+      "queries": 20,
+      "queries_with_a_relevant_document": 16,
+      "deliberate_zero_queries": 4,
+      "precision_at_5": 0.3438,
+      "recall_at_5": 0.375,
+      "mean_reciprocal_rank": 0.3438,
+      "top_1_correct": 5,
+      "found_in_top_k": 6,
+      "missed_entirely": [
+        "q02",
+        "q04",
+        "q05",
+        "q08",
+        "q09",
+        "q10",
+        "q11",
+        "q14",
+        "q15",
+        "q16"
+      ],
+      "deliberate_zeros_correct": 4,
+      "deliberate_zeros_wrong": [],
+      "median_took_ms": 17.46,
+      "max_took_ms": 19.79
+    },
+    "per_query": [
+      {
+        "id": "q01",
+        "query": "capital adequacy",
+        "strategy": "ilike",
+        "theme": "capital adequacy requirements",
+        "relevant": [
+          "DOC-0004"
+        ],
+        "returned": [
+          "DOC-0002",
+          "DOC-0004"
+        ],
+        "total": 2,
+        "parsed_query": null,
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 0.5,
+        "correct_empty": null,
+        "first_relevant_rank": 2,
+        "took_ms": 17.43,
+        "round_trip_ms": 20.24,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q02",
+        "query": "\"capital adequacy\"",
+        "strategy": "ilike",
+        "theme": "phrase search",
+        "relevant": [
+          "DOC-0004"
+        ],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "correct_empty": null,
+        "first_relevant_rank": null,
+        "took_ms": 16.09,
+        "round_trip_ms": 18.56,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q03",
+        "query": "priority sector lending",
+        "strategy": "ilike",
+        "theme": "priority sector lending",
+        "relevant": [
+          "DOC-0003"
+        ],
+        "returned": [
+          "DOC-0003"
+        ],
+        "total": 1,
+        "parsed_query": null,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 18.38,
+        "round_trip_ms": 21.16,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q04",
+        "query": "credit facilities to scheduled castes and scheduled tribes",
+        "strategy": "ilike",
+        "theme": "commercial bank regulation / financial inclusion",
+        "relevant": [
+          "DOC-0003"
+        ],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "correct_empty": null,
+        "first_relevant_rank": null,
+        "took_ms": 19.65,
+        "round_trip_ms": 32.45,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q05",
+        "query": "lead bank responsibility districts",
+        "strategy": "ilike",
+        "theme": "commercial bank regulation",
+        "relevant": [
+          "DOC-0001"
+        ],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "correct_empty": null,
+        "first_relevant_rank": null,
+        "took_ms": 17.86,
+        "round_trip_ms": 20.77,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q06",
+        "query": "cyber security",
+        "strategy": "ilike",
+        "theme": "digital payment security",
+        "relevant": [
+          "DOC-0007"
+        ],
+        "returned": [
+          "DOC-0007"
+        ],
+        "total": 1,
+        "parsed_query": null,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 18.05,
+        "round_trip_ms": 20.68,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q07",
+        "query": "insurance ombudsman",
+        "strategy": "ilike",
+        "theme": "grievance redress",
+        "relevant": [
+          "DOC-0009"
+        ],
+        "returned": [
+          "DOC-0009"
+        ],
+        "total": 1,
+        "parsed_query": null,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 18.88,
+        "round_trip_ms": 21.77,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q08",
+        "query": "foreign investment in insurance companies",
+        "strategy": "ilike",
+        "theme": "foreign investment",
+        "relevant": [
+          "DOC-0011"
+        ],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "correct_empty": null,
+        "first_relevant_rank": null,
+        "took_ms": 17.42,
+        "round_trip_ms": 20.02,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q09",
+        "query": "transfer of shares of insurers",
+        "strategy": "ilike",
+        "theme": "corporate approvals",
+        "relevant": [
+          "DOC-0015"
+        ],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "correct_empty": null,
+        "first_relevant_rank": null,
+        "took_ms": 17.74,
+        "round_trip_ms": 30.04,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q10",
+        "query": "annual fee payment certificate of registration",
+        "strategy": "ilike",
+        "theme": "regulatory fees",
+        "relevant": [
+          "DOC-0010",
+          "DOC-0013"
+        ],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "correct_empty": null,
+        "first_relevant_rank": null,
+        "took_ms": 17.22,
+        "round_trip_ms": 19.73,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q11",
+        "query": "obligatory cession reinsurance",
+        "strategy": "ilike",
+        "theme": "reinsurance",
+        "relevant": [
+          "DOC-0016"
+        ],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "correct_empty": null,
+        "first_relevant_rank": null,
+        "took_ms": 18.6,
+        "round_trip_ms": 21.25,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q12",
+        "query": "alternative investment funds",
+        "strategy": "ilike",
+        "theme": "investment norms",
+        "relevant": [
+          "DOC-0017"
+        ],
+        "returned": [
+          "DOC-0017"
+        ],
+        "total": 1,
+        "parsed_query": null,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 18.83,
+        "round_trip_ms": 21.73,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q13",
+        "query": "formats for publishing financial results",
+        "strategy": "ilike",
+        "theme": "regulatory reporting",
+        "relevant": [
+          "DOC-0008"
+        ],
+        "returned": [
+          "DOC-0008"
+        ],
+        "total": 1,
+        "parsed_query": null,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "correct_empty": null,
+        "first_relevant_rank": 1,
+        "took_ms": 19.79,
+        "round_trip_ms": 32.3,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q14",
+        "query": "gender policy women",
+        "strategy": "ilike",
+        "theme": "development policy",
+        "relevant": [
+          "DOC-0006"
+        ],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "correct_empty": null,
+        "first_relevant_rank": null,
+        "took_ms": 17.35,
+        "round_trip_ms": 19.88,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q15",
+        "query": "insurance intermediaries registration",
+        "strategy": "ilike",
+        "theme": "intermediary regulation",
+        "relevant": [
+          "DOC-0012",
+          "DOC-0015"
+        ],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "correct_empty": null,
+        "first_relevant_rank": null,
+        "took_ms": 17.49,
+        "round_trip_ms": 29.95,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q16",
+        "query": "tariff de-notification",
+        "strategy": "ilike",
+        "theme": "pricing",
+        "relevant": [
+          "DOC-0014"
+        ],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "correct_empty": null,
+        "first_relevant_rank": null,
+        "took_ms": 17.0,
+        "round_trip_ms": 19.55,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q17",
+        "query": "know your customer",
+        "strategy": "ilike",
+        "theme": "KYC (brief theme, no document behind it)",
+        "relevant": [],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": null,
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "correct_empty": true,
+        "first_relevant_rank": null,
+        "took_ms": 16.87,
+        "round_trip_ms": 19.6,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q18",
+        "query": "digital payment security controls",
+        "strategy": "ilike",
+        "theme": "digital payment security (no document behind it)",
+        "relevant": [],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": null,
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "correct_empty": true,
+        "first_relevant_rank": null,
+        "took_ms": 17.27,
+        "round_trip_ms": 20.19,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q19",
+        "query": "liquidity coverage ratio requirements",
+        "strategy": "ilike",
+        "theme": "liquidity requirements (no document behind it)",
+        "relevant": [],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": null,
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "correct_empty": true,
+        "first_relevant_rank": null,
+        "took_ms": 17.22,
+        "round_trip_ms": 30.06,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      },
+      {
+        "id": "q20",
+        "query": "zzzzqqq nonexistent term",
+        "strategy": "ilike",
+        "theme": "negative control",
+        "relevant": [],
+        "returned": [],
+        "total": 0,
+        "parsed_query": null,
+        "precision_at_k": null,
+        "recall_at_k": null,
+        "reciprocal_rank": null,
+        "correct_empty": true,
+        "first_relevant_rank": null,
+        "took_ms": 16.27,
+        "round_trip_ms": 28.95,
+        "warnings": [
+          "strategy=ilike: substring match, no stemming and no ranking. Documents are grouped from the first 100 clause matches, in document order."
+        ]
+      }
+    ]
+  },
+  "fts_vs_ilike": {
+    "fts_better": 11,
+    "ilike_better": 0,
+    "tied": 9,
+    "per_query": [
+      {
+        "id": "q01",
+        "query": "capital adequacy",
+        "fts_total": 2,
+        "ilike_total": 2,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": 2,
+        "fts_rr": 1.0,
+        "ilike_rr": 0.5,
+        "winner": "fts"
+      },
+      {
+        "id": "q02",
+        "query": "\"capital adequacy\"",
+        "fts_total": 2,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": 1.0,
+        "ilike_rr": 0.0,
+        "winner": "fts"
+      },
+      {
+        "id": "q03",
+        "query": "priority sector lending",
+        "fts_total": 1,
+        "ilike_total": 1,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": 1,
+        "fts_rr": 1.0,
+        "ilike_rr": 1.0,
+        "winner": "tie"
+      },
+      {
+        "id": "q04",
+        "query": "credit facilities to scheduled castes and scheduled tribes",
+        "fts_total": 1,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": 1.0,
+        "ilike_rr": 0.0,
+        "winner": "fts"
+      },
+      {
+        "id": "q05",
+        "query": "lead bank responsibility districts",
+        "fts_total": 1,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": 1.0,
+        "ilike_rr": 0.0,
+        "winner": "fts"
+      },
+      {
+        "id": "q06",
+        "query": "cyber security",
+        "fts_total": 1,
+        "ilike_total": 1,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": 1,
+        "fts_rr": 1.0,
+        "ilike_rr": 1.0,
+        "winner": "tie"
+      },
+      {
+        "id": "q07",
+        "query": "insurance ombudsman",
+        "fts_total": 1,
+        "ilike_total": 1,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": 1,
+        "fts_rr": 1.0,
+        "ilike_rr": 1.0,
+        "winner": "tie"
+      },
+      {
+        "id": "q08",
+        "query": "foreign investment in insurance companies",
+        "fts_total": 3,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": 1.0,
+        "ilike_rr": 0.0,
+        "winner": "fts"
+      },
+      {
+        "id": "q09",
+        "query": "transfer of shares of insurers",
+        "fts_total": 1,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": 1.0,
+        "ilike_rr": 0.0,
+        "winner": "fts"
+      },
+      {
+        "id": "q10",
+        "query": "annual fee payment certificate of registration",
+        "fts_total": 3,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": 1.0,
+        "ilike_rr": 0.0,
+        "winner": "fts"
+      },
+      {
+        "id": "q11",
+        "query": "obligatory cession reinsurance",
+        "fts_total": 1,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": 1.0,
+        "ilike_rr": 0.0,
+        "winner": "fts"
+      },
+      {
+        "id": "q12",
+        "query": "alternative investment funds",
+        "fts_total": 1,
+        "ilike_total": 1,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": 1,
+        "fts_rr": 1.0,
+        "ilike_rr": 1.0,
+        "winner": "tie"
+      },
+      {
+        "id": "q13",
+        "query": "formats for publishing financial results",
+        "fts_total": 1,
+        "ilike_total": 1,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": 1,
+        "fts_rr": 1.0,
+        "ilike_rr": 1.0,
+        "winner": "tie"
+      },
+      {
+        "id": "q14",
+        "query": "gender policy women",
+        "fts_total": 1,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": 1.0,
+        "ilike_rr": 0.0,
+        "winner": "fts"
+      },
+      {
+        "id": "q15",
+        "query": "insurance intermediaries registration",
+        "fts_total": 2,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": 2,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": 0.5,
+        "ilike_rr": 0.0,
+        "winner": "fts"
+      },
+      {
+        "id": "q16",
+        "query": "tariff de-notification",
+        "fts_total": 1,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": 1,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": 1.0,
+        "ilike_rr": 0.0,
+        "winner": "fts"
+      },
+      {
+        "id": "q17",
+        "query": "know your customer",
+        "fts_total": 0,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": null,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": null,
+        "ilike_rr": null,
+        "winner": "n/a (no relevant document)"
+      },
+      {
+        "id": "q18",
+        "query": "digital payment security controls",
+        "fts_total": 0,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": null,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": null,
+        "ilike_rr": null,
+        "winner": "n/a (no relevant document)"
+      },
+      {
+        "id": "q19",
+        "query": "liquidity coverage ratio requirements",
+        "fts_total": 0,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": null,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": null,
+        "ilike_rr": null,
+        "winner": "n/a (no relevant document)"
+      },
+      {
+        "id": "q20",
+        "query": "zzzzqqq nonexistent term",
+        "fts_total": 0,
+        "ilike_total": 0,
+        "fts_first_relevant_rank": null,
+        "ilike_first_relevant_rank": null,
+        "fts_rr": null,
+        "ilike_rr": null,
+        "winner": "n/a (no relevant document)"
+      }
+    ]
+  },
+  "pagination": [
+    {
+      "query": "insurance",
+      "total": 135,
+      "page_size": 3,
+      "pages_walked": 34,
+      "reference_rows": 100,
+      "ids_collected": 102,
+      "duplicates": 0,
+      "missing_from_paged_walk": [],
+      "order_matches_single_page": true,
+      "ok": true
+    },
+    {
+      "query": "transfer of shares",
+      "total": 11,
+      "page_size": 3,
+      "pages_walked": 4,
+      "reference_rows": 11,
+      "ids_collected": 11,
+      "duplicates": 0,
+      "missing_from_paged_walk": [],
+      "order_matches_single_page": true,
+      "ok": true
+    },
+    {
+      "query": "annual fee payment",
+      "total": 8,
+      "page_size": 3,
+      "pages_walked": 3,
+      "reference_rows": 8,
+      "ids_collected": 8,
+      "duplicates": 0,
+      "missing_from_paged_walk": [],
+      "order_matches_single_page": true,
+      "ok": true
+    }
+  ],
+  "filters": [
+    {
+      "check": "documents?department=Insurance Regulatory and Development A",
+      "facet_count": 12,
+      "returned": 12,
+      "counts_agree": true,
+      "rows_with_wrong_value": [],
+      "ok": true
+    },
+    {
+      "check": "documents?department=Department of Regulation, Central Offi",
+      "facet_count": 1,
+      "returned": 1,
+      "counts_agree": true,
+      "rows_with_wrong_value": [],
+      "ok": true
+    },
+    {
+      "check": "documents?department=Financial Inclusion & Development Dept",
+      "facet_count": 1,
+      "returned": 1,
+      "counts_agree": true,
+      "rows_with_wrong_value": [],
+      "ok": true
+    },
+    {
+      "check": "documents?department=Financial Inclusion & Development Dept",
+      "facet_count": 1,
+      "returned": 1,
+      "counts_agree": true,
+      "rows_with_wrong_value": [],
+      "ok": true
+    },
+    {
+      "check": "documents?department=National Bank for Agriculture and Rura",
+      "facet_count": 1,
+      "returned": 1,
+      "counts_agree": true,
+      "rows_with_wrong_value": [],
+      "ok": true
+    },
+    {
+      "check": "documents?department=null",
+      "facet_count": 1,
+      "returned": 1,
+      "counts_agree": true,
+      "rows_with_wrong_value": [],
+      "ok": true
+    },
+    {
+      "check": "documents?document_type=circular",
+      "facet_count": 8,
+      "returned": 8,
+      "counts_agree": true,
+      "rows_with_wrong_value": [],
+      "ok": true
+    },
+    {
+      "check": "documents?document_type=amendment",
+      "facet_count": 5,
+      "returned": 5,
+      "counts_agree": true,
+      "rows_with_wrong_value": [],
+      "ok": true
+    },
+    {
+      "check": "documents?document_type=guideline",
+      "facet_count": 2,
+      "returned": 2,
+      "counts_agree": true,
+      "rows_with_wrong_value": [],
+      "ok": true
+    },
+    {
+      "check": "documents?document_type=notification",
+      "facet_count": 2,
+      "returned": 2,
+      "counts_agree": true,
+      "rows_with_wrong_value": [],
+      "ok": true
+    },
+    {
+      "check": "documents?date_from=2026-01-01",
+      "returned": 10,
+      "rows_before_the_window": [],
+      "ok": true
+    },
+    {
+      "check": "search?q=insurance&document_type=notification",
+      "returned": 2,
+      "rows_with_wrong_type": [],
+      "ok": true
+    }
+  ],
+  "provenance": {
+    "hits_inspected": 40,
+    "defects": [],
+    "ok": true
+  },
+  "edges": [
+    {
+      "check": "q=''",
+      "expected": 422,
+      "got": 422,
+      "error_code": "VALIDATION_ERROR",
+      "ok": true
+    },
+    {
+      "check": "q='   '",
+      "expected": 422,
+      "got": 422,
+      "error_code": "VALIDATION_ERROR",
+      "ok": true
+    },
+    {
+      "check": "q='the of and'",
+      "total": 0,
+      "parsed_query": "",
+      "warned": true,
+      "ok": true
+    },
+    {
+      "check": "q='!!!'",
+      "total": 0,
+      "parsed_query": "",
+      "warned": true,
+      "ok": true
+    },
+    {
+      "check": "q='...???'",
+      "total": 0,
+      "parsed_query": "",
+      "warned": true,
+      "ok": true
+    },
+    {
+      "check": "q=insurance, strategy=semantic",
+      "expected": 422,
+      "got": 422,
+      "error_code": "VALIDATION_ERROR",
+      "ok": true
+    },
+    {
+      "check": "q=insurance, method=sentence",
+      "expected": 422,
+      "got": 422,
+      "error_code": "VALIDATION_ERROR",
+      "ok": true
+    },
+    {
+      "check": "q=insurance, sort=whatever",
+      "expected": 422,
+      "got": 422,
+      "error_code": "VALIDATION_ERROR",
+      "ok": true
+    },
+    {
+      "check": "q=insurance, limit=0",
+      "expected": 422,
+      "got": 422,
+      "error_code": "VALIDATION_ERROR",
+      "ok": true
+    },
+    {
+      "check": "q=insurance, limit=5000",
+      "expected": 422,
+      "got": 422,
+      "error_code": "VALIDATION_ERROR",
+      "ok": true
+    },
+    {
+      "check": "q=insurance, date_from=not-a-date",
+      "expected": 422,
+      "got": 422,
+      "error_code": "VALIDATION_ERROR",
+      "ok": true
+    },
+    {
+      "check": "q=insurance, date_from=2026-05-01, date_to=2026-01-01",
+      "expected": 422,
+      "got": 422,
+      "error_code": "VALIDATION_ERROR",
+      "ok": true
+    },
+    {
+      "check": "q=xxxxxxxxxxxxxx",
+      "expected": 422,
+      "got": 422,
+      "error_code": "VALIDATION_ERROR",
+      "ok": true
+    },
+    {
+      "check": "offset past the end",
+      "total": 135,
+      "items": 0,
+      "ok": true
+    },
+    {
+      "check": "suggest with 1 character",
+      "items": 0,
+      "ok": true
+    }
+  ],
+  "match_granularity_experiment": {
+    "question": "Should a document match when its clauses contain the query terms between them, rather than one clause containing all of them?",
+    "relevant_documents_recovered": 1,
+    "irrelevant_documents_added": 4,
+    "deliberate_zero_queries_broken": [],
+    "verdict": "REJECTED. Document-level aggregation recovers 1 relevant document(s) and admits 4 irrelevant one(s), so it trades precision for a small recall gain. It is also a sequential aggregate over every segment with no index support, where the implemented match uses the GIN index. The segment-level AND stays, and the miss it causes is reported as a limitation rather than papered over.",
+    "per_query": [
+      {
+        "id": "q01",
+        "query": "capital adequacy",
+        "relevant": [
+          "DOC-0004"
+        ],
+        "implemented_matches": [
+          "DOC-0002",
+          "DOC-0004"
+        ],
+        "candidate_matches": [
+          "DOC-0002",
+          "DOC-0004"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q02",
+        "query": "\"capital adequacy\"",
+        "relevant": [
+          "DOC-0004"
+        ],
+        "implemented_matches": [
+          "DOC-0002",
+          "DOC-0004"
+        ],
+        "candidate_matches": [
+          "DOC-0002",
+          "DOC-0004"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q03",
+        "query": "priority sector lending",
+        "relevant": [
+          "DOC-0003"
+        ],
+        "implemented_matches": [
+          "DOC-0003"
+        ],
+        "candidate_matches": [
+          "DOC-0003"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q04",
+        "query": "credit facilities to scheduled castes and scheduled tribes",
+        "relevant": [
+          "DOC-0003"
+        ],
+        "implemented_matches": [
+          "DOC-0003"
+        ],
+        "candidate_matches": [
+          "DOC-0003"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q05",
+        "query": "lead bank responsibility districts",
+        "relevant": [
+          "DOC-0001"
+        ],
+        "implemented_matches": [
+          "DOC-0001"
+        ],
+        "candidate_matches": [
+          "DOC-0001",
+          "DOC-0003"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": [
+          "DOC-0003"
+        ]
+      },
+      {
+        "id": "q06",
+        "query": "cyber security",
+        "relevant": [
+          "DOC-0007"
+        ],
+        "implemented_matches": [
+          "DOC-0007"
+        ],
+        "candidate_matches": [
+          "DOC-0007"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q07",
+        "query": "insurance ombudsman",
+        "relevant": [
+          "DOC-0009"
+        ],
+        "implemented_matches": [
+          "DOC-0009"
+        ],
+        "candidate_matches": [
+          "DOC-0009"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q08",
+        "query": "foreign investment in insurance companies",
+        "relevant": [
+          "DOC-0011"
+        ],
+        "implemented_matches": [
+          "DOC-0005",
+          "DOC-0011",
+          "DOC-0015"
+        ],
+        "candidate_matches": [
+          "DOC-0005",
+          "DOC-0011",
+          "DOC-0015",
+          "DOC-0017"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": [
+          "DOC-0017"
+        ]
+      },
+      {
+        "id": "q09",
+        "query": "transfer of shares of insurers",
+        "relevant": [
+          "DOC-0015"
+        ],
+        "implemented_matches": [
+          "DOC-0015"
+        ],
+        "candidate_matches": [
+          "DOC-0015"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q10",
+        "query": "annual fee payment certificate of registration",
+        "relevant": [
+          "DOC-0010",
+          "DOC-0013"
+        ],
+        "implemented_matches": [
+          "DOC-0010",
+          "DOC-0013",
+          "DOC-0015"
+        ],
+        "candidate_matches": [
+          "DOC-0010",
+          "DOC-0013",
+          "DOC-0015"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q11",
+        "query": "obligatory cession reinsurance",
+        "relevant": [
+          "DOC-0016"
+        ],
+        "implemented_matches": [
+          "DOC-0016"
+        ],
+        "candidate_matches": [
+          "DOC-0016"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q12",
+        "query": "alternative investment funds",
+        "relevant": [
+          "DOC-0017"
+        ],
+        "implemented_matches": [
+          "DOC-0017"
+        ],
+        "candidate_matches": [
+          "DOC-0017"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q13",
+        "query": "formats for publishing financial results",
+        "relevant": [
+          "DOC-0008"
+        ],
+        "implemented_matches": [
+          "DOC-0008"
+        ],
+        "candidate_matches": [
+          "DOC-0004",
+          "DOC-0008"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": [
+          "DOC-0004"
+        ]
+      },
+      {
+        "id": "q14",
+        "query": "gender policy women",
+        "relevant": [
+          "DOC-0006"
+        ],
+        "implemented_matches": [
+          "DOC-0006"
+        ],
+        "candidate_matches": [
+          "DOC-0006"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q15",
+        "query": "insurance intermediaries registration",
+        "relevant": [
+          "DOC-0012",
+          "DOC-0015"
+        ],
+        "implemented_matches": [
+          "DOC-0010",
+          "DOC-0015"
+        ],
+        "candidate_matches": [
+          "DOC-0010",
+          "DOC-0012",
+          "DOC-0013",
+          "DOC-0015"
+        ],
+        "recovered_relevant": [
+          "DOC-0012"
+        ],
+        "added_irrelevant": [
+          "DOC-0013"
+        ]
+      },
+      {
+        "id": "q16",
+        "query": "tariff de-notification",
+        "relevant": [
+          "DOC-0014"
+        ],
+        "implemented_matches": [
+          "DOC-0014"
+        ],
+        "candidate_matches": [
+          "DOC-0014"
+        ],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q17",
+        "query": "know your customer",
+        "relevant": [],
+        "implemented_matches": [],
+        "candidate_matches": [],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q18",
+        "query": "digital payment security controls",
+        "relevant": [],
+        "implemented_matches": [],
+        "candidate_matches": [],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q19",
+        "query": "liquidity coverage ratio requirements",
+        "relevant": [],
+        "implemented_matches": [],
+        "candidate_matches": [],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      },
+      {
+        "id": "q20",
+        "query": "zzzzqqq nonexistent term",
+        "relevant": [],
+        "implemented_matches": [],
+        "candidate_matches": [],
+        "recovered_relevant": [],
+        "added_irrelevant": []
+      }
+    ]
+  }
+}

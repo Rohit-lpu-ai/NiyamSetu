@@ -2,9 +2,12 @@
 
 **Date:** 2026-11-13 · **By:** Person 1 · **Corpus:** 4 RBI PDFs, 57 pages
 **Suite at time of writing:** 590 passed, 0 failed, 0 skipped
-*(Re-run 2026-11-13 after the repository cleanup: 600 passed, 0 failed, 0
-skipped — 10 added tests pin the Library & Search scaffold. No metric in this
-document changed; the numbers below are left exactly as measured.)*
+*(Re-run 2026-11-13 after the repository cleanup: 600 passed. Re-run again
+2026-11-14 after Library & Search was implemented: **760 passed, 0 failed, 0
+skipped**, of which 170 are that module's. No metric in this document changed —
+the numbers below are left exactly as measured, on the 4-document development
+corpus. Search is measured separately, on a 17-document sample corpus in its
+own database: `LIBRARY_SEARCH_IMPLEMENTATION_REPORT.md` §6.)*
 
 Every number below was produced by a committed script from committed data, and
 every command shown was actually run. Where a metric requires human input that

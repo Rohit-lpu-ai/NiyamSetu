@@ -206,8 +206,19 @@ async def ingest(
 )
 def list_documents(
     q: Optional[str] = Query(None, description="Substring of title or reference no."),
-    department: Optional[str] = Query(None),
+    department: Optional[str] = Query(
+        None, description="Exact match. Pass 'null' for documents with none stated."
+    ),
     document_type: Optional[str] = Query(None),
+    date_from: Optional[str] = Query(
+        None, description="ISO date. Matches documents with any version on or after it."
+    ),
+    date_to: Optional[str] = Query(None, description="ISO date, inclusive."),
+    sort: str = Query(
+        "public_id",
+        pattern="^(public_id|title|title_desc|date_desc|date_asc|recent)$",
+        description="Every order tie-breaks on document_id, so pagination is stable.",
+    ),
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
     repository: Repository = Depends(get_repository),
@@ -217,15 +228,54 @@ def list_documents(
     Returns metadata only -- no page text and no segments. The counts come
     from an aggregate, so listing a 37-page document costs the same as listing
     a 2-page one.
+
+    ``date_from``, ``date_to`` and ``sort`` were added for the Library view.
+    They are additive (§12.4): omitting them reproduces the original
+    behaviour exactly, so no existing consumer is affected. The Library UI
+    browses through this endpoint rather than a second listing of its own.
     """
+    _check_iso_dates(date_from, date_to)
     payload = repository.list_documents(
         q=q,
         department=department,
         document_type=document_type,
+        date_from=date_from,
+        date_to=date_to,
+        sort=sort,
         limit=limit,
         offset=offset,
     )
     return DocumentListResponse(**payload)
+
+
+def _check_iso_dates(date_from: Optional[str], date_to: Optional[str]) -> None:
+    """Reject a malformed date here rather than letting SQL raise.
+
+    An unparseable date reaching PostgreSQL is a ``DataError``, which the
+    catch-all handler turns into a 500 -- an internal error for what is
+    plainly a bad request.
+    """
+    from datetime import date as _date
+
+    for name, value in (("date_from", date_from), ("date_to", date_to)):
+        if value is None:
+            continue
+        try:
+            _date.fromisoformat(value)
+        except ValueError:
+            raise ApiError(
+                "VALIDATION_ERROR",
+                f"{name} must be an ISO-8601 date (YYYY-MM-DD), got {value!r}.",
+                status.HTTP_422_UNPROCESSABLE_CONTENT,
+                {name: value},
+            ) from None
+    if date_from and date_to and date_from > date_to:
+        raise ApiError(
+            "VALIDATION_ERROR",
+            "date_from must not be later than date_to.",
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
+            {"date_from": date_from, "date_to": date_to},
+        )
 
 
 @documents_router.get(

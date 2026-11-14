@@ -1,0 +1,615 @@
+{
+ "schema_version": "1.0.0",
+ "guideline": "data/annotations/entities/README.md",
+ "corpus": "data/version_pairs (genuine RBI master-circular version chains)",
+ "sampling": {
+  "seed": 20261114,
+  "method": "random.Random(seed).shuffle over clause_aware segments of 80-700 characters across all 9 issues; first 30 kept",
+  "population": 747,
+  "sample": 30
+ },
+ "annotator": {
+  "count": 1,
+  "independent_of_system": false,
+  "agreement": "PENDING - there is no second annotator"
+ },
+ "gold_mentions": 90,
+ "clauses": [
+  {
+   "clause_id": "CLS-0001988",
+   "version_id": "VER-0007",
+   "text": "7.1 There should be good publicity about various anti -poverty programmes of the Government where there is large concentration of minority communities and particularly in the districts listed in the Annexure I which have a concentration of minority communities.",
+   "note": "",
+   "entities": [
+    {
+     "label": "OBLIGATION",
+     "text": "should"
+    },
+    {
+     "label": "SECTION_REF",
+     "text": "Annexure I"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0004462",
+   "version_id": "VER-0013",
+   "text": "10. References of circulars relevant to Lead Bank Scheme Sr No Circular issued by Reference No & date Subject",
+   "note": "Index heading row. 'Lead Bank Scheme' is a scheme, not a body (guideline section 1, AUTHORITY).",
+   "entities": []
+  },
+  {
+   "clause_id": "CLS-0003380",
+   "version_id": "VER-0010",
+   "text": "4 Bihar (7) 23 Kishanganj Bihar 24 Katihar Bihar 25 Araria Bihar 26 Purnia Bihar 27 Sitamarhi Bihar 28 Darbhanga Bihar 29 Paschim Champaran",
+   "note": "District-list table fragment: no entities.",
+   "entities": []
+  },
+  {
+   "clause_id": "CLS-0001752",
+   "version_id": "VER-0006",
+   "text": "23 RPCD.CO. LBS.BC.57/ 02.19.10/2009-2010 02.03.2010 Report of the High Level Committee to Review Lead Bank Scheme - Implementation of the Recommendations - Lead banks and SCBs",
+   "note": "The reference number carries two spaces introduced by extraction; annotated as it appears in our text, per guideline section 1, REFERENCE_NO.",
+   "entities": [
+    {
+     "label": "REFERENCE_NO",
+     "text": "RPCD.CO. LBS.BC.57/ 02.19.10/2009-2010"
+    },
+    {
+     "label": "DATE",
+     "text": "02.03.2010"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "High Level Committee to Review Lead Bank Scheme"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0003797",
+   "version_id": "VER-0011",
+   "text": "5.3 The progress made in regard to the flow of credit to the minority communities should be reviewed regularly at the meetings of the District Consultative Committees (DCCs) and the State Level Bankers Committees (SLBCs).",
+   "note": "Each parenthesised abbreviation is its own mention.",
+   "entities": [
+    {
+     "label": "OBLIGATION",
+     "text": "should"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "District Consultative Committees"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "DCCs"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "State Level Bankers Committees"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "SLBCs"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0001711",
+   "version_id": "VER-0006",
+   "text": "1 Priority Sector 1A Agriculture = 1A(i)+1A(ii)+1A(iii) 1A(i) Farm Credit 1A(ii) Agriculture Infrastructure 1A(iii) Ancillary Activities 1B Micro, Small and Medium Enterprises = 1B(i)+1B(ii)+1B(iii)+1B(iv)+1B(v) 1B(i) Micro Enterprises (Manufacturing + Service) 1B(ii) Small Enterprises (Manufacturing + Service) 1B(iii) Medium Enterprises (Manufacturing + Service) 1B(iv) Khadi and Village Industries 1B(v) Others under MSMEs 1C Export Credit 1D Education 1E Housing 1F Social Infrastructure 1G Renewable Energy 1H Others",
+   "note": "Priority-sector classification table: no entities.",
+   "entities": []
+  },
+  {
+   "clause_id": "CLS-0004070",
+   "version_id": "VER-0012",
+   "text": "1.1 The District Level Consultative Committees formed under the Lead Bank Scheme should continue to be the principal mechanism of co- ordination between banks and development agencies in this regard.",
+   "note": "",
+   "entities": [
+    {
+     "label": "AUTHORITY",
+     "text": "District Level Consultative Committees"
+    },
+    {
+     "label": "OBLIGATION",
+     "text": "should"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0002803",
+   "version_id": "VER-0008",
+   "text": "9. Dhenkanal UCO Bank 10.Gajapati Andhra Bank 11.Ganjam Andhra Bank 12.Jagatsinghpur UCO Bank 13.Jajpur State Bank of India 14.Jharsuguda State Bank of India 15.Kalahandi State Bank of India",
+   "note": "District-to-lead-bank allocation table. Seven bank mentions; a closed-list extractor cannot find any of them.",
+   "entities": [
+    {
+     "label": "AUTHORITY",
+     "text": "UCO Bank"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "Andhra Bank"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "Andhra Bank"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "UCO Bank"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "State Bank of India"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "State Bank of India"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "State Bank of India"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0002531",
+   "version_id": "VER-0008",
+   "text": "(vii) In view of the changes that have taken place in the financial sector over the years, the Reserve Bank of India had constituted a “Committee of Executive Directors” of the Bank to study the efficacy of the Scheme and suggest measures for its improvement. Based on the Committee’s recommendations and feedback received from various stakeholders, certain ‘action points’ were issued to SLBC Convenors/Lead Banks and NABARD on April 6, 2018.",
+   "note": "ANNOTATION CORRECTION: 'NABARD' and 'April 6, 2018' were missed in the first pass because the annotator read a 420-character preview of this clause rather than its full 437 characters. The benchmark surfaced both as extractor false positives, which is how the omission was found; they are gold mentions and the extractor was right. Recorded rather than quietly amended.",
+   "entities": [
+    {
+     "label": "AUTHORITY",
+     "text": "Reserve Bank of India"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "Committee of Executive Directors"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "SLBC"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "Lead Banks"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "NABARD"
+    },
+    {
+     "label": "DATE",
+     "text": "April 6, 2018"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0003107",
+   "version_id": "VER-0009",
+   "text": "TOTAL No. of A/cs Balance Outstan ding No. of A/cs Balance Outstan ding No. of A/cs Balance Outstan ding 1 2 3 4 5 6 A Priority Sector Advances ( sum of 1 to 8 )",
+   "note": "Statement column headers: no entities.",
+   "entities": []
+  },
+  {
+   "clause_id": "CLS-0001778",
+   "version_id": "VER-0006",
+   "text": "49 RPCD.No.LBS.BC.12/65/8 8-89 11.08.1988 Service Area Approach - Constitution of Block Level Bankers' Committees",
+   "note": "Extraction split '88-89' with a space inside the reference number. The committee name is annotated without its trailing apostrophe-s so the span ends on a word character.",
+   "entities": [
+    {
+     "label": "REFERENCE_NO",
+     "text": "RPCD.No.LBS.BC.12/65/8 8-89"
+    },
+    {
+     "label": "DATE",
+     "text": "11.08.1988"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "Block Level Bankers"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0000155",
+   "version_id": "VER-0003",
+   "text": "4. DBOD.No.BP.BC.132/C.594-81 October 22, 1981 Recommendations of the Working Group on the Development of Scheduled Castes",
+   "note": "",
+   "entities": [
+    {
+     "label": "REFERENCE_NO",
+     "text": "DBOD.No.BP.BC.132/C.594-81"
+    },
+    {
+     "label": "DATE",
+     "text": "October 22, 1981"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "Working Group on the Development of Scheduled Castes"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0002637",
+   "version_id": "VER-0008",
+   "text": "15. Hojai United Bank of India 16.Jorhat United Bank of India 17.Kamrup UCO Bank 18.Kamrup Metro UCO Bank 19.Karbi Anglong State Bank of India 20.Karimganj United Bank of India 21.Kokrajhar UCO Bank 22.Lakhimpur United Bank of India",
+   "note": "Eight bank mentions in a district allocation table.",
+   "entities": [
+    {
+     "label": "AUTHORITY",
+     "text": "United Bank of India"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "United Bank of India"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "UCO Bank"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "UCO Bank"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "State Bank of India"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "United Bank of India"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "UCO Bank"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "United Bank of India"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0002554",
+   "version_id": "VER-0008",
+   "text": "9. Efforts towards skill development on mission mode partnering with Krishi Vigyan Kendra ( KVK), Horticulture Mission, National Skill Development C orporation, Agriculture Skill Council of India ( ASCI), etc. including a review of functioning of RSETIs",
+   "note": "'Horticulture Mission' is annotated as AUTHORITY because it appears in a list of partner organisations rather than as an administered scheme; recorded as an arguable call. 'C orporation' is an extraction artefact, annotated as it appears.",
+   "entities": [
+    {
+     "label": "AUTHORITY",
+     "text": "Krishi Vigyan Kendra"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "KVK"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "Horticulture Mission"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "National Skill Development C orporation"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "Agriculture Skill Council of India"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "ASCI"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "RSETIs"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0004014",
+   "version_id": "VER-0011",
+   "text": "9 RPCD No. SP. BC.55/PS.160-87-88 02.11.87 Credit facilities to Minority Communities",
+   "note": "",
+   "entities": [
+    {
+     "label": "REFERENCE_NO",
+     "text": "RPCD No. SP. BC.55/PS.160-87-88"
+    },
+    {
+     "label": "DATE",
+     "text": "02.11.87"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0004127",
+   "version_id": "VER-0012",
+   "text": "31 RPCD.CO.GSSD.BC.No.26/09.16.03/2014-15 14.08.14 Restructuring of Swarna Jayanti Shahari Rozgar Yojana (SJSRY) as National Urban Livelihoods Mission (NULM)",
+   "note": "SJSRY and NULM are schemes, excluded per guideline section 1, AUTHORITY.",
+   "entities": [
+    {
+     "label": "REFERENCE_NO",
+     "text": "RPCD.CO.GSSD.BC.No.26/09.16.03/2014-15"
+    },
+    {
+     "label": "DATE",
+     "text": "14.08.14"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0004016",
+   "version_id": "VER-0011",
+   "text": "11 RPCD No.SP.649/PS.160-88-89 27.09.88 Prime Minister’s 15-Point Directive about Welfare of Minorities",
+   "note": "",
+   "entities": [
+    {
+     "label": "REFERENCE_NO",
+     "text": "RPCD No.SP.649/PS.160-88-89"
+    },
+    {
+     "label": "DATE",
+     "text": "27.09.88"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "Prime Minister"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0000148",
+   "version_id": "VER-0003",
+   "text": "6.3 Banks should review the measures taken to enhance the flow of c redit to SC/ST borrowers on a quarterly basis. The r eview should also consider the progress made in lending to these communities directly or through the State Level Scheduled Caste/Scheduled Tribe Corporations for various purposes based, amongst others, on field visits of the senior officers from the Head Office/Controlling Offices.",
+   "note": "'on a quarterly basis' is not a PERIOD: no explicit quantity (guideline section 1, PERIOD).",
+   "entities": [
+    {
+     "label": "OBLIGATION",
+     "text": "should"
+    },
+    {
+     "label": "OBLIGATION",
+     "text": "should"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "State Level Scheduled Caste/Scheduled Tribe Corporations"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0002998",
+   "version_id": "VER-0008",
+   "text": "27 RPCD.CO.LBS.BC.57/02.19.10/2009-2010 02.03.2010 Report of the High Level Committee to Review Lead Bank Scheme - Implementation of the Recommendations - Lead banks and SCBs",
+   "note": "",
+   "entities": [
+    {
+     "label": "REFERENCE_NO",
+     "text": "RPCD.CO.LBS.BC.57/02.19.10/2009-2010"
+    },
+    {
+     "label": "DATE",
+     "text": "02.03.2010"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "High Level Committee to Review Lead Bank Scheme"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0003356",
+   "version_id": "VER-0010",
+   "text": "3.8 The Lead Banks in the identified districts may collaborate with DDMs of NABARD/ NGOs/ Voluntary Organizations in reaching the poor through Self Help Groups (SHGs). Lead Banks of the Minority Concentration Districts will have to exercise the pro-active role expected of them to ensure that the minority communities, particularly those who are poor and illiterate have access to bank credit for taking up productive activities.",
+   "note": "Bare permissive 'may collaborate' is not an OBLIGATION (guideline section 1, OBLIGATION).",
+   "entities": [
+    {
+     "label": "AUTHORITY",
+     "text": "Lead Banks"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "NABARD"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "Lead Banks"
+    },
+    {
+     "label": "OBLIGATION",
+     "text": "will have to"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0005066",
+   "version_id": "VER-0013",
+   "text": "38 RPCD. CO.LBS. BC. No.85 /02.01.001/2000-01 09.05.2001 Lead Bank Scheme - Participation of Members of Parliament and Public Representatives in District Level Review Committee (DLRC) meetings",
+   "note": "Three spaces inside the printed reference number.",
+   "entities": [
+    {
+     "label": "REFERENCE_NO",
+     "text": "RPCD. CO.LBS. BC. No.85 /02.01.001/2000-01"
+    },
+    {
+     "label": "DATE",
+     "text": "09.05.2001"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "Parliament"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "District Level Review Committee"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "DLRC"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0003017",
+   "version_id": "VER-0008",
+   "text": "46 RPCD.CO.LBS.BC.No.85/02.01.001/2000-01 09.05.2001 Lead Bank Scheme - Participation of Members of Parliament and Public Representatives in District Level Review Committee (DLRC) meetings",
+   "note": "The same circular as CLS-0005066 but cleanly extracted; the pair makes the extraction-artefact effect measurable.",
+   "entities": [
+    {
+     "label": "REFERENCE_NO",
+     "text": "RPCD.CO.LBS.BC.No.85/02.01.001/2000-01"
+    },
+    {
+     "label": "DATE",
+     "text": "09.05.2001"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "Parliament"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "District Level Review Committee"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "DLRC"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0001790",
+   "version_id": "VER-0006",
+   "text": "61 DBOD.No.BP.B.BC 74/C/462(E.9)-80 18.06.1980 Credit Deposit Ratio of banks in Rural and Semi-Urban Areas",
+   "note": "",
+   "entities": [
+    {
+     "label": "REFERENCE_NO",
+     "text": "DBOD.No.BP.B.BC 74/C/462(E.9)-80"
+    },
+    {
+     "label": "DATE",
+     "text": "18.06.1980"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0000130",
+   "version_id": "VER-0003",
+   "text": "1.4 Banks should periodically review their lending procedures and policies to see that loans are sanctioned in time, are adequate and production- oriented and that they generate incremental income to make them self-liquidating.",
+   "note": "'periodically' is not a PERIOD.",
+   "entities": [
+    {
+     "label": "OBLIGATION",
+     "text": "should"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0003092",
+   "version_id": "VER-0009",
+   "text": "(q) If applications in respect of SCs / STs are to be rejected, it should be done at the next higher level instead of at th e branch level. Further, reasons for rejection of applications should be clearly indicated. Centrally Sponsored Schemes There are several major centrally sponsored schemes under which credit is provided by banks and subsidy is received through Government A gencies. Credit flow under these schemes is monitored by RBI. Under each of these, there is a significant reservation / relaxation for the members of the SC / ST communities. Reservations for SC / ST Beneficiaries under Major Centrally Sponsored Schemes Deendayal Antyodaya Yojana - National Rural Livelihoods Mission",
+   "note": "'Government A gencies' is a generic noun phrase, excluded. The Deendayal Antyodaya Yojana is a scheme, excluded.",
+   "entities": [
+    {
+     "label": "OBLIGATION",
+     "text": "should"
+    },
+    {
+     "label": "OBLIGATION",
+     "text": "should"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "RBI"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0003560",
+   "version_id": "VER-0010",
+   "text": "Annexure III Statement showing Priority Sector Advances granted to the members of specified minority communities vis-à-vis overall Priority Sector Ad vances (in the Identified Districts) for the quarter ended............ (Vide paragraph 5.3) Name of the District . Name of Community No. of accounts Amount Outstanding Previous Quarter Current Quarter Previous Quarter Current Quarter A. Minority Communities",
+   "note": "'quarter ended............' is a blank, not a DATE.",
+   "entities": [
+    {
+     "label": "SECTION_REF",
+     "text": "Annexure III"
+    },
+    {
+     "label": "SECTION_REF",
+     "text": "paragraph 5.3"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0001750",
+   "version_id": "VER-0006",
+   "text": "21 RPCD.CO.LBS.HLC.BC. No. 21/02.19.10/2010-11 16.09.2010 High Level Committee to Review Lead Bank scheme- Providing banking services in every village having population of over 2000",
+   "note": "'population of over 2000' is a count, not MONEY.",
+   "entities": [
+    {
+     "label": "REFERENCE_NO",
+     "text": "RPCD.CO.LBS.HLC.BC. No. 21/02.19.10/2010-11"
+    },
+    {
+     "label": "DATE",
+     "text": "16.09.2010"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "High Level Committee to Review Lead Bank scheme"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0000904",
+   "version_id": "VER-0006",
+   "text": "(i) The genesis of the Lead Bank Scheme (LBS) can be traced to the Study Group headed by Prof. D. R. Gadgil (Gadgil Study Group) on the Organizational Framework for the Implementation of the Social Objectives, which submitted its report in October 1969. The Study Group drew attention to the fact that commercial banks did not have adequate presence in rural areas and also lacked the required rural orientation. The Study Group, therefore, recommended the adoption of an 'Area Approach' to evolve pl ans and programmes for the development of an adequate banking and credit structure in the rural areas.",
+   "note": "Bare 'the Study Group', used three times, is a back-reference to a body named once as 'Gadgil Study Group'; excluded per guideline section 1.",
+   "entities": [
+    {
+     "label": "AUTHORITY",
+     "text": "Gadgil Study Group"
+    },
+    {
+     "label": "DATE",
+     "text": "October 1969"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0003083",
+   "version_id": "VER-0009",
+   "text": "(h) Special efforts should be made to evolve suitable bankable schemes for weaker sections including members of these communities. Role of Banks",
+   "note": "",
+   "entities": [
+    {
+     "label": "OBLIGATION",
+     "text": "should"
+    }
+   ]
+  },
+  {
+   "clause_id": "CLS-0002595",
+   "version_id": "VER-0008",
+   "text": "11 FIDD.FLC.BC.No.12/12.01.018/2016-17 August 25, 2016 Financial Literacy Centres - Revised reporting formats [SCBs including RRBs]",
+   "note": "'Financial Literacy Centres' is a type of facility, not a named body.",
+   "entities": [
+    {
+     "label": "REFERENCE_NO",
+     "text": "FIDD.FLC.BC.No.12/12.01.018/2016-17"
+    },
+    {
+     "label": "DATE",
+     "text": "August 25, 2016"
+    },
+    {
+     "label": "AUTHORITY",
+     "text": "RRBs"
+    }
+   ]
+  }
+ ]
+}

@@ -1,163 +1,246 @@
-# Library & Search — module brief
+# Library & Search — module reference
 
-**Status: `[PLANNED]` — this directory is a scaffold.** Four files exist
-(`__init__.py`, `service.py`, `repository.py`, `schemas.py`); every function
-raises `NotImplementedError` and `backend/tests/test_library_search_scaffold.py`
-asserts that it still does. Nothing here is wired into the FastAPI app, so the
-running API is unchanged.
+**Status: `[IMPLEMENTED]`.** PostgreSQL full-text search over
+`segments.text_search`, four endpoints, 170 tests. Measured results and every
+limitation: **`backend/docs/LIBRARY_SEARCH_IMPLEMENTATION_REPORT.md`**.
 
 **Owner:** Person 5 (Library intelligence + integration), per `CLAUDE.md` §7.
-**Depends on:** Phases 3 and 4, both `[IMPLEMENTED]` and verified.
+**Depends on:** Phases 3 and 4 — both `[IMPLEMENTED]` and verified.
+
+> This file replaced a scaffold brief. If you are looking for the planning
+> document that preceded the implementation, it is in this file's git history.
 
 ---
 
-## 1. Responsibility
+## 1. What it does
 
-One job: **given a query, return the documents or clauses that match it, in a
+One job: **given a query, return the documents and clauses that match it, in a
 defensible order, with the evidence to show why.**
 
-That is three deliverables in Person 5's half of the project — a keyword
-baseline, at least one comparison condition, and a relevance evaluation.
+```
+GET /api/search            documents, ranked by their best matching clause
+GET /api/search/clauses    clauses, each citable to a document and page
+GET /api/search/suggest    type-ahead over titles, reference numbers, departments
+GET /api/library/facets    filter values and corpus counts, read from the tables
+```
+
+Every clause hit carries `page_start`, `page_end` and a `pages` array with the
+character range on each page it touches — the same provenance
+`GET /api/documents/{id}/clauses` guarantees, because it is read from the same
+`segment_pages` rows. A search result can therefore be turned into a citation
+without a second query and without guessing.
 
 ### Explicitly not this module's job
 
 | Not here | Where it lives |
 |---|---|
 | PDF extraction, cleaning, segmentation | `backend/app/document_processing/` |
-| Any write to `documents` / `document_versions` / `pages` / `segments` | `backend/app/db/loader.py`, used only by ingestion |
+| Any write to the document tables | `backend/app/db/loader.py`, used only by ingestion |
 | Document / page / clause response shapes | `backend/app/api/schemas.py` |
 | Answer *generation* over retrieved text | Person 3's `rag_qa` — retrieval here, answers there |
 | Chunking text for an index | **nobody.** The stored segments *are* the chunks |
+| A second document listing endpoint | `GET /api/documents`, extended additively |
 
-The last row is the one that matters most. Re-chunking would produce text whose
-offsets no longer match `segments.char_start` / `char_end`, and then a search
-result could not be turned into a citation. `CLAUDE.md` §6 and §9 make that a
-hard rule, not a preference.
+The last two rows are the ones that cost the most to get wrong. Re-chunking
+would produce offsets that no longer match `segment_pages`, and then a hit
+could not be cited (`CLAUDE.md` §6, §9). A second listing endpoint would be a
+second definition of what a document summary is.
 
 ---
 
-## 2. What already exists and must be reused
+## 2. The files
 
-### 2.1 Database tables — all 7 exist, applied, loaded
+| File | What it holds |
+|---|---|
+| `repository.py` | The SQL. Indexed full-text match, `ts_rank_cd` ranking, `ts_headline` snippets, facets, suggestions, the ILIKE comparison baseline, and the `EXPLAIN` helpers. Read-only |
+| `service.py` | Query validation, strategy choice, timing, and the response envelope that makes every result attributable to the condition that produced it |
+| `api.py` | The two routers (`/search`, `/library`), mounted by `api/main.py` under `/api` |
+| `schemas.py` | Only the genuinely new shapes: ranking metadata, facets, suggestions |
+| `__init__.py` | Public surface and `CONTRACT_VERSION` |
 
-| Table | Rows now | How search uses it |
-|---|---:|---|
-| `documents` | 4 | the unit a Library hit points at; `department` / `document_type` / `reference_no` are the filter columns |
-| `document_versions` | 4 | restricts search to one version; `extraction_status` gates what is searchable at all |
-| `pages` | 57 | page-scoped results and page text for display |
-| `segments` | 501 | **the search corpus.** 138 paragraph + 363 clause-aware, both methods stored side by side |
-| `segment_pages` | 552 | turns a hit into a citation: page number + `char_start` / `char_end` per page |
-| `page_removed_lines` | 151 | explains why a header is absent from a result; not searched |
-| `ingestion_jobs` | 4 | out of scope for search |
+```
+backend/app/api/main.py          mounts both routers under /api
+  └─ library_search.api          FastAPI routes + validation
+      └─ library_search.service  strategy, validation, timing, envelope
+          └─ library_search.repository   SQL over segments.text_search
+              └─ backend.app.db.engine   the EXISTING pooled connection
+```
 
-### 2.2 Indexes that already exist — no migration needed for the baseline
+---
+
+## 3. How the search works, and why each choice
+
+`segments.text_search` is a **stored `tsvector` generated column with a GIN
+index**, created by `0001_initial_schema.sql` for exactly this purpose and
+queried by nothing until now:
 
 ```sql
-segments.text_search  tsvector GENERATED ALWAYS AS (to_tsvector('english', text)) STORED
+text_search TSVECTOR GENERATED ALWAYS AS (to_tsvector('english', text)) STORED
 CREATE INDEX segments_text_search_idx ON segments USING GIN (text_search);
-CREATE INDEX documents_department_idx  ON documents (department);
-CREATE INDEX documents_type_idx        ON documents (document_type);
-CREATE INDEX versions_publication_idx  ON document_versions (publication_date DESC NULLS LAST);
 ```
 
-`segments.text_search` is **queried by nothing today.** It was created in
-`0001_initial_schema.sql` specifically for this module. Lighting it up is the
-whole of the keyword baseline — and because it is a stored generated column,
-it is already populated for all 501 segments.
-
-**Carry its defect forward honestly:** the configuration is `'english'`, which
-is the wrong stemmer for the Devanagari text in the corpus. The schema records
-this in a `COMMENT`; the evaluation must report it rather than let coverage
-look better than it is.
-
-### 2.3 Python to call, not to copy
-
-| Reuse | Instead of |
+| Choice | Why, and what the alternative costs |
 |---|---|
-| `backend.app.db.engine.connection()` | a second engine or pool |
-| `backend.app.db.config.database_url()` | reading `.env` again |
-| `backend.app.db.repository.list_documents()` | re-writing the unfiltered Library listing |
-| `backend.app.db.repository.get_citation()` | assembling a citation by hand |
-| `backend.app.api.errors` + `ApiError` | a second error envelope |
-| `backend.app.api.schemas` models | a second `ClauseOut` |
+| `websearch_to_tsquery` | Supports quoted phrases, `or`, `-exclusion`, and never raises on punctuation a user typed. `plainto_tsquery` ANDs every word and cannot express a phrase; `to_tsquery` raises on `!!!` |
+| `ts_rank_cd` | Cover density: terms occurring *close together* rank higher, so "capital adequacy ratio" in one sentence beats "capital" on line 1 and "adequacy" on line 40 |
+| normalisation `1\|32` | `1` divides by log(length) so a 2,000-character annexure does not outrank a 90-character clause by sheer size; `32` maps the score into `0 < score < 1` so it is readable |
+| one method per query | Paragraph and clause-aware segments cover **the same text**. A union would return every passage twice. `method` is a parameter, default `clause_aware`; never both |
+| `version_scope=latest` | One version per document by default, so an amended policy does not return the same clause twice. An explicit `version_id` overrides it |
+| `extraction_status = 'ok'` only | A `partial` extraction must not surface as evidence — the same rule the schema's `segment_citations` view enforces |
+| query function inlined, not in a CTE | A materialised CTE hides the constant from the planner and the GIN index stops being usable |
 
-### 2.4 Endpoints that already work (6, all under `/api`)
+**Document score** = the best clause score in the document **+ 1.0 if the
+title, reference number or department matched.** The bonus is larger than any
+possible `ts_rank_cd` value (the `32` flag caps it below 1), so a document whose
+own name matches always outranks one that merely mentions the words. A document
+can match on metadata alone, and then `best_clause` is `null` — a meaningful
+answer, not a missing field.
 
-| Method | Path | What search gets from it |
+### Known limitation: segment-level AND
+
+`websearch_to_tsquery` ANDs its terms, and the AND is evaluated **within one
+segment**. A document genuinely about "insurance intermediaries registration"
+can mention each word in a different clause and match nothing.
+
+Document-level aggregation was **implemented, measured and rejected**: on the
+20-query set it recovered 1 relevant document and admitted 4 irrelevant ones,
+and it is a sequential aggregate with no index support. The experiment is
+reproducible — `evaluation/library_search_eval.py::compare_match_granularity`,
+results in `evaluation/library-search/results.json`.
+
+### Known limitation: the `english` configuration on a bilingual corpus
+
+12 of the 17 sample documents are bilingual Hindi/English, and the Hindi half
+extracts as **real Devanagari** (20,712 characters in the longest). The
+`english` configuration indexes those tokens unstemmed: they are searchable
+only by exact form, Hindi queries will not stem correctly, and a snippet can
+open mid-Hindi before reaching the English match. Recorded, not worked around —
+D-3 puts Hindi out of scope for this phase.
+
+---
+
+## 4. Reuse: what this module does not re-declare
+
+| Reuses | Instead of |
+|---|---|
+| `db.engine.connection()` | a second engine or pool |
+| `db.config.database_url()` | reading `.env` again |
+| `db.repository.get_pages()` | its own page reader |
+| `api.errors.ApiError` + handlers | a second error envelope |
+| `api.schemas.ErrorResponse` | a second error model |
+| `GET /api/documents` (extended) | a Library listing endpoint of its own |
+| FastAPI `Query` validation | hand-rolled parameter checks |
+
+`GET /api/documents` gained `date_from`, `date_to` and `sort` plus five
+`latest_version` fields on each item. Additive (§12.4): omitting them
+reproduces the previous behaviour exactly, and `CLAUDE.md` §12.3 specified
+them all along — Phase 4 simply shipped without them.
+
+---
+
+## 5. Endpoint reference
+
+### `GET /api/search` — documents
+
+| Parameter | Default | Notes |
 |---|---|---|
-| GET | `/api/health` | the pattern for DB-reachability reporting |
-| POST | `/api/documents/ingest` | **the only writer.** Search never ingests |
-| GET | `/api/documents` | substring filter on title / `reference_no`, plus `department` and `document_type`. **This is the fallback the baseline must beat** |
-| GET | `/api/documents/{document_id}` | metadata + version list for a hit |
-| GET | `/api/documents/{document_id}/pages` | page text for display |
-| GET | `/api/documents/{document_id}/clauses` | the clause corpus, with provenance, by method |
+| `q` | required | 1–300 chars. `websearch_to_tsquery` syntax |
+| `strategy` | `fts` | `fts` \| `ilike`. `semantic`/`hybrid` → 422, not implemented (D-7) |
+| `method` | `clause_aware` | `clause_aware` \| `paragraph` |
+| `sort` | `relevance` | `relevance` \| `date_desc` \| `date_asc` \| `title` |
+| `version_scope` | `latest` | `latest` \| `all` |
+| `department` | — | exact match; `null` selects "not stated" |
+| `document_type` | — | the schema's vocabulary |
+| `date_from`, `date_to` | — | ISO dates, inclusive |
+| `limit`, `offset` | 20, 0 | limit capped at 100 |
 
-Today's `GET /api/documents?q=` is `ILIKE '%q%'` over `title` and
-`reference_no` only — it does not touch clause text at all. That is the honest
-baseline-of-the-baseline, and the first measurable claim this module can make
-is how much ranked full-text search over 501 segments improves on it.
-
----
-
-## 3. How it connects
-
-```
-HTTP
- └─ backend/app/api/routes.py          existing routers; add a search_router here
-     └─ library_search.service         strategy choice: keyword | semantic | hybrid
-         ├─ library_search.repository  SQL: tsvector @@ plainto_tsquery, ts_rank_cd
-         │   └─ backend.app.db.engine  the EXISTING pooled connection
-         └─ backend.app.db.repository  reused reads (citations, document detail)
+```bash
+curl "http://127.0.0.1:8000/api/search?q=capital%20adequacy&limit=3"
 ```
 
-Three rules this wiring must keep:
+```json
+{
+  "query": "capital adequacy",
+  "strategy": "fts",
+  "parsed_query": "'capit' & 'adequaci'",
+  "sort": "relevance",
+  "segmentation_method": "clause_aware",
+  "version_scope": "latest",
+  "total": 2,
+  "limit": 3,
+  "offset": 0,
+  "took_ms": 7.8,
+  "warnings": [],
+  "items": [
+    {
+      "document_id": "DOC-0004",
+      "title": "Reserve Bank of India (Commercial Banks - Prudential Norms on Capital Adequacy) Eleventh Amendment Directions, 2026",
+      "department": null,
+      "document_type": "amendment",
+      "score": 1.0457,
+      "matched_clauses": 2,
+      "metadata_match": true,
+      "best_clause": { "clause_id": "CLS-0000248", "page_start": 1, "pages": [...] }
+    }
+  ]
+}
+```
 
-1. **One engine.** Go through `db.engine.connection()`; never construct an
-   engine here.
-2. **Read-only.** No `INSERT` / `UPDATE` / `DELETE` in this package, ever.
-3. **Injected, not imported, at the route.** Follow
-   `api/dependencies.py::get_repository`: a `SearchService` dependency that
-   tests can override, so search gets mocked tests like the API already has.
+### `GET /api/search/clauses` — clauses
+
+Everything above plus `document_id`, `version_id`, `segment_type`, `page_from`,
+`page_to`, `include_text`. Each item adds `clause_number`,
+`clause_number_ambiguous`, `heading`, `level`, `snippet`, `page_start`,
+`page_end`, `pages[]`, `offset_basis`.
+
+`snippet` marks matches with `[[hl]]` / `[[/hl]]` sentinels and is **plain
+text, not HTML** — the text comes out of a PDF, and handing a browser markup
+assembled from document content is how a document becomes a script. Both
+sentinels were verified absent from all 501 original segments before being
+chosen.
+
+### `GET /api/search/suggest`
+
+`q` (0–120 chars), `limit` (1–25). Titles, reference numbers and departments
+only — **never clause text**: a clause fragment offered as a suggestion looks
+like an answer and carries no page reference to check it against. Fewer than
+two characters returns an empty list, not a 422.
+
+### `GET /api/library/facets`
+
+No parameters. `documents`, `versions`, `pages`, `segments` per method,
+`departments`, `document_types`, `publication_years`, `extraction_statuses`,
+`date_range`. Every value is a `GROUP BY` over the real tables. `null` is a
+**real bucket** labelled "Not stated", and filtering on it works — one of the
+four original documents does not print its department.
 
 ---
 
-## 4. Endpoints it will likely need `[PROPOSED]`
+## 6. Tests
 
-None of these exist yet. Each needs the §12.4 contract announcement before it
-is merged.
+| Module | Tests | Needs PostgreSQL |
+|---|---:|---|
+| `test_library_search_unit.py` | 54 | no |
+| `test_library_search_api.py` | 38 | no (fake service) |
+| `test_library_search_scaffold.py` | 22 | no (module boundaries) |
+| `test_library_search_integration.py` | 56 | **yes** |
+| **total** | **170** | 56 |
 
-| Method | Path | Purpose | Notes |
-|---|---|---|---|
-| GET | `/api/search` | ranked search across documents **and** clauses | `q`, `scope`, `strategy`, `department`, `document_type`, `limit`, `offset`. Empty `q` → `422 VALIDATION_ERROR`, not "everything" |
-| GET | `/api/search/clauses` | clause-level hits with provenance | every item already citable: `clause_id`, pages, offsets, `offset_basis` |
-| GET | `/api/library/facets` | filter values and counts | `department`, `document_type`, years — with an explicit `null` bucket, since both columns are nullable |
-| GET | `/api/search/suggest` | type-ahead | titles and `reference_no` only, never clause text |
-
-Deliberately **not** proposed: a "related documents" endpoint. It needs
-document similarity, and with 4 documents from 1 authority and 0 version pairs
-(D-10) any number it produced would be noise.
+Plus `evaluation/library_search_eval.py` (retrieval quality, 20 queries) and
+`evaluation/library_search_e2e.py` (51 HTTP flow checks against a running
+server).
 
 ---
 
-## 5. Open decisions that gate this module
+## 7. Still open
 
-| ID | Decision | Effect here |
-|---|---|---|
-| **D-10** | which documents form the corpus | **binding.** Relevance on 4 documents from 1 authority is not a measurement. The baseline can be *built* now; it cannot be *evaluated* meaningfully |
-| **D-7** | where retrieval embeddings live | gates `semantic` and `hybrid`. No vector DB without a written justification (`CLAUDE.md` §24 rule 5) |
-| **new** | which segmentation method is searched by default | `clause_aware` (363 segments) is the better unit for citation; `paragraph` (138) gives more context. Both are stored, so this is a parameter — but a default has to be chosen and recorded |
-| **new** | relevance ground truth | a query set with judged results, committed under `data/annotations/`, written **before** any metric — `CLAUDE.md` §14 rule 1 |
+| ID | What it gates |
+|---|---|
+| **D-10** | **The binding one.** 17 documents, 3 authorities. Relevance numbers from a 20-query set judged by one non-independent annotator are diagnostic, not validated — `data/annotations/search_relevance/README.md` §0 |
+| **D-7** | `semantic` and `hybrid`. Both need an embedding model, a pinned dependency and a written justification. The seam exists; nothing claims they work |
+| new | A second annotator for the relevance set. `template.json` is ready |
+| new | Whether `clause_aware` stays the default searched method (it is the better citation unit; `paragraph` gives more context) |
 
----
-
-## 6. First three steps, in order
-
-1. **`keyword` only**, behind `search_segments`, with unit tests that do not
-   need a server plus `@pytest.mark.integration` tests that do.
-2. **Measure it against today's `ILIKE` listing** on a committed query set.
-   That is a real baseline-vs-comparison with no new dependency.
-3. **Only then** argue D-7 for `semantic`, with the keyword numbers in hand.
-
-Related reading: `backend/docs/backend-integration-contract.md` (what the API
-guarantees), `backend/docs/phase3-postgresql.md` (schema rationale),
-`backend/docs/PROJECT_STRUCTURE_AND_MODULE_GUIDE.md` (where everything lives).
+Read next: `backend/docs/LIBRARY_SEARCH_IMPLEMENTATION_REPORT.md` for the
+measured results, the FTS-vs-ILIKE comparison, the defects found and fixed, and
+the startup instructions.

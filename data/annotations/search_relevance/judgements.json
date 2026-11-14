@@ -1,0 +1,156 @@
+{
+  "schema_version": "1.0.0",
+  "created": "2026-11-14",
+  "annotator": "person-1-backend-owner",
+  "independent": false,
+  "corpus": {
+    "database": "niyamsetu_sample",
+    "documents": 17,
+    "pages": 148,
+    "clause_aware_segments": 728,
+    "authorities": ["RBI", "IRDAI", "NABARD"]
+  },
+  "caveat": "Single non-independent annotator. See README.md section 0 before quoting any metric.",
+  "queries": [
+    {
+      "id": "q01",
+      "query": "capital adequacy",
+      "theme": "capital adequacy requirements",
+      "relevant": ["DOC-0004"],
+      "note": "DOC-0004 is the capital-adequacy amendment itself. DOC-0002 cites the parent directions once while amending something else, and DOC-0005 ('Other Forms of Capital') is about capital instruments for insurers, not adequacy norms - both judged not relevant under rule 1."
+    },
+    {
+      "id": "q02",
+      "query": "\"capital adequacy\"",
+      "theme": "phrase search",
+      "relevant": ["DOC-0004"],
+      "note": "Same intent as q01, written as a quoted phrase. Included to check that websearch_to_tsquery's phrase operator does not lose the right answer."
+    },
+    {
+      "id": "q03",
+      "query": "priority sector lending",
+      "theme": "priority sector lending",
+      "relevant": ["DOC-0003"],
+      "note": "DOC-0003 reports SC/ST advances under the Priority Sector Lending master direction. The PSL master direction itself is not in the corpus."
+    },
+    {
+      "id": "q04",
+      "query": "credit facilities to scheduled castes and scheduled tribes",
+      "theme": "commercial bank regulation / financial inclusion",
+      "relevant": ["DOC-0003"],
+      "note": "Exactly the subject of DOC-0003."
+    },
+    {
+      "id": "q05",
+      "query": "lead bank responsibility districts",
+      "theme": "commercial bank regulation",
+      "relevant": ["DOC-0001"],
+      "note": "DOC-0001 assigns lead bank responsibility for the re-organised Delhi districts. DOC-0003 mentions the Lead Bank Scheme in passing - not relevant under rule 2."
+    },
+    {
+      "id": "q06",
+      "query": "cyber security",
+      "theme": "digital payment security",
+      "relevant": ["DOC-0007"],
+      "note": "DOC-0007 is the only cyber-security document in the corpus. The RBI Master Directions on Cyber Resilience and Digital Payment Security Controls was selected but could not be downloaded (sources.UNREACHABLE)."
+    },
+    {
+      "id": "q07",
+      "query": "insurance ombudsman",
+      "theme": "grievance redress",
+      "relevant": ["DOC-0009"],
+      "note": "The Ombudsman (Amendment) Rules."
+    },
+    {
+      "id": "q08",
+      "query": "foreign investment in insurance companies",
+      "theme": "foreign investment",
+      "relevant": ["DOC-0011"],
+      "note": "DOC-0011 is the Foreign Investment Amendment Rules. DOC-0005 and DOC-0015 reference the Foreign Investment Rules while regulating something else - not relevant under rule 2."
+    },
+    {
+      "id": "q09",
+      "query": "transfer of shares of insurers",
+      "theme": "corporate approvals",
+      "relevant": ["DOC-0015"],
+      "note": "The Master Circular covers registration, capital structure, transfer of shares and amalgamation."
+    },
+    {
+      "id": "q10",
+      "query": "annual fee payment certificate of registration",
+      "theme": "regulatory fees",
+      "relevant": ["DOC-0010", "DOC-0013"],
+      "note": "Two documents on the same subject: the original clarification (DOC-0010) and the circular extending it (DOC-0013). Both relevant - a reader asking this needs to see both."
+    },
+    {
+      "id": "q11",
+      "query": "obligatory cession reinsurance",
+      "theme": "reinsurance",
+      "relevant": ["DOC-0016"],
+      "note": "The obligatory cession notification for FY2025-26."
+    },
+    {
+      "id": "q12",
+      "query": "alternative investment funds",
+      "theme": "investment norms",
+      "relevant": ["DOC-0017"],
+      "note": "AIF investment clarifications."
+    },
+    {
+      "id": "q13",
+      "query": "formats for publishing financial results",
+      "theme": "regulatory reporting",
+      "relevant": ["DOC-0008"],
+      "note": "The LODR financial-results formats circular."
+    },
+    {
+      "id": "q14",
+      "query": "gender policy women",
+      "theme": "development policy",
+      "relevant": ["DOC-0006"],
+      "note": "The NABARD gender policy - the only non-regulatory policy document in the corpus."
+    },
+    {
+      "id": "q15",
+      "query": "insurance intermediaries registration",
+      "theme": "intermediary regulation",
+      "relevant": ["DOC-0012", "DOC-0015"],
+      "note": "DOC-0012 is the Intermediaries Amendment Regulations; DOC-0015's registration chapter governs the same subject. DOC-0010 and DOC-0013 concern intermediary fees rather than registration - judged not relevant, and this is the finest judgement call in the set."
+    },
+    {
+      "id": "q16",
+      "query": "tariff de-notification",
+      "theme": "pricing",
+      "relevant": ["DOC-0014"],
+      "note": "The de-notification of all tariffs."
+    },
+    {
+      "id": "q17",
+      "query": "know your customer",
+      "theme": "KYC (brief theme, no document behind it)",
+      "relevant": [],
+      "note": "DELIBERATE ZERO. The brief asks for a KYC query; the corpus has no KYC document, because the RBI KYC master direction lives on the unreachable host. A search that returns anything here is matching on vocabulary, not subject - the correct answer is an empty result with a clear empty state."
+    },
+    {
+      "id": "q18",
+      "query": "digital payment security controls",
+      "theme": "digital payment security (no document behind it)",
+      "relevant": [],
+      "note": "DELIBERATE ZERO. DOC-0007 is about a cyber-security awareness month, not payment security controls; judged not relevant under rule 1. The RBI master direction that would answer this is in sources.UNREACHABLE."
+    },
+    {
+      "id": "q19",
+      "query": "liquidity coverage ratio requirements",
+      "theme": "liquidity requirements (no document behind it)",
+      "relevant": [],
+      "note": "DELIBERATE ZERO. Nothing in the corpus regulates liquidity ratios. DOC-0015 mentions asset liquidity in a disclosure list, which is a vocabulary match."
+    },
+    {
+      "id": "q20",
+      "query": "zzzzqqq nonexistent term",
+      "theme": "negative control",
+      "relevant": [],
+      "note": "DELIBERATE ZERO. A term that cannot appear in any government document. If this ever returns a hit, something is matching on something other than the query."
+    }
+  ]
+}

@@ -26,6 +26,7 @@ from backend.app.db.engine import connection
 __all__ = [
     "NotFound",
     "MAX_LIMIT",
+    "LIST_SORTS",
     "list_documents",
     "get_document",
     "get_pages",
@@ -112,16 +113,44 @@ def _resolve_version(
     return version
 
 
+#: ``ORDER BY`` clauses for the Library listing. Every one ends in
+#: ``d.public_id`` so the order is total: an ``ORDER BY`` with ties cannot
+#: paginate without repeating or skipping rows.
+LIST_SORTS = {
+    "public_id": "d.public_id ASC",
+    "title": "d.title ASC, d.public_id ASC",
+    "title_desc": "d.title DESC, d.public_id ASC",
+    "date_desc": "max(v.publication_date) DESC NULLS LAST, d.public_id ASC",
+    "date_asc": "max(v.publication_date) ASC NULLS LAST, d.public_id ASC",
+    "recent": "max(v.ingested_at) DESC NULLS LAST, d.public_id ASC",
+}
+DEFAULT_LIST_SORT = "public_id"
+
+
 def list_documents(
     *,
     q: Optional[str] = None,
     department: Optional[str] = None,
     document_type: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    sort: str = DEFAULT_LIST_SORT,
     limit: Optional[int] = None,
     offset: int = 0,
     url: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """The Library listing: §12.3's ``GET /api/documents`` shape."""
+    """The Library listing: §12.3's ``GET /api/documents`` shape.
+
+    ``date_from``, ``date_to`` and ``sort`` were added for the Library &
+    Search module. §12.3 always specified them; Phase 4 shipped without them.
+    Additive, with defaults that reproduce the original query exactly, so no
+    existing consumer sees a change (§12.4).
+
+    The date filters apply to **any** version of the document: a policy whose
+    2026 amendment falls in range is in range, even if its original issue
+    does not. For a corpus of amendments that is the useful reading, and it is
+    the only one that works with a nullable ``publication_date``.
+    """
     capped = _clamp(limit)
     clauses: List[str] = []
     params: Dict[str, Any] = {"limit": capped, "offset": max(0, int(offset))}
@@ -130,31 +159,83 @@ def list_documents(
         clauses.append("(d.title ILIKE :q OR d.reference_no ILIKE :q)")
         params["q"] = f"%{q}%"
     if department:
-        clauses.append("d.department = :department")
-        params["department"] = department
+        # 'null' selects the documented gap: 1 of the 4 original documents
+        # does not print its issuing department, and a filter list that cannot
+        # express that makes the document unreachable.
+        if department == "null":
+            clauses.append("d.department IS NULL")
+        else:
+            clauses.append("d.department = :department")
+            params["department"] = department
     if document_type:
-        clauses.append("d.document_type = :document_type")
-        params["document_type"] = document_type
+        if document_type == "null":
+            clauses.append("d.document_type IS NULL")
+        else:
+            clauses.append("d.document_type = :document_type")
+            params["document_type"] = document_type
+    if date_from or date_to:
+        # EXISTS rather than a predicate on the outer join: filtering the
+        # joined rows would also change version_count, so a document would
+        # report fewer versions than it has purely because of a date filter.
+        bounds = []
+        if date_from:
+            bounds.append("fv.publication_date >= CAST(:date_from AS DATE)")
+            params["date_from"] = date_from
+        if date_to:
+            bounds.append("fv.publication_date <= CAST(:date_to AS DATE)")
+            params["date_to"] = date_to
+        clauses.append(
+            "EXISTS (SELECT 1 FROM document_versions fv "
+            "WHERE fv.document_id = d.id AND " + " AND ".join(bounds) + ")"
+        )
     where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
+    order_by = LIST_SORTS.get(sort, LIST_SORTS[DEFAULT_LIST_SORT])
 
     with connection(url) as conn:
         total = conn.execute(
             text(f"SELECT count(*) FROM documents d {where}"), params
         ).scalar_one()
 
+        # The aggregate answers "how many versions and when"; the lateral
+        # join answers "which version would a reader open". Separating them is
+        # what keeps version_count honest while still exposing the latest
+        # version's own page count and extraction status.
         rows = conn.execute(
             text(
                 f"""
                 SELECT d.public_id, d.title, d.department, d.document_type,
                        d.reference_no,
-                       count(v.id)            AS version_count,
-                       max(v.publication_date) AS latest_publication_date
+                       count(v.id)             AS version_count,
+                       max(v.publication_date) AS latest_publication_date,
+                       max(v.ingested_at)      AS latest_ingested_at,
+                       latest.public_id        AS latest_version_id,
+                       latest.version_label    AS latest_version_label,
+                       latest.page_count       AS page_count,
+                       latest.extraction_status AS extraction_status,
+                       latest.clause_count     AS clause_count
                   FROM documents d
                   LEFT JOIN document_versions v ON v.document_id = d.id
+                  LEFT JOIN LATERAL (
+                        SELECT lv.public_id, lv.version_label, lv.page_count,
+                               lv.extraction_status,
+                               (SELECT count(*) FROM segments g
+                                 WHERE g.version_id = lv.id
+                                   AND g.segmentation_method = 'clause_aware')
+                                   AS clause_count
+                          FROM document_versions lv
+                         WHERE lv.document_id = d.id
+                           AND lv.extraction_status = 'ok'
+                         ORDER BY lv.publication_date DESC NULLS LAST,
+                                  lv.ingested_at DESC, lv.id DESC
+                         LIMIT 1
+                  ) latest ON TRUE
                   {where}
                  GROUP BY d.id, d.public_id, d.title, d.department,
-                          d.document_type, d.reference_no
-                 ORDER BY d.public_id
+                          d.document_type, d.reference_no,
+                          latest.public_id, latest.version_label,
+                          latest.page_count, latest.extraction_status,
+                          latest.clause_count
+                 ORDER BY {order_by}
                  LIMIT :limit OFFSET :offset
                 """
             ),
@@ -177,6 +258,15 @@ def list_documents(
                     row.latest_publication_date.isoformat()
                     if row.latest_publication_date
                     else None
+                ),
+                "latest_version_id": row.latest_version_id,
+                "latest_version_label": row.latest_version_label,
+                "page_count": (
+                    int(row.page_count) if row.page_count is not None else None
+                ),
+                "extraction_status": row.extraction_status,
+                "clause_count": (
+                    int(row.clause_count) if row.clause_count is not None else None
                 ),
             }
             for row in rows

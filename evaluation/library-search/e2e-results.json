@@ -1,0 +1,424 @@
+{
+  "experiment": "Library & Search end-to-end flow (HTTP)",
+  "generated_at": "2026-11-14T11:43:35+0530",
+  "base": "http://127.0.0.1:5173",
+  "browser_automation": "NOT PERFORMED. The Chrome extension was not connected on this machine (tabs_context_mcp reported 'Browser extension is not connected'), so no click-through was done and none is claimed. This script replays the frontend's exact request sequence instead; DOM rendering, input handling and CSS remain unverified.",
+  "corpus": {
+    "documents": 17,
+    "pages": 148,
+    "segments": {
+      "clause_aware": 728,
+      "paragraph": 775
+    }
+  },
+  "timings_ms": {
+    "facets_ms": 17.6,
+    "document_search_ms": 390.1,
+    "clause_search_ms": 45.6,
+    "slowest_call_ms": 390.1,
+    "median_call_ms": 32.2,
+    "requests_made": 39
+  },
+  "checks": [
+    {
+      "action": "load the page",
+      "check": "GET /index.html serves",
+      "ok": true,
+      "detail": "status=200"
+    },
+    {
+      "action": "load the page",
+      "check": "GET /styles.css serves",
+      "ok": true,
+      "detail": "status=200"
+    },
+    {
+      "action": "load the page",
+      "check": "GET /app.js serves",
+      "ok": true,
+      "detail": "status=200"
+    },
+    {
+      "action": "load the page",
+      "check": "index.html references styles.css",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "action": "load the page",
+      "check": "index.html references app.js",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "action": "health pill",
+      "check": "health reports ok/ok",
+      "ok": true,
+      "detail": {
+        "status": "ok",
+        "database": "ok",
+        "version": "0.1.0"
+      }
+    },
+    {
+      "action": "library landing",
+      "check": "facets return 200",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "library landing",
+      "check": "document count comes from the API and is non-zero",
+      "ok": true,
+      "detail": 17
+    },
+    {
+      "action": "library landing",
+      "check": "authorities are listed with counts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "action": "library landing",
+      "check": "document types are listed with counts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "action": "library landing",
+      "check": "facet counts sum to the document total",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "action": "library landing",
+      "check": "both segmentation methods are counted",
+      "ok": true,
+      "detail": {
+        "clause_aware": 728,
+        "paragraph": 775
+      }
+    },
+    {
+      "action": "library listing",
+      "check": "listing returns 200",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "library listing",
+      "check": "the first page holds documents and a total",
+      "ok": true,
+      "detail": {
+        "items": 10,
+        "total": 17
+      }
+    },
+    {
+      "action": "library listing",
+      "check": "a card carries the fields the UI renders",
+      "ok": true,
+      "detail": [
+        "clause_count",
+        "department",
+        "document_id",
+        "document_type",
+        "extraction_status",
+        "latest_publication_date",
+        "latest_version_id",
+        "latest_version_label",
+        "page_count",
+        "reference_no",
+        "title",
+        "version_count"
+      ]
+    },
+    {
+      "action": "library pagination",
+      "check": "paging covers every document exactly once",
+      "ok": true,
+      "detail": {
+        "collected": 17,
+        "unique": 17,
+        "total": 17
+      }
+    },
+    {
+      "action": "change sort order",
+      "check": "sort=public_id returns the full set",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "change sort order",
+      "check": "sort=title returns the full set",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "change sort order",
+      "check": "sort=date_desc returns the full set",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "change sort order",
+      "check": "sort=date_asc returns the full set",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "change sort order",
+      "check": "sort=recent returns the full set",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "change sort order",
+      "check": "date_desc really orders by date",
+      "ok": true,
+      "detail": [
+        "2026-11-02",
+        "2026-10-26",
+        "2026-10-23",
+        "2026-10-23"
+      ]
+    },
+    {
+      "action": "type in the search box",
+      "check": "a two-or-more character prefix returns suggestions",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "type in the search box",
+      "check": "a one-character prefix returns an empty list, not an error",
+      "ok": true,
+      "detail": {
+        "prefix": "c",
+        "items": []
+      }
+    },
+    {
+      "action": "search documents",
+      "check": "returns 200",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "search documents",
+      "check": "results are ranked, with the envelope the UI shows",
+      "ok": true,
+      "detail": {
+        "total": 13,
+        "tsquery": "'insur'"
+      }
+    },
+    {
+      "action": "search clauses",
+      "check": "returns 200",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "search clauses",
+      "check": "every hit carries page provenance and an offset basis",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "action": "search clauses",
+      "check": "snippets are marked with sentinels, not HTML",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "action": "apply an authority filter",
+      "check": "every result has the filtered authority",
+      "ok": true,
+      "detail": "Insurance Regulatory and Development Authority of India"
+    },
+    {
+      "action": "apply an authority filter",
+      "check": "the filtered total is not larger than the unfiltered one",
+      "ok": true,
+      "detail": {
+        "filtered": 12,
+        "unfiltered": 13
+      }
+    },
+    {
+      "action": "apply an authority filter",
+      "check": "the response says a filter was applied",
+      "ok": true,
+      "detail": [
+        "Filters applied: department=Insurance Regulatory and Development Authority of India"
+      ]
+    },
+    {
+      "action": "remove the filter",
+      "check": "removing it restores the unfiltered total",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "action": "filter on 'Not stated'",
+      "check": "the null authority bucket is filterable and matches its count",
+      "ok": true,
+      "detail": {
+        "returned": 1,
+        "facet": 1
+      }
+    },
+    {
+      "action": "filter by year",
+      "check": "the year facet maps onto a date range the API accepts",
+      "ok": true,
+      "detail": {
+        "year": "2026",
+        "returned": 10
+      }
+    },
+    {
+      "action": "open a result",
+      "check": "the document detail loads",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "open a result",
+      "check": "the detail carries versions with extraction status",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "action": "open a result",
+      "check": "a source URL is available for the official PDF link",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "action": "inspect provenance",
+      "check": "the page text loads",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "inspect provenance",
+      "check": "the stored character range resolves to real text on that page",
+      "ok": true,
+      "detail": {
+        "page": 3,
+        "range": [
+          46,
+          2116
+        ],
+        "page_length": 2116,
+        "resolved_chars": 2070
+      }
+    },
+    {
+      "action": "inspect provenance",
+      "check": "the resolved text is what the search matched",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "action": "inspect clauses",
+      "check": "the document's clause list loads with its offset basis",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "inspect clauses",
+      "check": "the clause that was clicked is in the document's clause list",
+      "ok": true,
+      "detail": "CLS-0001344"
+    },
+    {
+      "action": "paginate the results",
+      "check": "no clause appears on two pages",
+      "ok": true,
+      "detail": {
+        "collected": 30,
+        "unique": 30
+      }
+    },
+    {
+      "action": "switch strategy to ILIKE",
+      "check": "the comparison baseline runs and says what it is",
+      "ok": true,
+      "detail": [
+        "strategy=ilike: substring match, no stemming and no ranking. Results are in document order. This is the comparison baseline, not the production search."
+      ]
+    },
+    {
+      "action": "switch strategy to ILIKE",
+      "check": "ILIKE hits still carry provenance",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "action": "search with no matches",
+      "check": "an empty result is a 200 with total 0, not an error",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "action": "search only stop words",
+      "check": "the response explains why nothing could match",
+      "ok": true,
+      "detail": [
+        "The query contained no searchable terms after stemming and stop-word removal, so nothing could match. PostgreSQL's 'english' configuration reduced it to an empty query \u2014 try different wording."
+      ]
+    },
+    {
+      "action": "submit an empty query",
+      "check": "a blank query is a 422 in the shared error envelope",
+      "ok": true,
+      "detail": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "Request validation failed.",
+          "details": {
+            "errors": [
+              {
+                "field": "query.q",
+                "message": "String should have at least 1 character",
+                "type": "string_too_short"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "action": "submit an empty query",
+      "check": "the proxy forwards the error envelope unchanged",
+      "ok": true,
+      "detail": {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "message": "Request validation failed.",
+          "details": {
+            "errors": [
+              {
+                "field": "query.q",
+                "message": "String should have at least 1 character",
+                "type": "string_too_short"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "action": "open a document that does not exist",
+      "check": "404 in the shared envelope",
+      "ok": true,
+      "detail": 404
+    }
+  ],
+  "passed": 51,
+  "failed": 0
+}

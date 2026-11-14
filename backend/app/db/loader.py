@@ -50,6 +50,7 @@ __all__ = [
     "LoadSummary",
     "load_version_directory",
     "load_processed_tree",
+    "link_supersedes",
     "main",
 ]
 
@@ -119,6 +120,10 @@ class LoadSummary:
     """Every version's outcome from one run."""
 
     outcomes: List[LoadOutcome] = field(default_factory=list)
+    #: What :func:`link_supersedes` did at the end of the run, or ``None`` when
+    #: it was not called (a single-directory load does not run it, because one
+    #: version cannot establish a chain on its own).
+    supersedes_links: Optional[Dict[str, Any]] = None
 
     def add(self, outcome: LoadOutcome) -> None:
         self.outcomes.append(outcome)
@@ -744,7 +749,190 @@ def load_processed_tree(
             )
             if stop_on_error:
                 break
+
+    # Version order is resolved after every version is in, not during the
+    # load: a manifest row can name a predecessor whose directory sorts later,
+    # and a one-pass loader would have to either reject it or guess.
+    summary.supersedes_links = link_supersedes(
+        declarations_from_tree(processed_dir), url=url
+    )
     return summary
+
+
+def declarations_from_tree(
+    processed_dir: Path = DEFAULT_PROCESSED_DIR,
+) -> Dict[str, str]:
+    """``{version_fingerprint: declared predecessor version_label}``.
+
+    Read straight out of the ``extraction.json`` files, because that is where
+    the value already is: ``data/manifest.csv`` carries a ``supersedes``
+    column holding **the ``version_label`` this version replaces**
+    (``data/README.md`` §4), the extraction CLI copies it into
+    ``source_metadata``, and nothing had ever read it back out.
+
+    Doing it this way means no new column and no migration -- the declaration
+    lives in the artefact, exactly as the publication date and the source URL
+    already do, and only the *resolved* link lands in the database.
+    """
+    out: Dict[str, str] = {}
+    if not processed_dir.exists():
+        return out
+    for directory in sorted(child for child in processed_dir.iterdir() if child.is_dir()):
+        extraction = directory / EXTRACTION_FILENAME
+        if not extraction.exists():
+            continue
+        try:
+            payload = _read_json(extraction)
+        except LoadError:
+            continue
+        document = payload.get("document") or {}
+        source = document.get("source_metadata") or {}
+        declared = source.get("supersedes")
+        fingerprint = document.get("version_id") or directory.name
+        if declared and str(declared).strip():
+            out[str(fingerprint)] = str(declared).strip()
+    return out
+
+
+def link_supersedes(
+    declarations: Dict[str, str], *, url: Optional[str] = None
+) -> Dict[str, Any]:
+    """Resolve declared predecessors into ``supersedes_version_id``.
+
+    ``declarations`` maps a version fingerprint to the ``version_label`` that
+    version's manifest row says it replaces, as
+    :func:`declarations_from_tree` reads it out of the artefacts.
+
+    Why this exists at all: until now nothing wrote
+    ``document_versions.supersedes_version_id``, so the one statement in the
+    database about version order that is *asserted by a human rather than
+    inferred* was being dropped at the last step of ingestion.
+
+    That matters specifically for Compare. Without the column, "which of these
+    two versions is the newer one" can only be guessed from publication date --
+    which ``CLAUDE.md`` §11.1 says explicitly is not a reliable version order,
+    and which is nullable besides. With it,
+    ``GET /api/compare/options`` can mark a pair ``supersedes_declared`` and
+    the direction of a diff becomes a fact rather than an assumption.
+
+    Four rules, enforced here rather than left to the schema:
+
+    * **Within one document only.** A label is looked up among the *same
+      document's* versions, so a chain can never cross documents -- which the
+      schema also has a trigger against, but a refusal reported by name is
+      more useful than a constraint violation.
+    * **No self-reference**, and **no cycle**: a link that would close one is
+      refused and reported.
+    * **Nothing is guessed.** An unresolvable label is reported as unresolved
+      and no link is written. Title similarity is never used (D-9).
+    * **Idempotent.** A link already correct is left alone, so this is safe to
+      call after every load.
+    """
+    linked: List[str] = []
+    refused: List[Dict[str, str]] = []
+    unresolved: List[Dict[str, str]] = []
+
+    if not declarations:
+        return {
+            "linked": linked,
+            "linked_count": 0,
+            "unresolved": unresolved,
+            "refused": refused,
+        }
+
+    with transaction(url) as conn:
+        rows = conn.execute(
+            text(
+                "SELECT v.id, v.public_id, v.fingerprint, v.document_id,"
+                "       v.version_label, v.supersedes_version_id"
+                "  FROM document_versions v"
+                " ORDER BY v.id"
+            )
+        ).all()
+        by_label: Dict[Tuple[int, str], int] = {
+            (int(row.document_id), str(row.version_label)): int(row.id)
+            for row in rows
+        }
+
+        for row in rows:
+            declared = declarations.get(str(row.fingerprint))
+            if not declared:
+                continue
+            target = by_label.get((int(row.document_id), declared))
+            if target is None:
+                unresolved.append(
+                    {
+                        "version": row.public_id,
+                        "supersedes": declared,
+                        "reason": (
+                            "no version carries that version_label within the "
+                            "same document; it may not be ingested yet, or the "
+                            "manifest's supersedes value may not match any "
+                            "version_label"
+                        ),
+                    }
+                )
+                continue
+            if target == int(row.id):
+                refused.append(
+                    {
+                        "version": row.public_id,
+                        "supersedes": declared,
+                        "reason": "a version cannot supersede itself",
+                    }
+                )
+                continue
+            if _would_cycle(conn, int(row.id), target):
+                refused.append(
+                    {
+                        "version": row.public_id,
+                        "supersedes": declared,
+                        "reason": "the link would close a supersedes cycle",
+                    }
+                )
+                continue
+            if row.supersedes_version_id == target:
+                continue
+            conn.execute(
+                text(
+                    "UPDATE document_versions SET supersedes_version_id = :target"
+                    " WHERE id = :vid"
+                ),
+                {"target": target, "vid": int(row.id)},
+            )
+            linked.append(f"{row.public_id} supersedes {declared}")
+
+    return {
+        "linked": linked,
+        "linked_count": len(linked),
+        "unresolved": unresolved,
+        "refused": refused,
+    }
+
+
+def _would_cycle(conn: Connection, version_id: int, target_id: int) -> bool:
+    """Would pointing ``version_id`` at ``target_id`` close a cycle?
+
+    Walks the existing chain upward from ``target_id``; if it reaches
+    ``version_id`` the new link would make the chain circular. Bounded by the
+    number of versions, so a chain that is *already* circular cannot hang this.
+    """
+    seen = {version_id}
+    cursor: Optional[int] = target_id
+    for _ in range(1000):
+        if cursor is None:
+            return False
+        if cursor in seen:
+            return True
+        seen.add(cursor)
+        cursor = conn.execute(
+            text(
+                "SELECT supersedes_version_id FROM document_versions"
+                " WHERE id = :vid"
+            ),
+            {"vid": cursor},
+        ).scalar_one_or_none()
+    return True
 
 
 def build_parser() -> argparse.ArgumentParser:

@@ -175,6 +175,15 @@ class PageListResponse(BaseModel):
 
 
 class DocumentSummary(BaseModel):
+    """One row of the Library listing.
+
+    The last five fields were added for the Library & Search module. They all
+    describe the **latest ok-extracted version** -- the one a reader means by
+    "the document" -- and they are null when a document has no such version,
+    which is a real state (a failed or partial extraction) and not a gap to
+    paper over. ``version_count`` counts every version regardless.
+    """
+
     model_config = ConfigDict(extra="forbid")
 
     document_id: str = Field(examples=["DOC-0001"])
@@ -184,6 +193,17 @@ class DocumentSummary(BaseModel):
     reference_no: Optional[str] = None
     version_count: int
     latest_publication_date: Optional[str] = None
+    latest_version_id: Optional[str] = None
+    latest_version_label: Optional[str] = None
+    page_count: Optional[int] = Field(
+        default=None, description="Pages in the latest ok-extracted version."
+    )
+    extraction_status: Optional[str] = Field(
+        default=None, description="Of the latest ok-extracted version."
+    )
+    clause_count: Optional[int] = Field(
+        default=None, description="clause_aware segments in that version."
+    )
 
 
 class DocumentListResponse(BaseModel):

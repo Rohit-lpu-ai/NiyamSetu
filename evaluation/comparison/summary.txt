@@ -1,0 +1,75 @@
+NiyamSetu — Compare evaluation over the real version-pair corpus
+==============================================================================
+
+READ THIS FIRST
+------------------------------------------------------------------------------
+  NONE. No clause-level annotation exists for these documents, so this
+  report contains no alignment accuracy, precision, recall or F1. Every
+  count below describes what the system reported, not whether it was right.
+
+CORPUS
+------------------------------------------------------------------------------
+  documents                6
+  versions                 13
+  ok_versions              13
+  documents_with_pairs     3
+  pairs evaluated          12
+  authority-declared       6
+  consecutive              7
+
+INVARIANTS (a failure here is a defect, not a judgement call)
+------------------------------------------------------------------------------
+  pairs passing every invariant : 12 / 12
+
+EVIDENCE RESOLUTION
+------------------------------------------------------------------------------
+  clause sides checked          : 5104
+  verified against page offsets : 5104
+  resolution rate               : 1.0
+  by status                     : {"resolved": 5104}
+
+SELF-COMPARISON (the one check that needs no annotation)
+------------------------------------------------------------------------------
+  VER-0006 against itself, 929 clauses
+  all unchanged                 : True
+  no spurious reordering        : True
+  no spurious renumbering       : True
+  counts                        : {"added": 0, "removed": 0, "modified": 0, "unchanged": 929}
+
+PER-PAIR BEHAVIOUR (descriptions, not scores)
+------------------------------------------------------------------------------
+  pair                             clauses     +     -     ~     =   unch%  amb  renum      ms
+   2019-07-01->2026-10-01        62->49         3    16    41     5    7.7%    2     21      35
+   2017-07-01->2026-10-01        60->49         4    15    39     6    9.4%    1     23      27
+   2016-07-01->2026-10-01       108->49         8    67    38     3    2.6%    1     30      31
+  *2017-07-01->2019-07-01        60->62         3     1    19    40   63.5%    0      7      29
+   2016-07-01->2019-07-01       108->62         8    54    29    25   21.6%    0     22      36
+  *2016-07-01->2017-07-01       108->60         6    54    31    23   20.2%    0     21      33
+  *2018-07-02->2019-07-02       929->554       35   410   144   375   38.9%   18     74     717
+   2017-07-03->2019-07-02       707->554       71   224   160   323   41.5%   14    116     571
+  *2017-07-03->2018-07-02       707->929      243    21   139   547   57.6%   32     82     858
+  *2018-07-02->2019-07-01       277->286        9     0    32   245   85.7%    4      1     119
+   2017-07-01->2019-07-01       275->286       11     0    43   232   81.1%    6      1     112
+  *2017-07-01->2018-07-02       275->277        2     0    40   235   84.8%    1      0     110
+  * = the newer issue's own metadata declares it supersedes the older
+
+HOW THE MATCHER ESTABLISHED ITS PAIRS
+------------------------------------------------------------------------------
+  exact_text          2059  (73.2%)
+  clause_number        470  (16.7%)
+  similarity           285  (10.1%)
+
+THRESHOLD SENSITIVITY
+------------------------------------------------------------------------------
+  pair: VER-0012->VER-0005
+   match_threshold      +      -      ~      =   amb
+               0.2      2      0     20     40     0
+              0.35      3      1     19     40     0
+              0.45      3      1     19     40     0
+               0.6      3      1     19     40     0
+               0.8      6      4     16     40     0
+
+TIMING
+------------------------------------------------------------------------------
+  median alignment : 72.9 ms
+  slowest pair     : 858.4 ms
